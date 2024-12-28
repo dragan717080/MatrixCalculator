@@ -6,6 +6,11 @@ import { FiLogOut, FiEdit, FiEdit2 } from 'react-icons/fi'
 import { Link, useNavigate } from 'react-router-dom'
 import { useToast, EToastTypes } from '../contexts/ToastContext'
 import Logo from '../../public/logo.webp'
+import AdvancedPropertiesToolbar from '../Components/NavbarToolbars/AdvancedPropertiesToolbar'
+import InversionsToolbar from './NavbarToolbars/InversionsToolbar'
+import LinearEquationsToolbar from './NavbarToolbars/LinearEquationsToolbar'
+import MatrixOperationsToolbar from './NavbarToolbars/MatrixOperationsToolbar'
+import NavbarMenuItem from './NavbarMenuItem'
 
 function classNames(...classes: Array<string>) {
   return classes.filter(Boolean).join(' ')
@@ -15,35 +20,18 @@ export default function DashNavbar() {
   const { showError } = useToast()
 
   const [navigation, setNavigation] = useState([
-    { name: 'Dashboard', href: '/', current: false },
-    { name: 'Projects', href: '/projects', current: false },
+    { name: 'Matrix Operations', href: '/', current: false, component: MatrixOperationsToolbar },
+    { name: 'Advanced Properties', href: '/advanced-properties', current: false, component: AdvancedPropertiesToolbar },
+    { name: 'Inversions', href: '/inversions', current: false, component: InversionsToolbar },
+    { name: 'Linear Equations Systems', href: '/linear-equations-systems', current: false, component: LinearEquationsToolbar },
   ])
-
-  useEffect(() => {
-    const newObj = navigation.map((e) => {
-      return {
-        name: e.name,
-        href: e.href,
-        current: e.href === window.location.pathname,
-      }
-    })
-    setNavigation(newObj)
-  }, [window.location.pathname])
 
   const navigate = useNavigate()
 
-  const ProfilePicture = (
-    <Menu.Button className="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-      <span className="sr-only">Open user menu</span>
-      <img
-        className="h-8 w-8 rounded-full"
-        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-        alt=""
-      />
-    </Menu.Button>
-  )
+  const toolbarComponents = [MatrixOperationsToolbar, AdvancedPropertiesToolbar, InversionsToolbar, LinearEquationsToolbar]
+
   return (
-    <Disclosure as="nav" className="bg-gray-800">
+    <Disclosure as="nav" className="bg-gray-800 h-16">
       <>
         <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
           <div className="relative flex h-16 items-center justify-between">
@@ -54,7 +42,8 @@ export default function DashNavbar() {
                 <Bars3Icon className="block h-6 w-6" aria-hidden="true" />
               </Disclosure.Button>
             </div>
-            <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+            <div className="flex flex-1 items-center justify-center max-h-full sm:justify-start">
+              <Link to='/'>
               <div className="flex flex-shrink-0 items-center">
                 <img
                   className="block h-8 w-auto lg:hidden"
@@ -67,9 +56,10 @@ export default function DashNavbar() {
                   alt="Dragan Logo"
                 />
               </div>
+              </Link>
               <div className="hidden sm:ml-6 sm:block">
-                <div className="flex space-x-4">
-                  {navigation.map((item) => (
+                <div className="flex space-x-4 h-16">
+                  {/*                   {navigation.map((item) => (
                     <Link
                       key={item.name}
                       to={item.href}
@@ -83,6 +73,25 @@ export default function DashNavbar() {
                     >
                       {item.name}
                     </Link>
+                  ))} */}
+                  {navigation.map((toolbarComponent, index: number) => (
+                    <div className='h-full row-v navbar-item-container' key={toolbarComponent.name}>
+                      <div
+                        className={classNames(
+                          toolbarComponent.current
+                            ? 'bg-gray-900 text-white'
+                            : 'text-gray-300 hover:bg-gray-700 hover:py-0 hover:text-white',
+                          'row-v max-h-10 m-auto px-1.5 py-2 rounded-md text-sm font-medium'
+                        )}
+                        aria-current={toolbarComponent.current ? 'page' : undefined}
+                      >
+                        <NavbarMenuItem
+                          ComponentToRender={toolbarComponent.component}
+                          index={index}
+                          key={index}
+                        />
+                      </div>
+                    </div>
                   ))}
                 </div>
               </div>
