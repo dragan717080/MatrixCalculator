@@ -222,6 +222,12 @@ body::-webkit-scrollbar-thumb {
     line-height: 1.6;
 }
 
+ol {
+    list-style: auto !important;
+    margin-inline: 2rem !important;
+    margin-bottom: 1rem !important;
+}
+
 @keyframes spin {
     0% {
         transform: translateY(-50%) rotate(0deg);

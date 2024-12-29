@@ -1,8 +1,8 @@
 import { FC, useRef, useEffect, useState, ReactNode } from 'react';
 import { createPortal } from 'react-dom';
-import RenderProp from '../interfaces/RenderProp';
+import RenderProps from '../interfaces/RenderProps';
 
-const NavbarPortal: FC<RenderProp> = ({ children }) => {
+const NavbarPortal: FC<RenderProps> = ({ children }) => {
 
   const ref = useRef<Element | null>(null);
   const [mounted, setMounted] = useState<boolean>(false);

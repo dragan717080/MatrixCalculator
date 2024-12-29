@@ -1,5 +1,5 @@
 import { ReactNode } from "react"
 
-export default interface RenderProp {
+export default interface RenderProps {
   children: ReactNode
 }

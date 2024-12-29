@@ -1,20 +1,30 @@
 import { useEffect } from 'react'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
-import Dashboard from './Dashboard'
 import PrivateRoutes from './PrivateRoutes'
-import Projects from './Projects'
-import { AdditionSubstraction, Multiplication, Power, Transpose } from './Menus'
+import {
+  AdditionSubstraction,
+  CramerRule,
+  Determinant,
+  GaussJordanElimination,
+  Inverse,
+  InverseMethod,
+  Multiplication,
+  Power,
+  Rank,
+  Transpose
+} from './Menus'
+import About from './About'
 import { useNavbarPortalStore } from '../store/zustandStore'
 import { ToastProvider } from '../contexts/ToastContext'
 import 'react-toastify/dist/ReactToastify.min.css'
 import AppContextProviders from '../contexts/AppContextProvider'
 import '../styles/animations.css'
 import '../styles/globals.css'
+import '../styles/modal.css'
 
 function App() {
   const providers = [ToastProvider]
   const { isNavbarPortalOpen, setIsNavbarPortalOpen, setActiveIndex } = useNavbarPortalStore()
-  console.log(isNavbarPortalOpen);
 
   /** Close submenu portals. */
   useEffect(() => {
@@ -58,12 +68,17 @@ function App() {
       <AppContextProviders components={providers}>
         <Routes>
           <Route element={<PrivateRoutes />}>
-            <Route element={<Dashboard />} path="/" />
-            <Route path="projects" element={<Projects />} />
-            <Route path="addition-substraction" element={<AdditionSubstraction />} />
-            <Route path="multiplication" element={<Multiplication />} />
-            <Route path="power" element={<Power />} />
-            <Route path="transpose" element={<Transpose />} />
+            <Route path='/' element={<About />} />
+            <Route path='addition-substraction' element={<AdditionSubstraction />} />
+            <Route path='cramer-rule' element={<CramerRule />} />
+            <Route path='gauss-jordan-elimination' element={<GaussJordanElimination />} />
+            <Route path='determinant' element={<Determinant />} />
+            <Route path='inverse' element={<Inverse />} />
+            <Route path='inverse-method' element={<InverseMethod />} />
+            <Route path='multiplication' element={<Multiplication />} />
+            <Route path='power' element={<Power />} />
+            <Route path='rank' element={<Rank />} />
+            <Route path='transpose' element={<Transpose />} />
           </Route>
         </Routes>
       </AppContextProviders>

@@ -2,7 +2,9 @@ import React, { FC } from 'react'
 
 const Transpose: FC = () => {
   return (
-    <div>Transpose</div>
+    <div>
+      <h1>Transpose</h1>
+    </div>
   )
 }
 
