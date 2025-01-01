@@ -1,15 +1,72 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useEffect } from 'react'
 import MatrixDimensionsInput from '../Atoms/MatrixDimensionsInput'
-import Matrix from '../../interfaces/Matrix';
-import { TwoNumbers } from '../../interfaces/MatrixModalProps';
 import { useMatrixStore } from '../../store/zustandStore';
 
 const Multiplication: FC = () => {
-  const { aDim, bDim, setIsOnlyA } = useMatrixStore();
+  const { isOnlyA, setIsOnlyA, aDim, bDim, A, setA, B, setB, setCalculate } = useMatrixStore();
+
+  const calculateResult = () => {
+    console.log('calculating multiplication');
+    const updatedMatrices = getUpdatedValues();
+    const newA = updatedMatrices[0];
+    let newB = updatedMatrices[1] ?? undefined;
+
+    console.log('A:', newA);
+    console.log('B:', newB);
+  }
+
+  const updateValuesForMatrix = (isA=true) => {
+    const matrix = isA ? A : B!
+    const func = isA ? setA : setB
+    // Make a shallow copy of the previous matrix
+    const newMatrix = [...matrix];
+
+    for (const row in newMatrix) {
+      for (const col in newMatrix[0]) {
+        // To do: remove (check will be done in modal)
+        if (typeof(matrix[row][col]) === 'undefined') {
+          continue
+        }
+
+        // @ts-ignore:next-line
+        if (matrix[row][col][matrix[row][col].length - 1] === '.') {
+          // @ts-ignore:next-line
+          matrix[row][col] = matrix[row][col] + '0'
+        }
+
+        matrix[row][col] = parseFloat(matrix[row][col] as unknown as string)
+      }
+    }
+
+    func!(newMatrix)
+
+    return newMatrix
+  }
+
+  /** Turns matrices from input element strings to floats and returns them. */
+  const getUpdatedValues = () => {
+    const newA = updateValuesForMatrix()
+
+    if (!isOnlyA) {
+      const newB = updateValuesForMatrix(false)
+
+      return [newA, newB]
+    }
+
+    return [newA]
+  };
 
   useEffect(() => {
     setIsOnlyA(false);
   }, [])
+
+  useEffect(() => {
+    console.log('recalculating function');
+    if (A && B || A && isOnlyA) {
+      //calculateResult(); // Recalculate whenever A or B changes
+      setCalculate(calculateResult)
+    }
+  }, [A, B]);
 
   return (
     <div className=''>
@@ -26,7 +83,7 @@ const Multiplication: FC = () => {
         </div>
       </section>
       <p>Your dimensions A: {aDim[0]}, {aDim[1]}</p>
-      <p>Your dimensions B: {bDim ? bDim[0] : 0}, {bDim ? bDim[1] : 0}</p>
+      <p>Your dimensions B: {!isOnlyA ? bDim[0] : 0}, {!isOnlyA ? bDim[1] : 0}</p>
     </div>
   )
 }

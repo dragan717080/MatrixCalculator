@@ -34,7 +34,7 @@ function App() {
     const hoveredToolbar = toolbarElements.some(x => x.contains(target))
     const navbarPortalContents = Array.from(document.getElementsByClassName('navbar-portal-content'))
     const hoveredPortalContent = navbarPortalContents.some(x => x.contains(target))
-    console.log('Hover toolbar:', hoveredToolbar, 'Hover portal content:', hoveredPortalContent);
+    //console.log('Hover toolbar:', hoveredToolbar, 'Hover portal content:', hoveredPortalContent);
     // If hovered directly under toolbar, don't close portal
     const navbarItemContainers = Array.from(document.getElementsByClassName('navbar-item-container'));
 
@@ -57,8 +57,7 @@ function App() {
 
       const [mouseX, mouseY] = [e.clientX, e.clientY];
 
-      console.log(`Mouse position: ${mouseX} ${mouseY}, Toolbar dimensions: width=${toolbarWidth}, height=${toolbarHeight}`);
-      
+      //console.log(`Mouse position: ${mouseX} ${mouseY}, Toolbar dimensions: width=${toolbarWidth}, height=${toolbarHeight}`);
     }
   })
   }, [])

@@ -5,7 +5,7 @@ import { TwoNumbers } from '../../interfaces/MatrixModalProps'
 import { useMatrixStore } from '../../store/zustandStore'
 
 const MatrixDimensionsInput: FC = () => {
-  const { setADim, setA, setBDim, setB } = useMatrixStore();
+  const { isOnlyA, setADim, setA, setBDim, setB } = useMatrixStore();
   const aRows = useRef<HTMLInputElement | null>(null)
   const aCols = useRef<HTMLInputElement | null>(null)
   const bRows = useRef<HTMLInputElement | null>(null)
@@ -29,7 +29,7 @@ const MatrixDimensionsInput: FC = () => {
     const aIsSet = newAValue[0] !== 0 && newAValue[1] !== 0
     setADim(newAValue)
 
-    if (setBDim) {
+    if (!isOnlyA) {
       const newBValue = getNumericDimValue(false)
       setBDim(newBValue)
       const bIsSet = newBValue[0] !== 0 && newBValue[1] !== 0
@@ -59,17 +59,12 @@ const MatrixDimensionsInput: FC = () => {
     return [bRowsNum, bColsNum] as TwoNumbers
   }
 
-  useEffect(() => {
-    console.log('new A dim:', aRows.current?.value);
-    console.log('new B dim:', aCols.current?.value);
-  }, [aRows, aCols])
-
   return (
     <div className='row'>
       <form action=''>
         {/* Pick A */}
         <div className="row">
-          <span className='mr-2'>Matrix {setB ? 'A ' : ''}dimension:</span>
+          <span className='mr-2'>Matrix {!isOnlyA ? 'A ' : ''}dimension:</span>
           <input
             required
             ref={aRows}
@@ -95,7 +90,7 @@ const MatrixDimensionsInput: FC = () => {
           />
         </div>
         {/* Pick B */}
-        {setB && (
+        {!isOnlyA && (
           <div className="row mt-5">
             <span className='mr-2'>Matrix B dimension:</span>
             <input
@@ -128,7 +123,7 @@ const MatrixDimensionsInput: FC = () => {
           onClick={(e) => handleSubmit(e)}
           className='row-h rounded-md my-4 mx-auto px-3 py-2 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 bg-sky-500 hover:bg-sky-600 text-gray-300 focus-visible:outline-sky-600'
         >
-          Set {setBDim ? 'matrix' : 'matrices'}
+          Set {!isOnlyA ? 'matrix' : 'matrices'}
         </button>
       </form>
       <MatrixModal isOpen={isModalOpen} setIsOpen={setIsModalOpen} />

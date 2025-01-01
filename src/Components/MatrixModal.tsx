@@ -1,22 +1,42 @@
-import { FC, ChangeEvent } from "react";
+import { FC, ChangeEvent, useEffect, useState } from "react";
 import MatrixModalProps from "../interfaces/MatrixModalProps";
 import { useMatrixStore } from "../store/zustandStore";
-import Matrix from "../interfaces/Matrix";
 
 const MatrixModal: FC<MatrixModalProps> = ({ isOpen, setIsOpen }) => {
-  const { isOnlyA, aDim, A, setA, bDim, B, setB } = useMatrixStore();
+  const { isOnlyA, aDim, A, setA, bDim, B, setB, calculate } = useMatrixStore();
   console.log('A dim:', aDim, 'B dim:', bDim);
   const [aRows, aCols] = aDim;
+  const [bRows, bCols] = bDim;
+  const [aIsFilled, setAIsFilled] = useState<boolean>(false);
+  const [bIsFilled, setBIsFilled] = useState<boolean>(false);
 
-  console.log('a rows:', aRows);
+  /** Need separate functions since this will be triggered multiple times. */
+  const initialFillA = () => {
+    console.log('A dim:', aRows, aCols);
+    const newA = Array.from({ length: aRows }, () => Array.from({ length: aCols }).fill(undefined));
+    console.log('NEW A:', newA);
+    // @ts-ignore:next-line
+    setA(newA)
+  }
+
+  // Initially fill matrices with `rows` * undefined
+  const initialFillMatrices = () => {
+    initialFillA();
+  }
+
+  //initialFillMatrices();
+
+  //console.log('a rows:', aRows);
   // Make matrix have `aRows` or `bRows` empty rows
-  console.log('new matrix value:', Array(aDim[0]).fill([]))
+  //console.log('new matrix value:', Array(aDim[0]).fill([]))
   //setA(Array(aDim[0]).fill([]));
+  //console.log('%cINITIAL MATRIX:', 'color:red', A);
 
-  /** Update the state immutably */
-  const updateValue = (isA = true, row: number, col: number, value: number) => {
+  /** Update the state with one new value immutably */
+  const updateValue = (row: number, col: number, value: number, isA = true) => {
     // Make a shallow copy of the previous matrix
     const newMatrix = [...A];
+    console.log('new matrix in update value:', newMatrix);
 
     // Make a copy of the row that we want to modify (row 1)
     const updatedRow = [...newMatrix[row]];
@@ -39,11 +59,61 @@ const MatrixModal: FC<MatrixModalProps> = ({ isOpen, setIsOpen }) => {
     console.log('Row:', row);
     console.log('Col:', col);
     console.log('value:', e.target.value);
+
+    // Only allow one dot
+    let dotsCount = [...e.target.value].filter(x => x === '.').length;
+    console.log('DOTS COUNT:', dotsCount);
+
+    // @ts-ignore:next-line
+    const newChar = e.nativeEvent.data;
+
+    if (newChar === '.') {
+      dotsCount--;
+
+      if (e.target.value.length === 0 || dotsCount > 0) {
+        console.log('preventing input value change');
+        e.preventDefault();
+
+        return;
+      }
+    }
+
+    const pattern = /^[\+\-]?\d*\.?\d+(?:[Ee][\+\-]?\d+)?$/;
+    const isNum = pattern.test(e.target.value);
+    console.log('is num:', isNum);
+
+    // Only update the value if it matches the pattern
+    // Allow empty input and values like `2.` as well
+    if (isNum || newChar === '.' || e.target.value === '') {
+      console.log('UPDATING');
+      updateValue(row, col, e.target.value as unknown as number, isA);
+    } else {
+      // Prevent the input from updating if it's invalid
+      console.log('NOT UPDATING');
+      e.preventDefault();
+    }
   }
 
   const fillWithZeros = (isA = true) => {
-    console.log(A);
+    const func = isA ? setA : setB;
+    const newMatrix = isA ? [...A] : [...B];
+    const newRows = isA ? aRows : bRows as number;
+    const newCols = isA ? aCols : bCols as number;
+
+    for (const row in newMatrix) {
+      for (const col in newMatrix[0]) {
+        if (!newMatrix[row][col]) {
+          newMatrix[row][col] = 0;
+        }
+      }
+    }
+
+    func!(newMatrix);
   }
+
+  useEffect(() => {
+    initialFillMatrices();
+  }, [aDim[0], aDim[1], bDim[0], bDim[1]]);
 
   return (
     <>
@@ -88,6 +158,7 @@ const MatrixModal: FC<MatrixModalProps> = ({ isOpen, setIsOpen }) => {
                               onChange={(e) => handleCellValueChange(e, row, col)}
                               className="modal-table-input-cell focus:bg-primary"
                               data-gtm-form-interact-field-id="0"
+                              value={A.length > 0 ? A[row][col] : ''}
                             />
                           </td>
                         ))}
@@ -97,9 +168,14 @@ const MatrixModal: FC<MatrixModalProps> = ({ isOpen, setIsOpen }) => {
                   </tbody>
                 </table>
               </div>
-              <div className="row space-x-3 mt-6 mb-2.5">
-                <button className="btn">Clear</button>
-                <button className="btn">Fill empty cells with zero</button>
+              <div className="flex flex-col space-y-1.5 mb-4">
+                <div className="row space-x-3 mt-6 mb-2.5">
+                  <button onClick={() => initialFillA()} className="btn">Clear</button>
+                  <button onClick={() => fillWithZeros()} className="btn">Fill empty cells with zero</button>
+                </div>
+                {!aIsFilled && (
+                  <button onClick={() => calculate()} className="btn">Calculate</button>
+                )}
               </div>
             </div>
             {/* Matrix B input */}
