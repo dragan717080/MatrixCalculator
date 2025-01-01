@@ -24,4 +24,6 @@ export const useMatrixStore = create<MatrixStore>((set) => ({
   setBDim: (value) => set((state) => ({ bDim: value })),
   B: [],
   setB: (value) => set((state) => ({ B: value })),
+  calculate: () => {},
+  setCalculate: (value) => set((state) => ({ calculate: value })),
 }));
