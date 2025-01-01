@@ -1,8 +1,8 @@
 import { Dispatch, SetStateAction } from "react";
-import Matrix from "./Matrix";
+
+export type TwoNumbers = [number, number];
 
 export default interface MatrixModalProps {
   isOpen?: boolean;
-  setMatrixA: Dispatch<SetStateAction<Matrix>>;
-  setMatrixB?: Dispatch<SetStateAction<Matrix>>;
+  setIsOpen: Dispatch<SetStateAction<boolean>>;
 }

@@ -1,72 +1,139 @@
-import React, { FC, ChangeEvent, MouseEvent, useRef } from 'react'
+import React, { FC, ChangeEvent, MouseEvent, useRef, useState, useEffect } from 'react'
+import { MatrixModal } from '../MatrixModal'
 import MatrixDimensionsInputProps from '../../interfaces/MatrixDimensionsInputProps'
+import { TwoNumbers } from '../../interfaces/MatrixModalProps'
+import { useMatrixStore } from '../../store/zustandStore'
 
-const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> =
-  ({ setADim, setA, setBDim, setB }) => {
-    const aDim = useRef<HTMLInputElement | null>(null)
-    const bDim = useRef<HTMLInputElement | null>(null)
-    const v1 = parseInt(aDim.current?.value || '0')
-    const v2 = parseInt(bDim.current?.value || '0')
+const MatrixDimensionsInput: FC = () => {
+  const { setADim, setA, setBDim, setB } = useMatrixStore();
+  const aRows = useRef<HTMLInputElement | null>(null)
+  const aCols = useRef<HTMLInputElement | null>(null)
+  const bRows = useRef<HTMLInputElement | null>(null)
+  const bCols = useRef<HTMLInputElement | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
 
-    const validateRange = (e: ChangeEvent<HTMLInputElement>) => {
-      let value = e.target.value as unknown as number
-      if (value < 1) {
-        e.target.value = '1'
-      } else if (value > 25) {
-        e.target.value = '25'
+  const validateRange = (e: ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value as unknown as number
+    if (value < 1) {
+      e.target.value = '1'
+    } else if (value > 25) {
+      e.target.value = '25'
+    }
+  }
+
+  const handleSubmit = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault()
+    const newAValue = getNumericDimValue()
+
+    // Only opet modal if all dimensions are set
+    const aIsSet = newAValue[0] !== 0 && newAValue[1] !== 0
+    setADim(newAValue)
+
+    if (setBDim) {
+      const newBValue = getNumericDimValue(false)
+      setBDim(newBValue)
+      const bIsSet = newBValue[0] !== 0 && newBValue[1] !== 0
+
+      if (aIsSet && bIsSet) {
+        setIsModalOpen(true)
+      }
+    } else {
+      if (aIsSet) {
+        setIsModalOpen(true)
       }
     }
+  }
 
-    const handleSubmit = (e: MouseEvent<HTMLButtonElement>) => {
-      e.preventDefault()
+  /** Set `aDim` and `bDim` values, or undefined if they are null. */
+  const getNumericDimValue = (isA = true) => {
+    if (isA) {
+      const aRowsNum = parseInt(aRows.current?.value || '0')
+      const aColsNum = parseInt(aCols.current?.value || '0')
 
-      setADim(v1)
-      if (setBDim) {
-        setBDim(v2)
-      }
+      return [aRowsNum, aColsNum] as TwoNumbers
     }
 
-    return (
-      <div className='row'>
-        <form action=''>
-          <div className="row">
-            <span className='mr-2'>Matrix dimension:</span>
+    const bRowsNum = parseInt(bRows.current?.value || '0')
+    const bColsNum = parseInt(bCols.current?.value || '0')
+
+    return [bRowsNum, bColsNum] as TwoNumbers
+  }
+
+  useEffect(() => {
+    console.log('new A dim:', aRows.current?.value);
+    console.log('new B dim:', aCols.current?.value);
+  }, [aRows, aCols])
+
+  return (
+    <div className='row'>
+      <form action=''>
+        {/* Pick A */}
+        <div className="row">
+          <span className='mr-2'>Matrix {setB ? 'A ' : ''}dimension:</span>
+          <input
+            required
+            ref={aRows}
+            type='number'
+            inputMode='numeric'
+            onChange={validateRange}
+            min='1'
+            max='25'
+            className='p-1.5 pr-0 pb-1.5 pl-2.5 w-[50px] text-sm pointer outline-none rounded-lg focus:bg-primary'
+            value={22}
+          />
+          <span className="px-2">X</span>
+          <input
+            required
+            ref={aCols}
+            type='number'
+            inputMode='numeric'
+            onChange={validateRange}
+            min='1'
+            max='25'
+            className='p-1.5 pr-0 pb-1.5 pl-2.5 w-[50px] text-sm pointer outline-none rounded-lg focus:bg-primary'
+            value={5}
+          />
+        </div>
+        {/* Pick B */}
+        {setB && (
+          <div className="row mt-5">
+            <span className='mr-2'>Matrix B dimension:</span>
             <input
               required
-              ref={aDim}
+              ref={bRows}
               type='number'
               inputMode='numeric'
               onChange={validateRange}
               min='1'
               max='25'
               className='p-1.5 pr-0 pb-1.5 pl-2.5 w-[50px] text-sm pointer outline-none rounded-lg focus:bg-primary'
+              value={2}
             />
-            {setBDim && (
-              <>
-                <span className="px-2">X</span>
-                <input
-                  required
-                  ref={bDim}
-                  type='number'
-                  inputMode='numeric'
-                  onChange={validateRange}
-                  min='1'
-                  max='25'
-                  className='p-1.5 pr-0 pb-1.5 pl-2.5 w-[50px] text-sm pointer outline-none rounded-lg focus:bg-primary'
-                />
-              </>
-            )}
+            <span className="px-2">X</span>
+            <input
+              required
+              ref={bCols}
+              type='number'
+              inputMode='numeric'
+              onChange={validateRange}
+              min='1'
+              max='25'
+              className='p-1.5 pr-0 pb-1.5 pl-2.5 w-[50px] text-sm pointer outline-none rounded-lg focus:bg-primary'
+              value={4}
+            />
           </div>
-          <button
-            type='submit'
-            onClick={(e) => handleSubmit(e)}
-            className='row-h rounded-md my-4 mx-auto px-3 py-2 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 bg-sky-500 hover:bg-sky-600 text-gray-300 focus-visible:outline-sky-600'
-          >
-            Set {setBDim ? 'matrix' : 'matrices'}
-          </button>
-        </form>
-      </div>
-    )
-  }
+        )}
+        <button
+          type='submit'
+          onClick={(e) => handleSubmit(e)}
+          className='row-h rounded-md my-4 mx-auto px-3 py-2 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 bg-sky-500 hover:bg-sky-600 text-gray-300 focus-visible:outline-sky-600'
+        >
+          Set {setBDim ? 'matrix' : 'matrices'}
+        </button>
+      </form>
+      <MatrixModal isOpen={isModalOpen} setIsOpen={setIsModalOpen} />
+    </div>
+  )
+}
 
 export default MatrixDimensionsInput

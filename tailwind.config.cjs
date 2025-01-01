@@ -6,7 +6,14 @@ module.exports = {
       colors: {
         dark: '#1F2937',
         lightblue: '#4FA8C4',
-        primary: '#FF9519'
+        primary: '#FF9519',
+        gray: {
+          550: '#424143',
+        }
+      },
+      spacing: {
+        '3/10': '30%',
+        '4/5': '80%',
       }
     },
   },
