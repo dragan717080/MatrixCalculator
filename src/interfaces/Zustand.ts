@@ -16,8 +16,10 @@ export interface MatrixStore {
   setADim: (value: TwoNumbers) => void;
   A: Matrix;
   setA: (value: Matrix) => void;
-  bDim?: TwoNumbers;
-  setBDim?: (value: TwoNumbers) => void;
-  B?: Matrix;
-  setB?: (value: Matrix) => void;
+  bDim: TwoNumbers;
+  setBDim: (value: TwoNumbers) => void;
+  B: Matrix;
+  setB: (value: Matrix) => void;
+  calculate: any;
+  setCalculate: (value: any) => any;
 }

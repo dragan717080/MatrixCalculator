@@ -9,6 +9,6 @@ import { TwoNumbers } from './MatrixModalProps';
 export default interface MatrixDimensionsInputProps {
   setADim: Dispatch<SetStateAction<TwoNumbers>>;
   setA: Dispatch<SetStateAction<Matrix>>;
-  setBDim?: Dispatch<SetStateAction<TwoNumbers>>;
-  setB?: Dispatch<SetStateAction<Matrix>>;
+  setBDim: Dispatch<SetStateAction<TwoNumbers>>;
+  setB: Dispatch<SetStateAction<Matrix>>;
 }
