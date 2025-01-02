@@ -4,44 +4,37 @@ import { useMatrixStore } from '../store/zustandStore';
 
 const MatrixModal: FC<MatrixModalProps> = ({ isOpen, setIsOpen }) => {
   const { isOnlyA, aDim, A, setA, bDim, B, setB, calculate } = useMatrixStore();
-  console.log('A dim:', aDim, 'B dim:', bDim);
   const [aRows, aCols] = aDim;
   const [bRows, bCols] = bDim;
   const [aIsFilled, setAIsFilled] = useState<boolean>(false);
   const [bIsFilled, setBIsFilled] = useState<boolean>(false);
-  let inputCellsA: HTMLInputElement[] | undefined;
-  let inputCellsB: HTMLInputElement[] | undefined;
+  const [inputCellsA, setInputCellsA] = useState<HTMLInputElement[]>([]);
+  const [inputCellsB, setInputCellsB] = useState<HTMLInputElement[]>([]);
 
   /** Need separate functions since this will be triggered multiple times. */
   const initialFillA = () => {
-    console.log('A dim:', aRows, aCols);
     const newA = Array.from({ length: aRows }, () => Array.from({ length: aCols }).fill(undefined));
-    console.log('NEW A:', newA);
     // @ts-ignore:next-line
     setA(newA)
   }
 
   const initialFillB = () => {
-    console.log('B dim:', aRows, bCols);
     const newB = Array.from({ length: bRows }, () => Array.from({ length: bCols }).fill(undefined));
-    console.log('NEW B:', newB);
     // @ts-ignore:next-line
     setB(newB)
   }
 
   const fillInputCells = (isA = true) => {
-    console.log('filling input cells');
     const matrix = isA ? A : B;
-    const nRows = isA ? aRows : bRows;
     const nCols = isA ? aCols : bCols;
 
     const inputCells = isA ? inputCellsA! : inputCellsB!;
-    console.log(inputCells.length);
+    console.log('There are', inputCells.length, 'input elements');
 
     inputCells.forEach((inputCell, index) => {
       const row = Math.floor(index / nCols);
       const col = index - row * nCols;
-      console.log('Index:', index, 'Row:', row, 'Col:', col)
+
       if (matrix.length === 0) {
         inputCell.value = ''
       } else {
@@ -141,34 +134,56 @@ const MatrixModal: FC<MatrixModalProps> = ({ isOpen, setIsOpen }) => {
     const func = isA ? setA : setB;
     const fillFunc = isA ? setAIsFilled : setBIsFilled;
     const newMatrix = isA ? [...A] : [...B];
-    const newRows = isA ? aRows : bRows as number;
-    const newCols = isA ? aCols : bCols as number;
 
     for (const row in newMatrix) {
       for (const col in newMatrix[0]) {
         if (!newMatrix[row][col]) {
-          newMatrix[row][col] = 0;
+          newMatrix[row][col] = 0
         }
       }
     }
 
     func!(newMatrix);
     fillFunc(true);
+
+    console.log('is A', isA);
+    const inputCells = isA ? inputCellsA : inputCellsB;
+
+    for (const inputCell of inputCells!) {
+      if (!inputCell.value) {
+        inputCell.value = '0'
+      }
+    }
+  }
+
+  const clearMatrix = (isA=true) => {
+    const matrix = isA ? A : B
+    const inputCells = isA ? inputCellsA : inputCellsB
+
+    for (const inputCell of inputCells) {
+      inputCell.value = ''
+    }
+
+    isA ? initialFillA() : initialFillB()
   }
 
   useEffect(() => {
-    inputCellsA =
-      Array.from(document.getElementsByClassName('cell-a') as HTMLCollectionOf<HTMLInputElement>);
-    inputCellsB =
-      Array.from(document.getElementsByClassName('cell-b') as HTMLCollectionOf<HTMLInputElement>);
+    setInputCellsA(
+      Array.from(document.getElementsByClassName('cell-a') as HTMLCollectionOf<HTMLInputElement>)
+    );
+    setInputCellsB(
+      Array.from(document.getElementsByClassName('cell-b') as HTMLCollectionOf<HTMLInputElement>)
+    );
     initialFillMatrices();
+    console.log('input cells A:', inputCellsA);
+    console.log('input cells B:', inputCellsB);
   }, [aDim[0], aDim[1], bDim[0], bDim[1]]);
 
   return (
     <>
       <div className={`modal ${isOpen ? 'block' : 'hidden'}`}>
         <div className='wrapper mt-[10%] text-white'>
-          <div className='modal-content max-h-[37rem] row space-x-4 h-full'>
+          <div className='modal-content max-h-[37rem] min-w-fit row space-x-4 h-full'>
             {/* Matrix A input */}
             <div className='w-full col-v items-center bg-gray-550 border-2 border-primary rounded-xl overflow-hidden'>
               <div className='row w-full bg-primary px-3'>
@@ -179,85 +194,32 @@ const MatrixModal: FC<MatrixModalProps> = ({ isOpen, setIsOpen }) => {
                   <button onClick={() => setIsOpen(false)}>X</button>
                 )}
               </div>
-              <div className='pt-5 pb-6 row space-x-3 text-sm md:text-md bold rounded-xl'>
-                <button className='btn'>Insert matrix</button>
-                <button disabled className='btn'>Restore matrix</button>
-              </div>
-              <div className='flex-1 row w-full'>
-                <table className='modal-table text-center'>
-                  <thead>
-                    <tr>
-                      {/* First element is empty */}
-                      <th>&nbsp;</th>
-                      {Array.from({ length: aCols }).map((_, col) => (
-                        <th key={col}>A<span className='subindex'>{col + 1}</span></th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {Array.from({ length: aRows }).map((_, row) => (
-                      <tr key={row}>
-                        <td>{row + 1}</td>
-                        {Array.from({ length: aCols }).map((_, col) => (
-                          <td className='' key={col}>
-                            <input
-                              type='text'
-                              onChange={(e) => handleCellValueChange(e, row, col)}
-                              className='modal-table-input-cell cell-a focus:bg-primary'
-                              data-gtm-form-interact-field-id='0'
-                            />
-                          </td>
-                        ))}
-                      </tr>
-                    ))
-                    }
-                  </tbody>
-                </table>
-              </div>
-              <div className='flex flex-col space-y-1.5 mb-4'>
-                <div className='row space-x-3 mt-6 mb-2.5'>
-                  <button onClick={() => initialFillA()} className='btn'>Clear</button>
-                  <button onClick={() => fillWithZeros()} className='btn'>Fill empty cells with zero</button>
-                </div>
-                {!aIsFilled && (
-                  <button onClick={() => { setIsOpen(false); calculate() }} className='btn'>Calculate</button>
-                )}
-              </div>
-            </div>
-            {/* Matrix B input */}
-            {!isOnlyA && (
-              <div className='w-full col-v items-center bg-gray-550 border-2 border-primary rounded-xl overflow-hidden'>
-                <div className='row w-full bg-primary px-3'>
-                  <h3 className='flex-1 text-gray-300 text-center semibold leading-7'>
-                    Matrix B input
-                  </h3>
-                  <button onClick={() => setIsOpen(false)}>X</button>
-                </div>
+              <div className='px-3'>
                 <div className='pt-5 pb-6 row space-x-3 text-sm md:text-md bold rounded-xl'>
                   <button className='btn'>Insert matrix</button>
                   <button disabled className='btn'>Restore matrix</button>
                 </div>
                 <div className='flex-1 row w-full'>
-                  <table className='modal-table text-center'>
+                  <table className='modal-table overflow-scroll md:overflow-auto text-center'>
                     <thead>
                       <tr>
                         {/* First element is empty */}
                         <th>&nbsp;</th>
-                        {Array.from({ length: bCols }).map((_, col) => (
-                          <th key={col}>B<span className='subindex'>{col + 1}</span></th>
+                        {Array.from({ length: aCols }).map((_, col) => (
+                          <th key={col}>A<span className='subindex'>{col + 1}</span></th>
                         ))}
                       </tr>
                     </thead>
                     <tbody>
-                      {Array.from({ length: bRows }).map((_, row) => (
+                      {Array.from({ length: aRows }).map((_, row) => (
                         <tr key={row}>
                           <td>{row + 1}</td>
-                          {Array.from({ length: bCols }).map((_, col) => (
+                          {Array.from({ length: aCols }).map((_, col) => (
                             <td className='' key={col}>
                               <input
                                 type='text'
-                                onChange={(e) => handleCellValueChange(e, row, col, false)}
-                                className='modal-table-input-cell cell-b focus:bg-primary'
+                                onChange={(e) => handleCellValueChange(e, row, col)}
+                                className='modal-table-input-cell cell-a focus:bg-primary'
                                 data-gtm-form-interact-field-id='0'
                               />
                             </td>
@@ -270,7 +232,64 @@ const MatrixModal: FC<MatrixModalProps> = ({ isOpen, setIsOpen }) => {
                 </div>
                 <div className='flex flex-col space-y-1.5 mb-4'>
                   <div className='row space-x-3 mt-6 mb-2.5'>
-                    <button onClick={() => initialFillB()} className='btn'>Clear</button>
+                    <button onClick={() => clearMatrix()} className='btn'>Clear</button>
+                    <button onClick={() => fillWithZeros()} className='btn'>Fill empty cells with zero</button>
+                  </div>
+                  {!aIsFilled && (
+                    <button onClick={() => { setIsOpen(false); calculate() }} className='btn'>Calculate</button>
+                  )}
+                </div>
+              </div>
+            </div>
+            {/* Matrix B input */}
+            {!isOnlyA && (
+              <div className='w-full col-v items-center bg-gray-550 border-2 border-primary rounded-xl overflow-hidden'>
+                <div className='row w-full bg-primary px-3'>
+                  <h3 className='flex-1 text-gray-300 text-center semibold leading-7'>
+                    Matrix B input
+                  </h3>
+                  <button onClick={() => setIsOpen(false)}>X</button>
+                </div>
+                <div className='px-3'>
+                  <div className='pt-5 pb-6 row space-x-3 text-sm md:text-md bold rounded-xl'>
+                    <button className='btn'>Insert matrix</button>
+                    <button disabled className='btn'>Restore matrix</button>
+                  </div>
+                  <div className='flex-1 row w-full'>
+                    <table className='modal-table overflow-scroll md:overflow-auto text-center'>
+                      <thead>
+                        <tr>
+                          {/* First element is empty */}
+                          <th>&nbsp;</th>
+                          {Array.from({ length: bCols }).map((_, col) => (
+                            <th key={col}>B<span className='subindex'>{col + 1}</span></th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {Array.from({ length: bRows }).map((_, row) => (
+                          <tr key={row}>
+                            <td>{row + 1}</td>
+                            {Array.from({ length: bCols }).map((_, col) => (
+                              <td className='' key={col}>
+                                <input
+                                  type='text'
+                                  onChange={(e) => handleCellValueChange(e, row, col, false)}
+                                  className='modal-table-input-cell cell-b focus:bg-primary'
+                                  data-gtm-form-interact-field-id='0'
+                                />
+                              </td>
+                            ))}
+                          </tr>
+                        ))
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <div className='flex flex-col space-y-1.5 mb-4'>
+                  <div className='row space-x-3 mt-6 mb-2.5'>
+                    <button onClick={() => clearMatrix(false)} className='btn'>Clear</button>
                     <button onClick={() => fillWithZeros(false)} className='btn'>Fill empty cells with zero</button>
                   </div>
                   {!bIsFilled && (

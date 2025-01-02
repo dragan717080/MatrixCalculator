@@ -4,7 +4,7 @@ import MatrixDimensionsInputProps from '../../interfaces/MatrixDimensionsInputPr
 import { TwoNumbers } from '../../interfaces/MatrixModalProps'
 import { useMatrixStore } from '../../store/zustandStore'
 
-const MatrixDimensionsInput: FC = () => {
+const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({ isSquare = false }) => {
   const { isOnlyA, setADim, setA, setBDim, setB } = useMatrixStore();
   const aRows = useRef<HTMLInputElement | null>(null)
   const aCols = useRef<HTMLInputElement | null>(null)
@@ -48,7 +48,7 @@ const MatrixDimensionsInput: FC = () => {
   const getNumericDimValue = (isA = true) => {
     if (isA) {
       const aRowsNum = parseInt(aRows.current?.value || '0')
-      const aColsNum = parseInt(aCols.current?.value || '0')
+      const aColsNum = !isSquare ? parseInt(aCols.current?.value || '0') : aRowsNum
 
       return [aRowsNum, aColsNum] as TwoNumbers
     }
@@ -74,20 +74,24 @@ const MatrixDimensionsInput: FC = () => {
             min='1'
             max='25'
             className='p-1.5 pr-0 pb-1.5 pl-2.5 w-[50px] text-sm pointer outline-none rounded-lg focus:bg-primary'
-            value={22}
-          />
-          <span className='px-2'>X</span>
-          <input
-            required
-            ref={aCols}
-            type='number'
-            inputMode='numeric'
-            onChange={validateRange}
-            min='1'
-            max='25'
-            className='p-1.5 pr-0 pb-1.5 pl-2.5 w-[50px] text-sm pointer outline-none rounded-lg focus:bg-primary'
-            value={5}
-          />
+/*             value={22}
+ */          />
+          {!isSquare && (
+            <>
+              <span className='px-2'>X</span>
+              <input
+                required
+                ref={bCols}
+                type='number'
+                inputMode='numeric'
+                onChange={validateRange}
+                min='1'
+                max='25'
+                className='p-1.5 pr-0 pb-1.5 pl-2.5 w-[50px] text-sm pointer outline-none rounded-lg focus:bg-primary'
+              /*               value={4} */
+              />
+            </>
+          )}
         </div>
         {/* Pick B */}
         {!isOnlyA && (
@@ -102,7 +106,7 @@ const MatrixDimensionsInput: FC = () => {
               min='1'
               max='25'
               className='p-1.5 pr-0 pb-1.5 pl-2.5 w-[50px] text-sm pointer outline-none rounded-lg focus:bg-primary'
-              value={2}
+            /*               value={2} */
             />
             <span className='px-2'>X</span>
             <input
@@ -114,7 +118,7 @@ const MatrixDimensionsInput: FC = () => {
               min='1'
               max='25'
               className='p-1.5 pr-0 pb-1.5 pl-2.5 w-[50px] text-sm pointer outline-none rounded-lg focus:bg-primary'
-              value={4}
+            /*               value={4} */
             />
           </div>
         )}
