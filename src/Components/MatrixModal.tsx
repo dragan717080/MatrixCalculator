@@ -1,15 +1,24 @@
-import { FC, ChangeEvent, useEffect, useState } from 'react';
+import { FC, ChangeEvent, Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
 import MatrixModalProps from '../interfaces/MatrixModalProps';
 import { useMatrixStore } from '../store/zustandStore';
 
 const MatrixModal: FC<MatrixModalProps> = ({ isOpen, setIsOpen }) => {
-  const { isOnlyA, aDim, A, setA, bDim, B, setB, calculate } = useMatrixStore();
+  const { 
+    isOnlyA,
+    aDim, A, setA, aIsFilled, setAIsFilled,
+    bDim, B, setB, bIsFilled, setBIsFilled,
+    calculate
+  } = useMatrixStore();
   const [aRows, aCols] = aDim;
   const [bRows, bCols] = bDim;
-  const [aIsFilled, setAIsFilled] = useState<boolean>(false);
-  const [bIsFilled, setBIsFilled] = useState<boolean>(false);
   const [inputCellsA, setInputCellsA] = useState<HTMLInputElement[]>([]);
   const [inputCellsB, setInputCellsB] = useState<HTMLInputElement[]>([]);
+  const [isADisabled, setIsADisabled] = useState<boolean>(false);
+  const [isBDisabled, setIsBDisabled] = useState<boolean>(false);
+
+  const allIsFilled = useMemo(() => {
+    return isOnlyA ? aIsFilled : aIsFilled && bIsFilled;
+  }, [isOnlyA, aIsFilled, bIsFilled]);
 
   /** Need separate functions since this will be triggered multiple times. */
   const initialFillA = () => {
@@ -54,14 +63,6 @@ const MatrixModal: FC<MatrixModalProps> = ({ isOpen, setIsOpen }) => {
     }
   }
 
-  //initialFillMatrices();
-
-  //console.log('a rows:', aRows);
-  // Make matrix have `aRows` or `bRows` empty rows
-  //console.log('new matrix value:', Array(aDim[0]).fill([]))
-  //setA(Array(aDim[0]).fill([]));
-  //console.log('%cINITIAL MATRIX:', 'color:red', A);
-
   /** Update the state with one new value immutably */
   const updateValue = (row: number, col: number, value: number, isA = true) => {
     const matrix = isA ? A : B;
@@ -84,6 +85,16 @@ const MatrixModal: FC<MatrixModalProps> = ({ isOpen, setIsOpen }) => {
     func(newMatrix);
   };
 
+  const checkIfIsMatrixFilled = (
+    fillFunc: (value: boolean) => void,
+    isA = true
+  ) => {
+    const inputCells = isA ? inputCellsA : inputCellsB;
+    const isFilled = inputCells.every(x => x.value);
+    fillFunc(isFilled);
+    return isFilled;
+  }
+
   const handleCellValueChange = (
     e: ChangeEvent<HTMLInputElement>,
     row: number,
@@ -103,12 +114,15 @@ const MatrixModal: FC<MatrixModalProps> = ({ isOpen, setIsOpen }) => {
     // @ts-ignore:next-line
     const newChar = e.nativeEvent.data;
 
+    const disableFunc = isA ? setIsADisabled : setIsBDisabled
+    const fillFunc = isA ? setAIsFilled : setBIsFilled
+
     if (newChar === '.') {
       dotsCount--;
 
       if (e.target.value.length === 1 || dotsCount > 0) {
         console.log('preventing input value change');
-        e.target.value = e.target.value.slice(0, -1);
+        e.target.value = ''
 
         return;
       }
@@ -118,46 +132,68 @@ const MatrixModal: FC<MatrixModalProps> = ({ isOpen, setIsOpen }) => {
     const isNum = pattern.test(e.target.value);
     console.log('is num:', isNum);
 
+    const isNegativeInput = newChar === '-'
+    const firstCharIsNegative = e.target.value.length === 1 && isNegativeInput
+    console.log('first char is neg:', firstCharIsNegative);
+    console.log('is matrix filled:', checkIfIsMatrixFilled(fillFunc, isA));
+    if (firstCharIsNegative) {
+      disableFunc(true)
+      fillFunc(false)
+      return
+    }
+
+    if (['--', '-.', '..'].includes(e.target.value)) {
+      e.target.value = e.target.value[0]
+      disableFunc(true)
+      fillFunc(false)
+      return
+    }
+
     // Only update the value if it matches the pattern
     // Allow empty input and values like `2.` as well
-    if (isNum || newChar === '.' || e.target.value === '') {
+    if (isNum || firstCharIsNegative || newChar === '.' || e.target.value === '') {
       console.log('UPDATING');
       updateValue(row, col, e.target.value as unknown as number, isA);
+      disableFunc(false)
     } else {
       // Prevent the input from updating if it's invalid
       console.log('NOT UPDATING');
       e.target.value = e.target.value.slice(0, -1);
+      if (e.target.value.length === 0) {
+        fillFunc(false)
+      }
     }
   }
 
-  const fillWithZeros = (isA = true) => {
-    const func = isA ? setA : setB;
-    const fillFunc = isA ? setAIsFilled : setBIsFilled;
-    const newMatrix = isA ? [...A] : [...B];
+  const fillWithZeros = useMemo(() => {
+    return (isA = true) => {
+      const func = isA ? setA : setB;
+      const fillFunc = isA ? setAIsFilled : setBIsFilled;
+      const newMatrix = isA ? [...A] : [...B];
 
-    for (const row in newMatrix) {
-      for (const col in newMatrix[0]) {
-        if (!newMatrix[row][col]) {
-          newMatrix[row][col] = 0
+      for (let row = 0; row < newMatrix.length; row++) {
+        for (let col = 0; col < newMatrix[0].length; col++) {
+          if (!newMatrix[row][col]) {
+            newMatrix[row][col] = 0;
+          }
         }
       }
-    }
 
-    func!(newMatrix);
-    fillFunc(true);
+      func!(newMatrix);
+      fillFunc(true);
 
-    console.log('is A', isA);
-    const inputCells = isA ? inputCellsA : inputCellsB;
+      console.log('is A', isA);
+      const inputCells = isA ? inputCellsA : inputCellsB;
 
-    for (const inputCell of inputCells!) {
-      if (!inputCell.value) {
-        inputCell.value = '0'
+      for (const inputCell of inputCells!) {
+        if (!inputCell.value) {
+          inputCell.value = '0';
+        }
       }
-    }
-  }
+    };
+  }, [A, B, inputCellsA, inputCellsB, setA, setB, setAIsFilled, setBIsFilled]);
 
-  const clearMatrix = (isA=true) => {
-    const matrix = isA ? A : B
+  const clearMatrix = (isA = true) => {
     const inputCells = isA ? inputCellsA : inputCellsB
 
     for (const inputCell of inputCells) {
@@ -185,7 +221,7 @@ const MatrixModal: FC<MatrixModalProps> = ({ isOpen, setIsOpen }) => {
         <div className='wrapper mt-[10%] text-white'>
           <div className='modal-content max-h-[37rem] min-w-fit row space-x-4 h-full'>
             {/* Matrix A input */}
-            <div className='w-full col-v items-center bg-gray-550 border-2 border-primary rounded-xl overflow-hidden'>
+            <div className='w-full min-w-72 col-v items-center bg-gray-550 border-2 border-primary rounded-xl overflow-hidden'>
               <div className='row w-full bg-primary px-3'>
                 <h3 className='flex-1 text-gray-300 text-center semibold leading-7'>
                   Matrix A input
@@ -200,7 +236,7 @@ const MatrixModal: FC<MatrixModalProps> = ({ isOpen, setIsOpen }) => {
                   <button disabled className='btn'>Restore matrix</button>
                 </div>
                 <div className='flex-1 row w-full'>
-                  <table className='modal-table overflow-scroll md:overflow-auto text-center'>
+                  <table className='matrix-table overflow-scroll md:overflow-auto text-center'>
                     <thead>
                       <tr>
                         {/* First element is empty */}
@@ -219,7 +255,7 @@ const MatrixModal: FC<MatrixModalProps> = ({ isOpen, setIsOpen }) => {
                               <input
                                 type='text'
                                 onChange={(e) => handleCellValueChange(e, row, col)}
-                                className='modal-table-input-cell cell-a focus:bg-primary'
+                                className='matrix-table-input-cell cell-a focus:bg-primary'
                                 data-gtm-form-interact-field-id='0'
                               />
                             </td>
@@ -235,15 +271,21 @@ const MatrixModal: FC<MatrixModalProps> = ({ isOpen, setIsOpen }) => {
                     <button onClick={() => clearMatrix()} className='btn'>Clear</button>
                     <button onClick={() => fillWithZeros()} className='btn'>Fill empty cells with zero</button>
                   </div>
-                  {!aIsFilled && (
-                    <button onClick={() => { setIsOpen(false); calculate() }} className='btn'>Calculate</button>
+                  {allIsFilled && (
+                    <button
+                      disabled={isADisabled}
+                      onClick={() => { setIsOpen(false); calculate() }}
+                      className='btn'
+                    >
+                      Calculate
+                    </button>
                   )}
                 </div>
               </div>
             </div>
             {/* Matrix B input */}
             {!isOnlyA && (
-              <div className='w-full col-v items-center bg-gray-550 border-2 border-primary rounded-xl overflow-hidden'>
+              <div className='w-full min-w-72 col-v items-center bg-gray-550 border-2 border-primary rounded-xl overflow-hidden'>
                 <div className='row w-full bg-primary px-3'>
                   <h3 className='flex-1 text-gray-300 text-center semibold leading-7'>
                     Matrix B input
@@ -256,7 +298,7 @@ const MatrixModal: FC<MatrixModalProps> = ({ isOpen, setIsOpen }) => {
                     <button disabled className='btn'>Restore matrix</button>
                   </div>
                   <div className='flex-1 row w-full'>
-                    <table className='modal-table overflow-scroll md:overflow-auto text-center'>
+                    <table className='matrix-table overflow-scroll md:overflow-auto text-center'>
                       <thead>
                         <tr>
                           {/* First element is empty */}
@@ -275,7 +317,7 @@ const MatrixModal: FC<MatrixModalProps> = ({ isOpen, setIsOpen }) => {
                                 <input
                                   type='text'
                                   onChange={(e) => handleCellValueChange(e, row, col, false)}
-                                  className='modal-table-input-cell cell-b focus:bg-primary'
+                                  className='matrix-table-input-cell cell-b focus:bg-primary'
                                   data-gtm-form-interact-field-id='0'
                                 />
                               </td>
@@ -292,8 +334,14 @@ const MatrixModal: FC<MatrixModalProps> = ({ isOpen, setIsOpen }) => {
                     <button onClick={() => clearMatrix(false)} className='btn'>Clear</button>
                     <button onClick={() => fillWithZeros(false)} className='btn'>Fill empty cells with zero</button>
                   </div>
-                  {!bIsFilled && (
-                    <button onClick={() => { setIsOpen(false); calculate() }} className='btn'>Calculate</button>
+                  {allIsFilled && (
+                    <button
+                      disabled={isBDisabled}
+                      onClick={() => { setIsOpen(false); calculate() }}
+                      className='btn'
+                    >
+                      Calculate
+                    </button>
                   )}
                 </div>
               </div>

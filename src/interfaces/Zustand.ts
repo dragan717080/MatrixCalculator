@@ -16,10 +16,14 @@ export interface MatrixStore {
   setADim: (value: TwoNumbers) => void;
   A: Matrix;
   setA: (value: Matrix) => void;
+  aIsFilled: boolean;
+  setAIsFilled: (value: boolean) => void;
   bDim: TwoNumbers;
   setBDim: (value: TwoNumbers) => void;
   B: Matrix;
   setB: (value: Matrix) => void;
+  bIsFilled: boolean;
+  setBIsFilled: (value: boolean) => void;
   calculate: any;
   setCalculate: (value: any) => any;
 }

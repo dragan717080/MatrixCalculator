@@ -34,6 +34,12 @@ const Multiplication: FC = () => {
           matrix[row][col] = matrix[row][col] + '0'
         }
 
+        // @ts-ignore:next-line
+        if (matrix[row][col][matrix[row][col].length - 1] === '-') {
+          // @ts-ignore:next-line
+          matrix[row][col] = '0'
+        }
+
         matrix[row][col] = parseFloat(matrix[row][col] as unknown as string)
       }
     }

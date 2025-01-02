@@ -28,59 +28,6 @@
     transform: translate(-50%, -50%);
 }
 
-.modal-table {
-    /* Width same regardless of text */
-    table-layout: fixed;
-}
-
-.modal-table tbody {
-    display: table-row-group;
-}
-
-.modal-table th td:nth-child(1),
-.modal-table tr td:nth-child(1) {
-    min-width: 1.75rem;
-    max-width: 1.75rem;
-}
-
-.modal-table th,
-.modal-table tr {
-    line-height: 1.25rem;
-    white-space: nowrap;
-    overflow: hidden;
-}
-
-.modal-table tr td,
-.modal-table tr th {
-    border: 1px solid #b5b5b5;
-    padding: 5px;
-    text-align: center;
-    color: #efefef;
-    max-width: 3.5rem;
-}
-
-.modal-table th td {
-    min-width: 3.5625rem;
-}
-
-.modal-table td {
-    max-height: 1.5rem;
-    min-width: 3.5rem;
-    width: 3.5rem;
-    padding: 0.25rem;
-    border-width: 1px;
-    border-color: rgb(209 213 219);
-}
-
-.modal-table-input-cell {
-    height: 1.3125rem;
-    width: 2.875rem;
-    text-align: center;
-    background-color: #fff;
-    color: #000;
-    font-size: 13px;
-}
-
 /* The Close Button */
 .close {
     color: #aaaaaa;
@@ -96,7 +43,7 @@
     cursor: pointer;
 }
 
-.history-modal-table-row {
+.history-matrix-table-row {
     display: grid;
     grid-template-columns: 0.4fr 1fr 1fr 1fr;
 }

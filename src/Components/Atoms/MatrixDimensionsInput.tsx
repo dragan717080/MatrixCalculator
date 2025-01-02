@@ -81,7 +81,7 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({ isSquare = fals
               <span className='px-2'>X</span>
               <input
                 required
-                ref={bCols}
+                ref={aCols}
                 type='number'
                 inputMode='numeric'
                 onChange={validateRange}

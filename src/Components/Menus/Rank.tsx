@@ -1,10 +1,16 @@
-import React, { FC, useState } from 'react'
+import React, { FC } from 'react'
+import MatrixDimensionsInput from '../Atoms/MatrixDimensionsInput'
+import { useMatrixStore } from '../../store/zustandStore'
 
 const Rank: FC = () => {
-  const [dimensions, setDimensions] = useState<number>(0)
+
+  const { A } = useMatrixStore()
 
   return (
-    <div>Rank</div>
+    <div>
+      Rank
+      <MatrixDimensionsInput />
+    </div>
   )
 }
 
