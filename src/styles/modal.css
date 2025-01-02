@@ -52,6 +52,7 @@
     padding: 5px;
     text-align: center;
     color: #efefef;
+    max-width: 3.5rem;
 }
 
 .modal-table th td {

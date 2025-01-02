@@ -265,7 +265,7 @@ ol {
     background-image: linear-gradient(180deg, #49484a, #424143);
 }
 
-.btn disabled {
+.btn:disabled {
     opacity: 0.3;
 }
 

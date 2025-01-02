@@ -60,10 +60,10 @@ const MatrixDimensionsInput: FC = () => {
   }
 
   return (
-    <div className='row'>
+    <div className='row pt-7'>
       <form action=''>
         {/* Pick A */}
-        <div className="row">
+        <div className='row'>
           <span className='mr-2'>Matrix {!isOnlyA ? 'A ' : ''}dimension:</span>
           <input
             required
@@ -76,7 +76,7 @@ const MatrixDimensionsInput: FC = () => {
             className='p-1.5 pr-0 pb-1.5 pl-2.5 w-[50px] text-sm pointer outline-none rounded-lg focus:bg-primary'
             value={22}
           />
-          <span className="px-2">X</span>
+          <span className='px-2'>X</span>
           <input
             required
             ref={aCols}
@@ -91,7 +91,7 @@ const MatrixDimensionsInput: FC = () => {
         </div>
         {/* Pick B */}
         {!isOnlyA && (
-          <div className="row mt-5">
+          <div className='row mt-5'>
             <span className='mr-2'>Matrix B dimension:</span>
             <input
               required
@@ -104,7 +104,7 @@ const MatrixDimensionsInput: FC = () => {
               className='p-1.5 pr-0 pb-1.5 pl-2.5 w-[50px] text-sm pointer outline-none rounded-lg focus:bg-primary'
               value={2}
             />
-            <span className="px-2">X</span>
+            <span className='px-2'>X</span>
             <input
               required
               ref={bCols}
@@ -121,7 +121,7 @@ const MatrixDimensionsInput: FC = () => {
         <button
           type='submit'
           onClick={(e) => handleSubmit(e)}
-          className='row-h rounded-md my-4 mx-auto px-3 py-2 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 bg-sky-500 hover:bg-sky-600 text-gray-300 focus-visible:outline-sky-600'
+          className='row-h rounded-md mt-7 mb-5 lg:mt-10 lg:mb-8 mx-auto px-3 py-2 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 bg-sky-500 hover:bg-sky-600 text-gray-300 focus-visible:outline-sky-600'
         >
           Set {!isOnlyA ? 'matrix' : 'matrices'}
         </button>
