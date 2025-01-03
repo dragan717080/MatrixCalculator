@@ -1,11 +1,15 @@
-import { TwoNumbers } from "./MatrixModalProps";
-import Matrix from "./Matrix";
+import Matrix, { TwoNumbers } from './Matrix'
 
 export interface NavbarPortalStore {
   isNavbarPortalOpen: boolean;
   setIsNavbarPortalOpen: (value: boolean) => void;
   activeIndex: number;
   setActiveIndex: (value: number) => void;
+}
+
+export interface ModalStore {
+  isOpen: boolean;
+  setIsOpen: (value: boolean) => void;
 }
 
 export interface MatrixStore {

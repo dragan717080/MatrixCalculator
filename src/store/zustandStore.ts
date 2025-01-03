@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import {
   MatrixStore,
+  ModalStore,
   NavbarPortalStore
 }
   from '../interfaces/Zustand';
@@ -11,6 +12,11 @@ export const useNavbarPortalStore = create<NavbarPortalStore>((set) => ({
   setIsNavbarPortalOpen: (value) => set((state) => ({ isNavbarPortalOpen: value })),
   activeIndex: 0,
   setActiveIndex: (value) => set((state) => ({ activeIndex: value })),
+}));
+
+export const useModalStore = create<ModalStore>((set) => ({
+  isOpen: false,
+  setIsOpen: (value) => set((state) => ({ isOpen: value })),
 }));
 
 export const useMatrixStore = create<MatrixStore>((set) => ({
