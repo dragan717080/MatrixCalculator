@@ -1,7 +1,28 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import MatrixDimensionsInput from '../Atoms/MatrixDimensionsInput'
+import { useMatrixStore, useModalStore } from '../../store/zustandStore'
 
 const Determinant: FC = () => {
+  const { setCalculate, aDim, A, aIsFilled, setAIsFilled, bIsFilled, setBIsFilled } = useMatrixStore()
+  const { isOpen } = useModalStore()
+  const [determinant, setDeterminant] = useState<number|undefined>(undefined)
+
+  const calculateResult = () => {
+    console.log('A in calculate:',);
+  }
+
+  useEffect(() => {
+    console.log('recalculating function');
+    if (A) {
+      setCalculate(calculateResult)
+    }
+  }, [aIsFilled]);
+
+  useEffect(() => {
+    setAIsFilled(false)
+    setBIsFilled(false)
+  }, [])
+
   return (
     <div className=''>
       <p>

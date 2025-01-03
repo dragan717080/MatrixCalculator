@@ -1,20 +1,20 @@
 import { FC, ChangeEvent, Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
-import MatrixModalProps from '../interfaces/MatrixModalProps';
-import { useMatrixStore } from '../store/zustandStore';
+import { useMatrixStore, useModalStore } from '../store/zustandStore';
 
-const MatrixModal: FC<MatrixModalProps> = ({ isOpen, setIsOpen }) => {
+const MatrixModal: FC = () => {
   const { 
     isOnlyA,
     aDim, A, setA, aIsFilled, setAIsFilled,
     bDim, B, setB, bIsFilled, setBIsFilled,
     calculate
-  } = useMatrixStore();
-  const [aRows, aCols] = aDim;
-  const [bRows, bCols] = bDim;
-  const [inputCellsA, setInputCellsA] = useState<HTMLInputElement[]>([]);
-  const [inputCellsB, setInputCellsB] = useState<HTMLInputElement[]>([]);
-  const [isADisabled, setIsADisabled] = useState<boolean>(false);
-  const [isBDisabled, setIsBDisabled] = useState<boolean>(false);
+  } = useMatrixStore()
+  const { isOpen, setIsOpen } = useModalStore()
+  const [aRows, aCols] = aDim
+  const [bRows, bCols] = bDim
+  const [inputCellsA, setInputCellsA] = useState<HTMLInputElement[]>([])
+  const [inputCellsB, setInputCellsB] = useState<HTMLInputElement[]>([])
+  const [isADisabled, setIsADisabled] = useState<boolean>(false)
+  const [isBDisabled, setIsBDisabled] = useState<boolean>(false)
 
   const allIsFilled = useMemo(() => {
     return isOnlyA ? aIsFilled : aIsFilled && bIsFilled;

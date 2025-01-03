@@ -33,9 +33,6 @@ const updateValuesForMatrix = (isA=true) => {
         matrix[row][col] = '0'
       }
 
-      const row = Math.floor(index / nCols);
-      const col = index - row * nCols;
-
       matrix[row][col] = parseFloat(matrix[row][col] as unknown as string)
     }
   }

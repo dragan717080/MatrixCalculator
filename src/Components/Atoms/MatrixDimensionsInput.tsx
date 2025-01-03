@@ -1,16 +1,16 @@
 import React, { FC, ChangeEvent, MouseEvent, useRef, useState, useEffect } from 'react'
 import { MatrixModal } from '../MatrixModal'
 import MatrixDimensionsInputProps from '../../interfaces/MatrixDimensionsInputProps'
-import { TwoNumbers } from '../../interfaces/MatrixModalProps'
-import { useMatrixStore } from '../../store/zustandStore'
+import { TwoNumbers } from '../../interfaces/Matrix'
+import { useMatrixStore, useModalStore } from '../../store/zustandStore'
 
 const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({ isSquare = false }) => {
-  const { isOnlyA, setADim, setA, setBDim, setB } = useMatrixStore();
+  const { isOnlyA, aDim, setADim, setA, bDim, setBDim, setB } = useMatrixStore()
+  const { setIsOpen } = useModalStore()
   const aRows = useRef<HTMLInputElement | null>(null)
   const aCols = useRef<HTMLInputElement | null>(null)
   const bRows = useRef<HTMLInputElement | null>(null)
   const bCols = useRef<HTMLInputElement | null>(null)
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
 
   const validateRange = (e: ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value as unknown as number
@@ -35,11 +35,11 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({ isSquare = fals
       const bIsSet = newBValue[0] !== 0 && newBValue[1] !== 0
 
       if (aIsSet && bIsSet) {
-        setIsModalOpen(true)
+        setIsOpen(true)
       }
     } else {
       if (aIsSet) {
-        setIsModalOpen(true)
+        setIsOpen(true)
       }
     }
   }
@@ -59,6 +59,25 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({ isSquare = fals
     return [bRowsNum, bColsNum] as TwoNumbers
   }
 
+  useEffect(() => {
+    console.log('new A dim in input:', aDim)
+    if (aDim[0] === 0 && aRows.current) {
+      aRows.current.value = ''
+    }
+
+    if (aDim[1] === 0 && aCols.current) {
+      aCols.current!.value = ''
+    }
+
+    if (aDim[0] === 0 && bRows.current) {
+      bRows.current!.value = ''
+    }
+
+    if (aDim[1] === 0 && bCols.current) {
+      bCols.current!.value = ''
+    }
+  }, [aDim[0], aDim[1], bDim[0], bDim[1]])
+
   return (
     <div className='row pt-7'>
       <form action=''>
@@ -74,8 +93,8 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({ isSquare = fals
             min='1'
             max='25'
             className='p-1.5 pr-0 pb-1.5 pl-2.5 w-[50px] text-sm pointer outline-none rounded-lg focus:bg-primary'
-/*             value={22}
- */          />
+            value={2}
+          />
           {!isSquare && (
             <>
               <span className='px-2'>X</span>
@@ -88,7 +107,7 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({ isSquare = fals
                 min='1'
                 max='25'
                 className='p-1.5 pr-0 pb-1.5 pl-2.5 w-[50px] text-sm pointer outline-none rounded-lg focus:bg-primary'
-              /*               value={4} */
+                value={2}
               />
             </>
           )}
@@ -130,7 +149,7 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({ isSquare = fals
           Set {!isOnlyA ? 'matrix' : 'matrices'}
         </button>
       </form>
-      <MatrixModal isOpen={isModalOpen} setIsOpen={setIsModalOpen} />
+      <MatrixModal />
     </div>
   )
 }
