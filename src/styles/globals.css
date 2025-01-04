@@ -336,3 +336,8 @@ ol {
     -webkit-animation: table-fade-out-from-none 0.9s ease-in-out;
     animation: table-fade-out-from-none 0.9s ease-in-out;
 }
+
+.border-b-darkgray {
+    border-bottom-width: 1px;
+    border-bottom-color: #1F1D20;
+}
