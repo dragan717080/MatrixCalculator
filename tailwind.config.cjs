@@ -8,8 +8,16 @@ module.exports = {
         lightblue: '#4FA8C4',
         primary: '#FF9519',
         gray: {
+          350: '#727272',
+          450: '#636264',
           550: '#424143',
+        },
+        neutral: {
+          150: '#EFEFEF',
         }
+      },
+      lineHeight: {
+        '6.5': '1.625rem',
       },
       spacing: {
         '3/10': '30%',
