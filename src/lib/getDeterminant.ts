@@ -1,5 +1,10 @@
 import Matrix from "../interfaces/Matrix";
 
+interface DeterminantSolution {
+  steps: Matrix[]
+  result: number
+}
+
 /**
  * Gaussian elimination to get upper triangular form.
  * 
@@ -74,41 +79,61 @@ import Matrix from "../interfaces/Matrix";
  * 
  * Δ = 1 * (-10) * (-17.9) * (-2.38) = -425
  */
-const getDeterminant = (A: Matrix): number => {
+const getDeterminant = (A: Matrix): DeterminantSolution => {
   const n = A.length
+  const steps = []
+
+  // Make copy of `A` to avoid directly mutating state
+  const B = A.map(row => [...row])
+
+  console.log(A)
+  console.log('original matrix in get d:', B)
+  console.log(Number.isNaN(A[1][0]))
+  console.log(Number.isNaN(B[1][0]))
 
   // Implementation of Gaussian elimination steps
   for (let i = 0; i < n - 1; i++) {
     console.log('Row:', i)
-    eliminateCol(A, i)
+    steps.push(eliminateCol(B, i))
   }
 
   let D = 1
 
   // Multiply upper diagonal
   for (let i = 0; i < n; i++) {
-    D *= A[i][i]!
+    D *= B[i][i]!
   }
 
   // Format
-  return Number.isInteger(D) ? D : parseFloat(D.toFixed(3))
+  const result = Number.isInteger(D) ? D : parseFloat(D.toFixed(3))
+
+  return { steps, result }
 }
 
 const eliminateCol = (A: Matrix, col:number): Matrix => {
   const pivot = A[col][col]
   console.log('Pivot for row', col, ':', pivot)
-  for (let row = col + 1; row < A.length; row++) {
-    console.log('Row:', row);
-    // Divide current row with pivot row
-    const coef = A[row][col]! / A[col][col]!
-    console.log('coef:', coef)
-    for (let i = 0; i < A.length; i++) {
-      A[row][i]! -= A[col][i]! * coef
+  console.log('Received matrix', A)
+  for (let i = col + 1; i < A.length; i++) {
+    console.log('Row:', i);
+    // If it is already 0, skip that row
+    if (A[i][col] === 0) {
+      continue
     }
+    // Divide current row with pivot row
+    console.log('shall divide', A[i][col], 'with', A[col][col]);
+    const coef = A[i][col]! / A[col][col]!
+    console.log('coef:', coef)
+    //const updatedRow = [...A[i]]
+
+    for (let j = 0; j < A.length; j++) {
+      //updatedRow[j]! -= A[col][j]! * coef
+    }
+
+    //A[i] = updatedRow
   }
   console.log('updated matrix:', A)
-  //* - Subtract rows R2 -> R2 - 4R1
-  //*   - R2 = [4 - 4, 2 - 12, 5 - 28, 4 - 32] = [0, -10, -23, -28]
+
   return A
 }
 

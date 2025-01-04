@@ -172,13 +172,13 @@ const MatrixModal: FC = () => {
     setIsOpen(false)
     console.log('old A in modal before calculate:', A)
     const newA = updateValuesForMatrix()
-    console.log('new A in modal before calculate:', newA)
+    console.log('new A in modal after calculate:', newA)
     setA(newA)
 
     if (!isOnlyA) {
       console.log('old B in modal before calculate:', B)
       const newB = updateValuesForMatrix()
-      console.log('new B in modal before calculate:', newB)
+      console.log('new B in modal after calculate:', newB)
       setB(newB)
     }
     calculate()
