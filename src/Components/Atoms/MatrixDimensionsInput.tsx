@@ -103,7 +103,7 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
             min='1'
             max='25'
             className='p-1.5 pr-0 pb-1.5 pl-2.5 w-[50px] text-sm pointer outline-none rounded-lg focus:bg-primary'
-            value={2}
+            value={3}
           />
           {!isSquare && (
             <>
