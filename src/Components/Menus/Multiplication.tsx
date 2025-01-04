@@ -1,68 +1,20 @@
 import React, { FC, useEffect } from 'react'
 import MatrixDimensionsInput from '../Atoms/MatrixDimensionsInput'
-import { useMatrixStore } from '../../store/zustandStore';
+import useUpdateValuesForMatrix from '../../lib/updateValuesForMatrix'
+import { useMatrixStore } from '../../store/zustandStore'
 
 const Multiplication: FC = () => {
-  const { isOnlyA, setIsOnlyA, aDim, bDim, A, setA, B, setB, setCalculate } = useMatrixStore();
+  const { isOnlyA, setIsOnlyA, aDim, bDim, A, setA, setAIsFilled, B, setB, setBIsFilled, setCalculate } = useMatrixStore();
 
   const calculateResult = () => {
-    console.log('calculating multiplication');
-    const updatedMatrices = getUpdatedValues();
-    const newA = updatedMatrices[0];
-    let newB = updatedMatrices[1] ?? undefined;
 
-    console.log('A:', newA);
-    console.log('B:', newB);
+    console.log('A:', A);
+    console.log('B:', B);
   }
-
-  const updateValuesForMatrix = (isA=true) => {
-    const matrix = isA ? A : B!
-    const func = isA ? setA : setB
-    // Make a shallow copy of the previous matrix
-    const newMatrix = [...matrix];
-
-    for (const row in newMatrix) {
-      for (const col in newMatrix[0]) {
-        // To do: remove (check will be done in modal)
-        if (typeof(matrix[row][col]) === 'undefined') {
-          continue
-        }
-
-        // @ts-ignore:next-line
-        if (matrix[row][col][matrix[row][col].length - 1] === '.') {
-          // @ts-ignore:next-line
-          matrix[row][col] = matrix[row][col] + '0'
-        }
-
-        // @ts-ignore:next-line
-        if (matrix[row][col][matrix[row][col].length - 1] === '-') {
-          // @ts-ignore:next-line
-          matrix[row][col] = '0'
-        }
-
-        matrix[row][col] = parseFloat(matrix[row][col] as unknown as string)
-      }
-    }
-
-    func!(newMatrix)
-
-    return newMatrix
-  }
-
-  /** Turns matrices from input element strings to floats and returns them. */
-  const getUpdatedValues = () => {
-    const newA = updateValuesForMatrix()
-
-    if (!isOnlyA) {
-      const newB = updateValuesForMatrix(false)
-
-      return [newA, newB]
-    }
-
-    return [newA]
-  };
 
   useEffect(() => {
+    setAIsFilled(false)
+    setBIsFilled(false)
     setIsOnlyA(false);
   }, [])
 
@@ -77,7 +29,7 @@ const Multiplication: FC = () => {
   return (
     <div className=''>
       <section>
-        <MatrixDimensionsInput />
+        <MatrixDimensionsInput minValue={2} />
         <div className=''>
           <h3 className='bold'>About the method</h3>
           <ol>

@@ -1,6 +1,7 @@
 import { Navigate, Outlet } from 'react-router-dom'
 import DashNavbar from './DashNavbar'
 import Footer from './Footer'
+import { MatrixModal } from './MatrixModal'
 
 export default function PrivateRoutes() {
   return <div className='flex flex-col min-h-screen'>
@@ -11,6 +12,7 @@ export default function PrivateRoutes() {
     </div>
     <main className='flex-1 max-w-7xl mx-auto py-7 px-4 lg:px-8'>
       <Outlet />
+      <MatrixModal />
     </main>
     <Footer />
   </div>

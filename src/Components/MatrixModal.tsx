@@ -1,14 +1,16 @@
 import { FC, ChangeEvent, Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
+import useUpdateValuesForMatrix from '../lib/updateValuesForMatrix';
 import { useMatrixStore, useModalStore } from '../store/zustandStore';
 
 const MatrixModal: FC = () => {
-  const { 
+  const {
     isOnlyA,
     aDim, A, setA, aIsFilled, setAIsFilled,
     bDim, B, setB, bIsFilled, setBIsFilled,
     calculate
   } = useMatrixStore()
   const { isOpen, setIsOpen } = useModalStore()
+  const { updateValuesForMatrix } = useUpdateValuesForMatrix()
   const [aRows, aCols] = aDim
   const [bRows, bCols] = bDim
   const [inputCellsA, setInputCellsA] = useState<HTMLInputElement[]>([])
@@ -73,6 +75,7 @@ const MatrixModal: FC = () => {
     const func = isA ? setA : setB;
     console.log('A:', A);
     console.log('new matrix in update value:', newMatrix);
+    console.log('new value:', value, typeof(value));
 
     // Make a copy of the row that we want to modify
     const updatedRow = [...newMatrix[row]];
@@ -165,6 +168,22 @@ const MatrixModal: FC = () => {
     }
   }
 
+  const handleCalculate = () => {
+    setIsOpen(false)
+    console.log('old A in modal before calculate:', A)
+    const newA = updateValuesForMatrix()
+    console.log('new A in modal before calculate:', newA)
+    setA(newA)
+
+    if (!isOnlyA) {
+      console.log('old B in modal before calculate:', B)
+      const newB = updateValuesForMatrix()
+      console.log('new B in modal before calculate:', newB)
+      setB(newB)
+    }
+    calculate()
+  }
+
   const fillWithZeros = useMemo(() => {
     return (isA = true) => {
       const func = isA ? setA : setB;
@@ -214,6 +233,19 @@ const MatrixModal: FC = () => {
     console.log('input cells A:', inputCellsA);
     console.log('input cells B:', inputCellsB);
   }, [aDim[0], aDim[1], bDim[0], bDim[1]]);
+
+  // to do: remove
+  useEffect(() => {
+    // @ts-ignore
+    setA([1, 2, 3, 4])
+    //setAIsFilled(true)
+    setIsOpen(false)
+    console.log('closing modal');
+  }, []);
+
+  useEffect(() => {
+    console.log('is open in modal:', isOpen);
+  }, [isOpen])
 
   return (
     <>
@@ -274,7 +306,7 @@ const MatrixModal: FC = () => {
                   {allIsFilled && (
                     <button
                       disabled={isADisabled}
-                      onClick={() => { setIsOpen(false); calculate() }}
+                      onClick={() => handleCalculate()}
                       className='btn'
                     >
                       Calculate
@@ -337,7 +369,7 @@ const MatrixModal: FC = () => {
                   {allIsFilled && (
                     <button
                       disabled={isBDisabled}
-                      onClick={() => { setIsOpen(false); calculate() }}
+                      onClick={() => handleCalculate()}
                       className='btn'
                     >
                       Calculate

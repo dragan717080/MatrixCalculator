@@ -324,3 +324,15 @@ ol {
     color: #000;
     font-size: 13px;
 }
+
+.fade-in-table {
+    max-width: fit-content;
+    -webkit-animation: table-fade-in-from-none 0.9s ease-in-out;
+    animation: table-fade-in-from-none 0.9s ease-in-out;
+}
+
+.fade-out-table {
+    max-width: fit-content;
+    -webkit-animation: table-fade-out-from-none 0.9s ease-in-out;
+    animation: table-fade-out-from-none 0.9s ease-in-out;
+}

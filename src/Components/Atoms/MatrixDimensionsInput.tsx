@@ -1,12 +1,14 @@
 import React, { FC, ChangeEvent, MouseEvent, useRef, useState, useEffect } from 'react'
-import { MatrixModal } from '../MatrixModal'
 import MatrixDimensionsInputProps from '../../interfaces/MatrixDimensionsInputProps'
 import { TwoNumbers } from '../../interfaces/Matrix'
 import { useMatrixStore, useModalStore } from '../../store/zustandStore'
 
-const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({ isSquare = false }) => {
+const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
+  minValue,
+  isSquare = false
+}) => {
   const { isOnlyA, aDim, setADim, setA, bDim, setBDim, setB } = useMatrixStore()
-  const { setIsOpen } = useModalStore()
+  const { isOpen, setIsOpen } = useModalStore()
   const aRows = useRef<HTMLInputElement | null>(null)
   const aCols = useRef<HTMLInputElement | null>(null)
   const bRows = useRef<HTMLInputElement | null>(null)
@@ -21,7 +23,9 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({ isSquare = fals
     }
   }
 
-  const handleSubmit = (e: MouseEvent<HTMLButtonElement>) => {
+  const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+
+  const handleSubmit = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
     const newAValue = getNumericDimValue()
 
@@ -36,9 +40,12 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({ isSquare = fals
 
       if (aIsSet && bIsSet) {
         setIsOpen(true)
+        
       }
     } else {
+      console.log('a is set:', aIsSet);
       if (aIsSet) {
+        console.log('opening modal');
         setIsOpen(true)
       }
     }
@@ -78,6 +85,9 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({ isSquare = fals
     }
   }, [aDim[0], aDim[1], bDim[0], bDim[1]])
 
+  useEffect(() => {
+    console.log('isOpen in input:', isOpen);
+  }, [isOpen])
   return (
     <div className='row pt-7'>
       <form action=''>
@@ -149,7 +159,6 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({ isSquare = fals
           Set {!isOnlyA ? 'matrix' : 'matrices'}
         </button>
       </form>
-      <MatrixModal />
     </div>
   )
 }
