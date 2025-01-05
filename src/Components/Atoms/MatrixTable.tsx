@@ -2,6 +2,9 @@ import React, { FC } from 'react'
 import MatrixTableProps from '../../interfaces/MatrixTableProps'
 
 const MatrixTable: FC<MatrixTableProps> = ({ nRows, nCols, A, toHighlight }) => {
+  const getTableCellValue = (row: number, col: number, value: number) =>
+    Number.isInteger(A[row][col]) ? A[row][col] : A[row][col]?.toFixed(3).replace(/(\.\d*?[1-9])0+$|\.0+$/, '$1')
+
   return (
     <table
       className='matrix-table mt-5 mb-6 mx-auto overflow-scroll md:overflow-auto text-center'
@@ -24,7 +27,7 @@ const MatrixTable: FC<MatrixTableProps> = ({ nRows, nCols, A, toHighlight }) => 
                 className={`${toHighlight && toHighlight(row, col) ? 'bg-gray-450 text-neutral-150' : ''} min-h-[2.3125rem] min-w-[2.3125rem] whitespace-nowrap`}
                 key={col}
               >
-                {A[row][col]}
+                {getTableCellValue(row, col, A[row][col]!)}
               </td>
             ))}
           </tr>

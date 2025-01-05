@@ -1,9 +1,5 @@
-import Matrix from "../interfaces/Matrix";
-
-interface DeterminantSolution {
-  steps: Matrix[]
-  result: number
-}
+import { DeterminantSolution, EliminationStep, Sign, Step } from '../interfaces/Determinant';
+import Matrix from '../interfaces/Matrix';
 
 /**
  * Gaussian elimination to get upper triangular form.
@@ -80,61 +76,89 @@ interface DeterminantSolution {
  * Δ = 1 * (-10) * (-17.9) * (-2.38) = -425
  */
 const getDeterminant = (A: Matrix): DeterminantSolution => {
-  const n = A.length
-  const steps = []
+  const n = A.length;
+  const steps: Step[] = [];
+  let sign: Sign = '+';
 
-  // Make copy of `A` to avoid directly mutating state
-  const B = A.map(row => [...row])
+  // Make a copy of `A` to avoid directly mutating state
+  const B = A.map(row => [...row]);
 
-  console.log(A)
-  console.log('original matrix in get d:', B)
-  console.log(Number.isNaN(A[1][0]))
-  console.log(Number.isNaN(B[1][0]))
-
-  // Implementation of Gaussian elimination steps
+  // Gaussian elimination steps
   for (let i = 0; i < n - 1; i++) {
-    console.log('Row:', i)
-    steps.push(eliminateCol(B, i))
+    // Handle row swapping
+    const swapResult = swapRows(B, i, sign);
+    if (swapResult.swapRow) {
+      steps.push({ A: [...B.map(row => [...row])], swapRow: swapResult.swapRow, sign: swapResult.sign });
+      sign = swapResult.sign;
+    }
+
+    // Handle row elimination
+    const eliminationResult = eliminateValues(B, i);
+    steps.push({ A: [...B.map(row => [...row])], swapRow: undefined, sign });
+
+    if (eliminationResult.toReturnEarly) {
+      break;
+    }
   }
 
-  let D = 1
-
-  // Multiply upper diagonal
+  // Multiply diagonal elements
+  let D = 1;
   for (let i = 0; i < n; i++) {
-    D *= B[i][i]!
+    D *= B[i][i]!;
   }
 
-  // Format
-  const result = Number.isInteger(D) ? D : parseFloat(D.toFixed(3))
+  // Adjust sign
+  let result = Number.isInteger(D) ? D : parseFloat(D.toFixed(3));
+  if (sign !== '+') {
+    result = -result;
+  }
 
-  return { steps, result }
-}
+  return { steps, result };
+};
 
-const eliminateCol = (A: Matrix, col:number): Matrix => {
-  const pivot = A[col][col]
-  console.log('Pivot for row', col, ':', pivot)
-  console.log('Received matrix', A)
+/** Handles swapping rows if needed */
+const swapRows = (
+  A: Matrix,
+  col: number,
+  sign: Sign
+): { A: Matrix; swapRow: number[] | undefined; sign: Sign } => {
+  const pivot = A[col][col];
+  let swapRow;
+
+  if (pivot === 0) {
+    for (let i = col + 1; i < A.length; i++) {
+      if (A[i][col]! !== 0) {
+        [A[col], A[i]] = [A[i], A[col]];
+        swapRow = [col, i];
+        sign = sign === '+' ? '-' : '+';
+        break;
+      }
+    }
+  }
+
+  return { A, swapRow, sign };
+};
+
+/** Handles value changes to eliminate values below the pivot */
+const eliminateValues = (
+  A: Matrix,
+  col: number
+): { A: Matrix; toReturnEarly: boolean } => {
+  const pivot = A[col][col];
+  if (pivot === 0) {
+    return { A, toReturnEarly: true };
+  }
+
   for (let i = col + 1; i < A.length; i++) {
-    console.log('Row:', i);
-    // If it is already 0, skip that row
-    if (A[i][col] === 0) {
-      continue
-    }
-    // Divide current row with pivot row
-    console.log('shall divide', A[i][col], 'with', A[col][col]);
-    const coef = A[i][col]! / A[col][col]!
-    console.log('coef:', coef)
-    //const updatedRow = [...A[i]]
+    if (A[i][col] === 0) continue;
 
-    for (let j = 0; j < A.length; j++) {
-      //updatedRow[j]! -= A[col][j]! * coef
+    const coef = A[i][col]! / pivot!;
+    for (let j = col; j < A.length; j++) {
+      A[i][j]! -= A[col][j]! * coef;
     }
-
-    //A[i] = updatedRow
   }
-  console.log('updated matrix:', A)
 
-  return A
-}
+  return { A, toReturnEarly: false };
+};
 
 export default getDeterminant
