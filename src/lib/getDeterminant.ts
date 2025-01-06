@@ -88,13 +88,23 @@ const getDeterminant = (A: Matrix): DeterminantSolution => {
     // Handle row swapping
     const swapResult = swapRows(B, i, sign);
     if (swapResult.swapRow) {
-      steps.push({ A: [...B.map(row => [...row])], swapRow: swapResult.swapRow, sign: swapResult.sign });
+      steps.push({
+        A: [...B.map(row => [...row])],
+        swapRow: swapResult.swapRow,
+        sign: swapResult.sign,
+        stepsExplanations: [`Swapping rows ${swapResult.swapRow[0] + 1} and ${swapResult.swapRow[1] + 1}, changing the sign to ${swapResult.sign}`]
+      });
       sign = swapResult.sign;
     }
 
     // Handle row elimination
     const eliminationResult = eliminateValues(B, i);
-    steps.push({ A: [...B.map(row => [...row])], swapRow: undefined, sign });
+    steps.push({
+      A: [...B.map(row => [...row])],
+      swapRow: undefined,
+      sign,
+      stepsExplanations: eliminationResult.stepsExplanations
+    });
 
     if (eliminationResult.toReturnEarly) {
       break;
@@ -143,22 +153,33 @@ const swapRows = (
 const eliminateValues = (
   A: Matrix,
   col: number
-): { A: Matrix; toReturnEarly: boolean } => {
+): { A: Matrix; toReturnEarly: boolean, stepsExplanations: string[] } => {
   const pivot = A[col][col];
   if (pivot === 0) {
-    return { A, toReturnEarly: true };
+    return { A, toReturnEarly: true, stepsExplanations: [`R${col} early return because A[${col}][${col}] is 0`] };
   }
 
+  const stepsExplanations = []
+
   for (let i = col + 1; i < A.length; i++) {
-    if (A[i][col] === 0) continue;
+    if (A[i][col] === 0) {
+      stepsExplanations.push(`R${i + 1} at column ${col + 1} is already 0, so this step is skipped.`)
+      continue
+    };
 
     const coef = A[i][col]! / pivot!;
+
+    console.log('old coef:', coef, 'new coef:', Math.abs(Number.isInteger(coef) ? coef : parseFloat(coef?.toFixed(3).replace(/(\.\d*?[1-9])0+$|\.0+$/, '$1'))));
+    console.log('will push to steps:', `R${i + 1} = R${i + 1} ${coef < 0 ? '+' : '-'} ${[-1, 1].includes(coef) ? Math.abs(coef) : ''}R${col + 1}`);
+
+    stepsExplanations.push(`R${i + 1} = R${i + 1} ${coef < 0 ? '+' : '-'} ${![-1, 1].includes(coef) ? Math.abs(Number.isInteger(coef) ? coef : parseFloat(coef?.toFixed(3).replace(/(\.\d*?[1-9])0+$|\.0+$/, '$1'))) : ''}R${col + 1}`)
+    console.log('new steps:', stepsExplanations);
     for (let j = col; j < A.length; j++) {
       A[i][j]! -= A[col][j]! * coef;
     }
   }
 
-  return { A, toReturnEarly: false };
+  return { A, toReturnEarly: false, stepsExplanations };
 };
 
 export default getDeterminant
