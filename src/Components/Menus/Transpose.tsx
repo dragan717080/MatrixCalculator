@@ -1,5 +1,6 @@
 import React, { FC, useEffect, useRef, useState } from 'react'
 import MatrixDimensionsInput from '../Atoms/MatrixDimensionsInput'
+import MatrixTable from '../Atoms/MatrixTable';
 import { useMatrixStore, useModalStore } from '../../store/zustandStore';
 import Matrix from '../../interfaces/Matrix';
 
@@ -72,41 +73,9 @@ const Transpose: FC = () => {
     setAIsFilled(false)
   }
 
-  useEffect(() => {
-    console.log('new A dim:', aDim)
-  }, [aDim[0], aDim[1]])
-
   return (
     <div>
-      <table
-        ref={showOriginalRef}
-        className={`matrix-table hidden mt-5 mb-6 mx-auto overflow-scroll md:overflow-auto text-center`}
-      >
-        <thead>
-          <tr>
-            {/* First element is empty */}
-            <th>&nbsp;</th>
-            {Array.from({ length: aCols }).map((_, col) => (
-              <th key={col}>A<span className='subindex'>{col + 1}</span></th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {Array.from({ length: aRows }).map((_, row) => (
-            <tr key={row}>
-              <td>{row + 1}</td>
-              {Array.from({ length: aCols }).map((_, col) => (
-                <td className='' key={col}>
-                  <div className='matrix-table-input-cell focus:bg-primary'>
-                    {A[row][col]}
-                  </div>
-                </td>
-              ))}
-            </tr>
-          ))
-          }
-        </tbody>
-      </table>
+      <MatrixTable ref={showOriginalRef} nRows={aRows} nCols={aCols} A={A} className='hidden' />
       {aIsFilled && (
         <div className='row text-white space-x-5'>
           <button className='btn' onClick={() => toggleShowOriginalMatrix()}>
@@ -127,32 +96,9 @@ const Transpose: FC = () => {
         {!isOpen && C.length && aIsFilled && (
           <section className='py-5'>
             <h3 className='bold'>Result</h3>
-            <table className='matrix-table mt-7 mx-auto overflow-scroll md:overflow-auto text-center'>
-              <thead>
-                <tr>
-                  {/* First element is empty */}
-                  <th>&nbsp;</th>
-                  {Array.from({ length: cCols }).map((_, col) => (
-                    <th key={col}>C<span className='subindex'>{col + 1}</span></th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {Array.from({ length: cRows }).map((_, row) => (
-                  <tr key={row}>
-                    <td>{row + 1}</td>
-                    {Array.from({ length: cCols }).map((_, col) => (
-                      <td className='' key={col}>
-                        <div className='matrix-table-input-cell focus:bg-primary'>
-                          {C[row][col]}
-                        </div>
-                      </td>
-                    ))}
-                  </tr>
-                ))
-                }
-              </tbody>
-            </table>
+            <div className="mt-2">
+              <MatrixTable nRows={cRows} nCols={cCols} A={C} />
+            </div>
             {time > -1 && (
               <div className='w-full pt-4 flex'>
                 <span className='ml-auto'>

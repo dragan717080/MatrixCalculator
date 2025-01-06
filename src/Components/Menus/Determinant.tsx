@@ -1,17 +1,17 @@
-import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
+import React, { FC, MouseEvent, useEffect, useMemo, useRef, useState } from 'react'
 import MatrixDimensionsInput from '../Atoms/MatrixDimensionsInput'
 import MatrixTable from '../Atoms/MatrixTable'
 import getDeterminant from '../../lib/getDeterminant'
 import { useMatrixStore, useModalStore } from '../../store/zustandStore'
 import { Step } from '../../interfaces/Determinant'
-import Matrix from '../../interfaces/Matrix'
+import ScrollWithSVGs from '../Atoms/ScrollWithSVGs'
 
 const Determinant: FC = () => {
   const {
     setIsOnlyA,
     setCalculate,
     aDim, setADim, A, setA, aIsFilled, setAIsFilled,
-    bIsFilled, setBIsFilled
+    setBIsFilled
   } = useMatrixStore()
   const { isOpen } = useModalStore()
 
@@ -21,6 +21,8 @@ const Determinant: FC = () => {
   const [time, setTime] = useState<number>(-1)
   const [steps, setSteps] = useState<Step[]>([])
   const [toShowSolution, setToShowSolution] = useState<boolean>(false)
+  const [actualCounts, setActualCounts] = useState<number[]>([])
+  const [stepsSwapsIndexes, setStepsSwapsIndexes] = useState<{ [key: string]: number }>({} as { [key: string]: number })
 
   const calculateResult = () => {
     console.log('A in calculate:', A)
@@ -29,8 +31,9 @@ const Determinant: FC = () => {
     const { steps, result } = getDeterminant(A)
 
     setSteps(steps)
-    console.log('%cSteps:', 'color:red', steps);
+    console.log('%cSteps:', 'color:red;font-size:22px', steps);
     setDeterminant(result)
+    console.log('%cDETERMINANT:', 'color:red;font-size:40', result);
 
     const endTime = performance.now()
     console.log('calc time:', endTime - startTime);
@@ -48,25 +51,22 @@ const Determinant: FC = () => {
     setAIsFilled(false)
   }
 
-  /** In case there were multiple swaps, make proper row/col of pivot appear
-   * 
-   * (e.g. 'Eliminate elements in the 2nd column under the 2nd element').
-  */
-  const getOrderNumberToStr = (index: number) => {
-    const actualIndex = getActualCount(index)
-
-    return actualIndex === 1 ? 'st' : actualIndex === 2 ? 'nd' : actualIndex === 3 ? 'rd' : 'th'
-  }
+  /** 1-based indexing. */
+  const getOrderNumberToStr = (index: number) =>
+    index === 1 ? 'st' : index === 2 ? 'nd' : index === 3 ? 'rd' : 'th'
 
   /** After completing all steps, get the equation for multiplying elements on upper (main) diagonal. */
   const getMultiplyEquation = () => {
     const upperDiagonalValues = steps[steps.length - 1].A.flatMap((row, i) => row.filter((_, j) => i === j));
-    console.log('upper diagonal:', upperDiagonalValues);
+
     const strValues = upperDiagonalValues.map(x => {
-      console.log('Value:', x);
+      if (typeof (x) === 'string') {
+        x = parseFloat(x)
+      }
+
       const value = Number.isInteger(x) ? x : x!.toFixed(3)
-      console.log('num value:', value);
       return (value as number)! >= 0 ? String(value) : `(${value})`
+      //
     })
     //console.log('str values:', strValues);
     const equation = strValues.join(' X ')
@@ -77,37 +77,58 @@ const Determinant: FC = () => {
   const getStepText = useMemo(
     () =>
       (step: Step, index: number) => {
-        console.log('step:', step);
-        const eText =
-          typeof step.swapRow !== 'undefined'
-            ? `, changing the sign to ${step.sign}`
-            : '';
-
-        return typeof step.swapRow !== 'undefined'
-          ? `Swapping rows ${step.swapRow[0] + 1} and ${step.swapRow[1] + 1}`
-          : `Eliminate elements in the ${getActualCount(index)}${getOrderNumberToStr(
-            index)} column under the ${getActualCount(index)}${getOrderNumberToStr(
-            index)} element${eText}`;
+        return typeof (step.swapRow) !== 'undefined'
+          ? `Swapping rows ${step.swapRow[0] + 1} and ${step.swapRow[1] + 1}, changing the sign to ${step.sign}`
+          // Text will have 1-based indexing so need `+1`
+          : `Eliminate elements in the ${stepsSwapsIndexes[index] + 1}${getOrderNumberToStr(
+            stepsSwapsIndexes[index] + 1)} column under the ${stepsSwapsIndexes[index] + 1}${getOrderNumberToStr(
+              stepsSwapsIndexes[index] + 1)} element`;
       },
-    [steps.length])
+    [steps.length, actualCounts.length, Object.keys(stepsSwapsIndexes).length])
 
-  const getHighlight = (step: Step, index: number, row: number, col: number) => {
-    const d = step.swapRow
-    ? step.swapRow?.includes(row)
-    : row > getActualCount(index) && col === getActualCount(index)
-      console.log('index:', index, 'row:', row, 'col:', col, 'shall highlight:', d);
-      return d;
-    }
+  const getHighlight = (step: Step, index: number, row: number, col: number) =>
+    step.swapRow
+      ? step.swapRow?.includes(row)
+      : row > stepsSwapsIndexes[index] && col === stepsSwapsIndexes[index]
 
-  /** Count of non swap steps. */
-  const getActualCount = (index: number) => {
+  // Memoized function to calculate actual counts based on `steps.length`
+  useMemo(() => {
     if (steps.length === 0) {
-      return 0
+      setActualCounts([]);
+      return;
     }
 
-    const swapsCount = steps.slice(0, index + 1).reduce((acc, x) => acc + Number(Array.isArray(x.swapRow)), 0)
-    console.log('slice:', steps.slice(0, index + 1), 'index:', index, 'swaps count:', swapsCount, 'actual count:', index - swapsCount);
-    return index - swapsCount}
+    const stepsWithoutSwaps = steps.filter(x => typeof (x.swapRow) === 'undefined')
+
+    // Track indexes of `steps` in relation to filtered steps without swaps
+    // e.g. if first 5 elements are 'swap, no swap, no swap, no swap, swap',
+    // it should return '{ 1 -> 0, 2 -> 1, 3 -> 2 }
+    const d = {} as { [key: string]: number }
+    for (let i = 0; i < steps.length; i++) {
+      if (typeof (steps[i]).swapRow !== 'undefined') {
+        continue;
+      }
+
+      const step = steps[i]
+
+      d[i as unknown as string] = stepsWithoutSwaps.indexOf(step)
+    }
+    console.log('%cStep indexes to indexes without swaps:', 'color:red;font-size:30px;', d);
+    const counts: number[] = [];
+    let swapIndex = 0; // Tracks the i-th swap step
+
+    setStepsSwapsIndexes(d);
+  }, [steps.length]);
+
+  const handleClickUp = (e: MouseEvent<SVGSVGElement>) => {
+    const index = Array.from(document.getElementsByClassName('svg-up')).indexOf(e.target as HTMLElement) + 1
+    document.getElementById(`step-${index - 1}`)?.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  const handleClickDown = (e: MouseEvent<SVGSVGElement>) => {
+    const index = Array.from(document.getElementsByClassName('svg-down')).indexOf(e.target as HTMLElement) + 1
+    document.getElementById(`step-${index + 1}`)?.scrollIntoView({ behavior: 'smooth' });
+  }
 
   useEffect(() => {
     console.log('recalculating function');
@@ -124,8 +145,8 @@ const Determinant: FC = () => {
   }, [])
 
   useEffect(() => {
-    console.log('is open in determinant:', isOpen);
-  }, [isOpen])
+    console.log('%cnew actual counts:', 'color:green', actualCounts);
+  }, [actualCounts.length])
 
   useEffect(() => {
     console.log('aIsFilled in determinant:', isOpen);
@@ -141,24 +162,39 @@ const Determinant: FC = () => {
         <div ref={solutionStepsRef}>
           {toShowSolution && (
             <div className='mb-7'>
-              <div className='border-b-darkgray'>
+              <div id='step-1' className='row-v px-3 border-b-darkgray'>
+                <ScrollWithSVGs handleClickUp={handleClickUp} handleClickDown={handleClickDown} aCols={aDim[1]} isFirst />
                 <MatrixTable nRows={aDim[0]} nCols={aDim[1]} A={A} />
               </div>
               {steps.map((step, index) => (
-                <div className='pt-2 pb-3 border-b-darkgray' key={index}>
-                  <p>{getStepText(step, index + 1)}</p>
-                  <MatrixTable
-                    nRows={step.A.length}
-                    nCols={step.A[0].length}
-                    A={step.A}
-                    toHighlight={(row = index, col = 0) => getHighlight(step, index, row, col)}
-                  />
+                <div id={`step-${index + 2}`} className='pt-2 pb-3 border-b-darkgray' key={index}>
+                  <p>{getStepText(step, index)}</p>
+                  {!steps[index].swapRow && (
+                    <div className='mt-3'>
+                      {step.stepsExplanations.map((explanation, index) => (
+                        <p key={index}>{explanation}</p>
+                      ))}
+                    </div>
+                  )}
+                  <p className={`${steps[index].swapRow && 'hidden'}`}></p>
+                  <div className='row-v px-3'>
+                    <ScrollWithSVGs handleClickUp={handleClickUp} handleClickDown={handleClickDown} aCols={aDim[1]} />
+                    <MatrixTable
+                      nRows={step.A.length}
+                      nCols={step.A[0].length}
+                      A={step.A}
+                      toHighlight={(row = index, col = 0) => getHighlight(step, index, row, col)}
+                    />
+                  </div>
                 </div>
               ))}
-              <div className='pt-2'>
+              <div id={`step-${steps.length + 2}`} className='pt-2'>
                 <p>Multiply the main diagonal elements</p>
                 <p>Sign: {steps[steps.length - 1].sign}</p>
-                <MatrixTable nRows={aDim[0]} nCols={aDim[1]} A={steps[steps.length - 1].A} toHighlight={(row, col) => row === col} />
+                <div className='row-v px-3'>
+                  <ScrollWithSVGs handleClickUp={handleClickUp} handleClickDown={handleClickDown} aCols={aDim[1]} isLast />
+                  <MatrixTable nRows={aDim[0]} nCols={aDim[1]} A={steps[steps.length - 1].A} toHighlight={(row, col) => row === col} />
+                </div>
                 <p>Δ = {steps[steps.length - 1].sign === '-' && '-'}{getMultiplyEquation()}</p>
               </div>
             </div>

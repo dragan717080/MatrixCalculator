@@ -65,7 +65,7 @@ const MatrixModal: FC = () => {
     }
   }
 
-  /** Update the state with one new value immutably */
+  /** Update the state with one new value immutably. */
   const updateValue = (row: number, col: number, value: number, isA = true) => {
     const matrix = isA ? A : B;
     console.log('is a:', isA);
@@ -119,6 +119,7 @@ const MatrixModal: FC = () => {
 
     const disableFunc = isA ? setIsADisabled : setIsBDisabled
     const fillFunc = isA ? setAIsFilled : setBIsFilled
+    const inputCells = isA ? inputCellsA : inputCellsB
 
     if (newChar === '.') {
       dotsCount--;
@@ -157,7 +158,13 @@ const MatrixModal: FC = () => {
     if (isNum || firstCharIsNegative || newChar === '.' || e.target.value === '') {
       console.log('UPDATING');
       updateValue(row, col, e.target.value as unknown as number, isA);
-      disableFunc(false)
+      console.log(inputCellsA);
+      console.log(inputCells.map(x => x.value === '-'));
+      if (inputCells.every(x => x.value !== '-')) {
+        disableFunc(false)
+      } else {
+        fillFunc(false)
+      }
     } else {
       // Prevent the input from updating if it's invalid
       console.log('NOT UPDATING');

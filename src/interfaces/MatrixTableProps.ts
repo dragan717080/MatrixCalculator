@@ -9,4 +9,5 @@ export default interface MatrixTableProps {
   nCols: number
   A: Matrix,
   toHighlight? : HighlightCells
+  className?: string
 }
