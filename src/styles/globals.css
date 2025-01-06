@@ -341,3 +341,8 @@ ol {
     border-bottom-width: 1px;
     border-bottom-color: #1F1D20;
 }
+
+.svg-up, .svg-down {
+    fill: #006CBC;
+    cursor: pointer;
+}
