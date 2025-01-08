@@ -11,36 +11,52 @@
 html,
 body {
     height: 100%;
-}
-
-@font-face {
-    font-family: 'Countach';
-    src: url('../../assets/fonts/Countact-Regular.otf') format('opentype'),
-}
-
-@font-face {
-    font-family: 'Tilda Petite';
-    src: url('../../assets/fonts/Tilda-Petite.ttf') format('truetype'),
-}
-
-@font-face {
-    font-family: 'Heading Pro Trial';
-    src: url('../../assets/fonts/heading-pro-trial/Heading-Pro-Book.ttf') format('truetype'),
+    font-family: 'Poppins', 'Countach', 'Copperplate Gothic', 'Inter', 'sans-serif';
 }
 
 @font-face {
     font-family: 'Copperplate Gothic';
-    src: url('../../assets/fonts/copperplate-gothic/Copperplate-Gothic-Regular.ttf') format('truetype'),
+    src: url('../assets/fonts/Copperplate-Gothic/Copperplate-Gothic-Medium-Regular.ttf') format('truetype'),
 }
 
 @font-face {
-    font-family: 'Bembo';
-    src: url('../../assets/fonts/bembo/Bembo Regular.otf') format('opentype'),
+    font-family: 'Copperplate Gothic Light';
+    src: url('../assets/fonts/Copperplate Gothic/Copperplate-Gothic-Light-Regular.ttf') format('truetype'),
 }
 
 @font-face {
-    font-family: 'Bembo Semibold Regular';
-    src: url('../../assets/fonts/bembo/Bembo Semibold Regular.otf') format('opentype'),
+    font-family: 'Copperplate Gothic Bold';
+    src: url('../assets/fonts/Copperplate-Gothic/Copperplate-Gothic-Medium-Bold.ttf') format('truetype'),
+}
+
+@font-face {
+    font-family: 'Countach';
+    src: url('../assets/fonts/Countach/Countach-Regular.otf') format('opentype'),
+}
+
+@font-face {
+    font-family: 'Countach Bold';
+    src: url('../assets/fonts/Countach/Countach-Bold.otf') format('opentype'),
+}
+
+@font-face {
+    font-family: 'Inconsolata';
+    src: url('../assets/fonts/Inconsolata/Inconsolata-Regular.ttf') format('truetype'),
+}
+
+@font-face {
+    font-family: 'Inconsolata Light';
+    src: url('../assets/fonts/Inconsolata/Inconsolata-Light.ttf') format('truetype'),
+}
+
+@font-face {
+    font-family: 'Inconsolata';
+    src: url('../assets/fonts/Inconsolata/Inconsolata-Bold.ttf') format('truetype'),
+}
+
+@font-face {
+    font-family: 'Poppins';
+    src: url('../assets/fonts/Poppins/Poppins-Regular.ttf') format('truetype'),
 }
 
 @layer base {
@@ -100,29 +116,32 @@ body {
     font-style: normal;
 }
 
-.tilda-petite {
-    font-family: 'Tilda Petite', sans-serif;
-    font-weight: 400;
+.countach-bold {
+    font-family: 'Countach Bold', sans-serif;
 }
 
-.heading-pro-trial {
-    font-family: 'Heading Pro Trial', sans-serif;
-    font-weight: 400;
-}
-
-.copperplate-gothic {
+.copperplate {
     font-family: 'Copperplate Gothic', sans-serif;
-    font-weight: 400;
 }
 
-.bembo {
-    font-family: 'Bembo Regular', sans-serif;
-    font-weight: 400;
+.copperplate-light {
+    font-family: 'Copperplate Gothic Light', sans-serif;
 }
 
-.bembo-semibold {
-    font-family: 'Bembo Semibold Regular', sans-serif;
-    font-weight: 400;
+.copperplate-bold {
+    font-family: 'Copperplate Gothic Bold', sans-serif;
+}
+
+.inconsolata {
+    font-family: 'Inconsolata', sans-serif;
+}
+
+.inconsolata-light {
+    font-family: 'Inconsolata', sans-serif;
+}
+
+.inconsolata-bold {
+    font-family: 'Inconsolata Bold', sans-serif;
 }
 
 .glass-card {
@@ -197,15 +216,15 @@ body::-webkit-scrollbar-thumb {
 }
 
 .navbar-portal-content {
-    border: 1px solid #ccc;
+    min-width: 11.5rem;
+    border-top: none;
     position: fixed;
     border-radius: 0.5rem;
     padding: 10px;
     -webkit-animation: fade-in-from-none 0.6s ease-in-out;
     animation: fade-in-from-none 0.6s ease-in-out;
     z-index: 40;
-    background: white;
-    color: #4B5563;
+    background: #006CBC;
 }
 
 /* Frame around the entire content */
@@ -271,6 +290,10 @@ ol {
 }
 
 /* Table */
+table {
+    font-family: 'Inconsolata', sans-serif;
+}
+
 .matrix-table {
     /* Width same regardless of text */
     table-layout: fixed;
