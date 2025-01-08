@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import DropdownMenu, { IMenuOption } from './Atoms/DropdownMenu'
 import { FiLogOut, FiEdit, FiEdit2 } from 'react-icons/fi'
 import { Link, useNavigate } from 'react-router-dom'
@@ -59,21 +59,6 @@ export default function DashNavbar() {
               </Link>
               <div className="hidden sm:ml-6 sm:block">
                 <div className="flex space-x-4 h-16">
-                  {/*                   {navigation.map((item) => (
-                    <Link
-                      key={item.name}
-                      to={item.href}
-                      className={classNames(
-                        item.current
-                          ? 'bg-gray-900 text-white'
-                          : 'text-gray-300 hover:bg-gray-700 hover:text-white',
-                        'px-3 py-2 rounded-md text-sm font-medium'
-                      )}
-                      aria-current={item.current ? 'page' : undefined}
-                    >
-                      {item.name}
-                    </Link>
-                  ))} */}
                   {navigation.map((toolbarComponent, index: number) => (
                     <div className='h-full row-v navbar-item-container' key={toolbarComponent.name}>
                       <div
@@ -96,19 +81,10 @@ export default function DashNavbar() {
                 </div>
               </div>
             </div>
-            <div className="absolute gap-4 inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-              <button
-                type="button"
-                className="rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-              >
-                <span className="sr-only">View notifications</span>
-                <BellIcon className="h-6 w-6" aria-hidden="true" />
-              </button>
-            </div>
           </div>
         </div>
 
-        <Disclosure.Panel className="sm:hidden">
+        <Disclosure.Panel className="sm:hidden relative z-10 bg-deepazure">
           <div className="px-2 pt-2 pb-3 flex flex-col gap-1">
             {navigation.map((item) => (
               <Link key={item.name} to={item.href}>

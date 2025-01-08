@@ -2,8 +2,8 @@ import { FC } from 'react';
 
 const MatrixOperationsToolbar: FC = () => {
   return (
-    <div>Matrix Operations 🔥
-      <ul>
+    <div>
+      <ul className='bg-deepazure'>
         <li><a href='/multiplication'>Matrix Multiplication</a></li>
         <li><a href='/addition-substraction'>Matrix Addition/Subtraction</a></li>
         <li><a href='/transpose'>Matrix Transpose</a></li>
