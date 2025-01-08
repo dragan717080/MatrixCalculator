@@ -160,13 +160,16 @@ const Multiplication: FC = () => {
               </button>
               <button onClick={() => recalculate()} className='btn'>Recalculate</button>
             </div>
-            <section className={!toShowSolution ? 'pt-6' : 'pt-2'}>
-              <div className='w-full flex'>
-                <span className='ml-auto pt-2'>
-                  Computation time: <span>{time}</span>sec.
-                </span>
-              </div>
-            </section>
+            {steps.length && (
+              <section>
+                <MatrixTable nRows={aDim[0]} nCols={aDim[1]} A={steps[steps.length - 1].A} />
+                <div className='w-full flex'>
+                  <span className='ml-auto pt-2'>
+                    Computation time: <span>{time}</span>sec.
+                  </span>
+                </div>
+              </section>
+            )}
           </>
         )}
       </div>

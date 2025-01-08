@@ -145,7 +145,7 @@ const getDotProduct = (
     }
   }
 
-  explanation += ` = ${sum}`
+  explanation += ` = ${Math.round(sum * 1000) / 1000}`
 
   console.log('\nvalue of element at row', i, 'col', j, ':', sum, '\n')
   console.log(`Explanation for ${i} ${j}: ${explanation}`);
