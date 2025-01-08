@@ -1,7 +1,7 @@
 import Matrix from "./Matrix"
 
 type HighlightCells = {
-  (row: number, col: number): boolean
+  (row: number, col: number, index?: number): boolean
 };
 
 export default interface MatrixTableProps {
@@ -10,4 +10,6 @@ export default interface MatrixTableProps {
   A: Matrix,
   toHighlight? : HighlightCells
   className?: string
+  index?: number
+  letter?: string
 }

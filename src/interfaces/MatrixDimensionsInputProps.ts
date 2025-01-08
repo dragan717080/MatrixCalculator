@@ -7,4 +7,6 @@ type MinValue = 1 | 2
 export default interface MatrixDimensionsInputProps {
   minValue: MinValue
   isSquare?: boolean
+  isPower?: boolean
+  isMultiplication?: boolean
 }

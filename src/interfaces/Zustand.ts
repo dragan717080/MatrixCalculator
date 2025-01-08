@@ -16,6 +16,8 @@ export interface MatrixStore {
   // Whether only `A` matrix is active or both `A` and `B`
   isOnlyA: boolean;
   setIsOnlyA: (value: boolean) => void;
+  calculate: any;
+  setCalculate: (value: any) => any;
   aDim: TwoNumbers;
   setADim: (value: TwoNumbers) => void;
   A: Matrix;
@@ -28,6 +30,8 @@ export interface MatrixStore {
   setB: (value: Matrix) => void;
   bIsFilled: boolean;
   setBIsFilled: (value: boolean) => void;
-  calculate: any;
-  setCalculate: (value: any) => any;
+  power: number;
+  setPower: (value: number) => void;
+  isMultiplication: boolean;
+  setIsMultiplication: (value: boolean) => void;
 }
