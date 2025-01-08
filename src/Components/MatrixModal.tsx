@@ -158,8 +158,8 @@ const MatrixModal: FC = () => {
     if (isNum || firstCharIsNegative || newChar === '.' || e.target.value === '') {
       console.log('UPDATING');
       updateValue(row, col, e.target.value as unknown as number, isA);
-      console.log(inputCellsA);
-      console.log(inputCells.map(x => x.value === '-'));
+      //console.log(inputCellsA);
+      //console.log(inputCells.map(x => x.value === '-'));
       if (inputCells.every(x => x.value !== '-')) {
         disableFunc(false)
       } else {
@@ -184,7 +184,7 @@ const MatrixModal: FC = () => {
 
     if (!isOnlyA) {
       console.log('old B in modal before calculate:', B)
-      const newB = updateValuesForMatrix()
+      const newB = updateValuesForMatrix(false)
       console.log('new B in modal after calculate:', newB)
       setB(newB)
     }
