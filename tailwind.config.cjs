@@ -5,6 +5,7 @@ module.exports = {
     extend: {
       colors: {
         dark: '#1F2937',
+        deepazure: '#006CBC',
         lightblue: '#4FA8C4',
         primary: '#FF9519',
         gray: {
@@ -14,7 +15,7 @@ module.exports = {
         },
         neutral: {
           150: '#EFEFEF',
-        }
+        },
       },
       lineHeight: {
         '6.5': '1.625rem',
