@@ -1,7 +1,8 @@
-import React, { FC, MouseEvent, useEffect, useMemo, useRef, useState } from 'react'
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import MatrixDimensionsInput from '../Atoms/MatrixDimensionsInput'
 import MatrixTable from '../Atoms/MatrixTable'
 import getDeterminant from '../../lib/getDeterminant'
+import { wait } from '../../lib/utils'
 import { useMatrixStore, useModalStore } from '../../store/zustandStore'
 import { Step } from '../../interfaces/Determinant'
 import ScrollWithSVGs from '../Atoms/ScrollWithSVGs'
@@ -11,7 +12,7 @@ const Determinant: FC = () => {
     setIsOnlyA,
     setCalculate,
     aDim, setADim, A, setA, aIsFilled, setAIsFilled,
-    setBIsFilled
+    setBDim, setB, setBIsFilled
   } = useMatrixStore()
   const { isOpen } = useModalStore()
 
@@ -66,11 +67,10 @@ const Determinant: FC = () => {
 
       const value = Number.isInteger(x) ? x : x!.toFixed(3)
       return (value as number)! >= 0 ? String(value) : `(${value})`
-      //
     })
-    //console.log('str values:', strValues);
+
     const equation = strValues.join(' X ')
-    //console.log('equation', equation);
+
     return `${equation} = ${determinant}`
   }
 
@@ -114,21 +114,25 @@ const Determinant: FC = () => {
       d[i as unknown as string] = stepsWithoutSwaps.indexOf(step)
     }
     console.log('%cStep indexes to indexes without swaps:', 'color:red;font-size:30px;', d);
-    const counts: number[] = [];
-    let swapIndex = 0; // Tracks the i-th swap step
-
     setStepsSwapsIndexes(d);
   }, [steps.length]);
 
-  const handleClickUp = (e: MouseEvent<SVGSVGElement>) => {
-    const index = Array.from(document.getElementsByClassName('svg-up')).indexOf(e.target as HTMLElement) + 1
-    document.getElementById(`step-${index - 1}`)?.scrollIntoView({ behavior: 'smooth' });
-  }
-
-  const handleClickDown = (e: MouseEvent<SVGSVGElement>) => {
-    const index = Array.from(document.getElementsByClassName('svg-down')).indexOf(e.target as HTMLElement) + 1
-    document.getElementById(`step-${index + 1}`)?.scrollIntoView({ behavior: 'smooth' });
-  }
+  const toggleShowSolution = useCallback(async () => {
+    console.log('before toggle:', solutionStepsRef.current!)
+    console.log('show original before toggle:', toShowSolution)
+    if (!toShowSolution) {
+      solutionStepsRef.current!.classList.remove('hidden')
+      solutionStepsRef.current!.classList.add('fade-in-table')
+      solutionStepsRef.current!.classList.remove('fade-out-table')
+    } else {
+      solutionStepsRef.current!.classList.remove('fade-in-table')
+      solutionStepsRef.current!.classList.add('fade-out-table')
+      await wait(700)
+      solutionStepsRef.current!.classList.add('hidden')
+    }
+    console.log('after toggle:', solutionStepsRef.current!)
+    setToShowSolution(!toShowSolution)
+  }, [toShowSolution])
 
   useEffect(() => {
     console.log('recalculating function');
@@ -139,18 +143,18 @@ const Determinant: FC = () => {
   }, [aIsFilled]);
 
   useEffect(() => {
-    setAIsFilled(false)
-    setBIsFilled(false)
     setIsOnlyA(true)
+    setADim([0, 0])
+    setA([])
+    setAIsFilled(false)
+    setBDim([0, 0])
+    setB([])
+    setBIsFilled(false)
   }, [])
 
   useEffect(() => {
     console.log('%cnew actual counts:', 'color:green', actualCounts);
   }, [actualCounts.length])
-
-  useEffect(() => {
-    console.log('aIsFilled in determinant:', isOpen);
-  }, [aIsFilled])
 
   useEffect(() => {
     console.log('new steps:', steps);
@@ -163,11 +167,11 @@ const Determinant: FC = () => {
           {toShowSolution && (
             <div className='mb-7'>
               <div id='step-1' className='row-v px-3 border-b-darkgray'>
-                <ScrollWithSVGs handleClickUp={handleClickUp} handleClickDown={handleClickDown} aCols={aDim[1]} isFirst />
+                <ScrollWithSVGs aCols={aDim[1]} isFirst />
                 <MatrixTable nRows={aDim[0]} nCols={aDim[1]} A={A} />
               </div>
               {steps.map((step, index) => (
-                <div id={`step-${index + 2}`} className='pt-2 pb-3 border-b-darkgray' key={index}>
+                <div id={`step-${index + 1}`} className='pt-2 pb-3 border-b-darkgray' key={index}>
                   <p>{getStepText(step, index)}</p>
                   {!steps[index].swapRow && (
                     <div className='mt-3'>
@@ -178,7 +182,7 @@ const Determinant: FC = () => {
                   )}
                   <p className={`${steps[index].swapRow && 'hidden'}`}></p>
                   <div className='row-v px-3'>
-                    <ScrollWithSVGs handleClickUp={handleClickUp} handleClickDown={handleClickDown} aCols={aDim[1]} />
+                    <ScrollWithSVGs aCols={aDim[1]} />
                     <MatrixTable
                       nRows={step.A.length}
                       nCols={step.A[0].length}
@@ -192,42 +196,51 @@ const Determinant: FC = () => {
                 <p>Multiply the main diagonal elements</p>
                 <p>Sign: {steps[steps.length - 1].sign}</p>
                 <div className='row-v px-3'>
-                  <ScrollWithSVGs handleClickUp={handleClickUp} handleClickDown={handleClickDown} aCols={aDim[1]} isLast />
+                  <ScrollWithSVGs aCols={aDim[1]} isLast />
                   <MatrixTable nRows={aDim[0]} nCols={aDim[1]} A={steps[steps.length - 1].A} toHighlight={(row, col) => row === col} />
                 </div>
                 <p>Δ = {steps[steps.length - 1].sign === '-' && '-'}{getMultiplyEquation()}</p>
               </div>
             </div>
           )}
-          <div className='row text-white space-x-5 mb-5'>
-            <button onClick={() => setToShowSolution(!toShowSolution)} className='btn'>
-              {toShowSolution ? 'Hide' : 'Show'} solution
-            </button>
-            <button onClick={() => recalculate()} className='btn'>Recalculate</button>
-          </div>
         </div>
       )}
       <div className={`${isOpen || aIsFilled ? 'hidden' : 'block'}`}>
+        <h3 className='bold'>Determinant</h3>
         <p>
           Here you can calculate a determinant of a matrix with complex numbers online for free with a very detailed solution. Determinant is calculated by reducing a matrix to row echelon form and multiplying its main diagonal elements.
         </p>
         <MatrixDimensionsInput minValue={2} isSquare={true} />
       </div>
-      <section className='pt-6'>
-        {typeof (determinant) !== 'undefined' && (
-          <>
-            <h3 className='bold'>Result</h3>
-            <p>Δ = {determinant}</p>
-          </>
-        )}
-        {time > -1 && (
-          <div className='w-full flex'>
-            <span className='mt-2 ml-auto'>
-              Computation time: <span>{time}</span>sec.
-            </span>
+      {aIsFilled && !isOpen && (
+        <>
+          <div className={`
+          ${toShowSolution ? 'mt-7 md:mt-10 mb-4 md:mb-6' : 'mt-3 mb-1'}
+          row text-white space-x-5
+        `}>
+            <button
+              onClick={() => toggleShowSolution()}
+              className='btn'
+            >
+              {!toShowSolution ? 'Show' : 'Hide'} solution
+            </button>
+            <button onClick={() => recalculate()} className='btn'>Recalculate</button>
           </div>
-        )}
-      </section>
+          <section className={!toShowSolution ? 'pt-6' : 'pt-2'}>
+            {typeof (determinant) !== 'undefined' && (
+              <>
+                <h3 className='bold mb-2'>Result</h3>
+                <p>Δ = {determinant}</p>
+              </>
+            )}
+            <div className='w-full flex'>
+              <span className='ml-auto pt-2'>
+                Computation time: <span>{time !== - 1 ? time : '0.000'}</span>sec.
+              </span>
+            </div>
+          </section>
+        </>
+      )}
     </div>
   )
 }

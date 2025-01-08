@@ -169,11 +169,8 @@ const eliminateValues = (
 
     const coef = A[i][col]! / pivot!;
 
-    console.log('old coef:', coef, 'new coef:', Math.abs(Number.isInteger(coef) ? coef : parseFloat(coef?.toFixed(3).replace(/(\.\d*?[1-9])0+$|\.0+$/, '$1'))));
-    console.log('will push to steps:', `R${i + 1} = R${i + 1} ${coef < 0 ? '+' : '-'} ${[-1, 1].includes(coef) ? Math.abs(coef) : ''}R${col + 1}`);
-
     stepsExplanations.push(`R${i + 1} = R${i + 1} ${coef < 0 ? '+' : '-'} ${![-1, 1].includes(coef) ? Math.abs(Number.isInteger(coef) ? coef : parseFloat(coef?.toFixed(3).replace(/(\.\d*?[1-9])0+$|\.0+$/, '$1'))) : ''}R${col + 1}`)
-    console.log('new steps:', stepsExplanations);
+
     for (let j = col; j < A.length; j++) {
       A[i][j]! -= A[col][j]! * coef;
     }

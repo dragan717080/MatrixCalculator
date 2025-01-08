@@ -1,7 +1,8 @@
 import React, { FC, useEffect, useRef, useState } from 'react'
 import MatrixDimensionsInput from '../Atoms/MatrixDimensionsInput'
 import MatrixTable from '../Atoms/MatrixTable';
-import { useMatrixStore, useModalStore } from '../../store/zustandStore';
+import { wait } from '../../lib/utils';
+import { useMatrixStore, useModalStore } from '../../store/zustandStore'
 import Matrix from '../../interfaces/Matrix';
 
 const Transpose: FC = () => {
@@ -33,8 +34,6 @@ const Transpose: FC = () => {
     setC(transposed)
   }
 
-  const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
-
   const toggleShowOriginalMatrix = async () => {
     console.log('before toggle:', showOriginalRef.current!)
     console.log('show original before toggle:', showOriginalMatrix)
@@ -58,7 +57,7 @@ const Transpose: FC = () => {
       setC(A)
       setCalculate(calculateResult)
     }
-  }, [aIsFilled])
+  }, [A, aIsFilled])
 
   useEffect(() => {
     setAIsFilled(false)
@@ -76,7 +75,7 @@ const Transpose: FC = () => {
   return (
     <div>
       <MatrixTable ref={showOriginalRef} nRows={aRows} nCols={aCols} A={A} className='hidden' />
-      {aIsFilled && (
+      {aIsFilled && !isOpen && (
         <div className='row text-white space-x-5'>
           <button className='btn' onClick={() => toggleShowOriginalMatrix()}>
             {!showOriginalMatrix ? 'Show' : 'Hide'} matrix
@@ -84,19 +83,21 @@ const Transpose: FC = () => {
           <button onClick={() => recalculate()} className='btn'>Recalculate</button>
         </div>
       )}
-      <MatrixDimensionsInput minValue={2} />
       <div>
-        <h3 className='bold'>About the method</h3>
-        The algorithm of matrix transpose is pretty simple.
-        <ul>
-          <li>A new matrix is obtained the following way: each [i, j] element of the new matrix gets the value of the [j, i] element of the original one.</li>
-          <li>Dimension also changes to the opposite. For example if you transpose a 'n' x 'm' size matrix you'll get a new one of 'm' x 'n' dimension.</li>
-        </ul>
-        To understand transpose calculation better input any example and examine the solution.
+        <div className={`${isOpen || aIsFilled ? 'hidden' : 'block'}`}>
+          <h3 className='bold'>Transpose</h3>
+          The algorithm of matrix transpose is pretty simple.
+          <ul>
+            <li>A new matrix is obtained the following way: each [i, j] element of the new matrix gets the value of the [j, i] element of the original one.</li>
+            <li>Dimension also changes to the opposite. For example if you transpose a 'n' x 'm' size matrix you'll get a new one of 'm' x 'n' dimension.</li>
+          </ul>
+          To understand transpose calculation better input any example and examine the solution.
+          <MatrixDimensionsInput minValue={2} />
+        </div>
         {!isOpen && C.length && aIsFilled && (
           <section className='py-5'>
-            <h3 className='bold'>Result</h3>
-            <div className="mt-2">
+            <h3 className='bold mb-2'>Result</h3>
+            <div className=''>
               <MatrixTable nRows={cRows} nCols={cCols} A={C} />
             </div>
             {time > -1 && (
