@@ -215,8 +215,8 @@ const Determinant: FC = () => {
       {aIsFilled && !isOpen && (
         <>
           <div className={`
-          ${toShowSolution ? 'mt-7 md:mt-10 mb-4 md:mb-6' : 'mt-3 mb-1'}
-          row text-white space-x-5
+            ${toShowSolution ? 'mt-7 md:mt-10 mb-4 md:mb-6' : 'mt-3 mb-1'}
+            row text-white space-x-5
         `}>
             <button
               onClick={() => toggleShowSolution()}
