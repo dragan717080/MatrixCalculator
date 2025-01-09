@@ -1,6 +1,7 @@
 export type TwoNumbers = [number, number];
 
-export type MatrixElement = number|undefined
+/** Also allows strings, for input values. */
+export type MatrixElement = string|number|undefined
 
 type Matrix = Array<MatrixElement[]>
 
