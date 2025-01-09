@@ -1,9 +1,10 @@
 import { FC, ChangeEvent, MouseEvent, memo, useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { addError, clearErrors, errorsReducer, removeError } from '../lib/MatrixTextInsertReducer';
 import useUpdateValuesForMatrix from '../lib/updateValuesForMatrix';
-import { isInputNumeric } from '../lib/utils';
+import { isStringNumeric } from '../lib/utils';
 import { useMatrixStore, useModalStore } from '../store/zustandStore';
 import MatrixTextInsertProps, { ErrorsAction, ErrorsState } from '../interfaces/MatrixTextInsertProps';
+import Matrix from '../interfaces/Matrix';
 
 const MatrixTextInsert: FC<MatrixTextInsertProps> = ({
   setIsInserting,
@@ -11,26 +12,35 @@ const MatrixTextInsert: FC<MatrixTextInsertProps> = ({
 }) => {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null)
 
-  const { aDim, A, setA, bDim, B, setB } = useMatrixStore()
+  const { updateValuesForMatrix } = useUpdateValuesForMatrix()
+  const { aDim, A, setA, setAIsFilled, bDim, B, setB, setBIsFilled } = useMatrixStore()
 
   const [errors, dispatch] = useReducer(errorsReducer, {});
 
   const [wrongRowsCountError, setWrongRowsCountError] = useState<string>('')
   const [wrongColsCountError, setWrongColsCountError] = useState<string>('')
   console.log('%cIN INSERT', 'font-size:40px');
+  console.log('isA:', isA);
+  
 
   const nRows = isA ? aDim[0] : bDim[0]
   const nCols = isA ? aDim[1] : bDim[1]
 
   const handleContinue = useCallback(
-    async (e: MouseEvent<HTMLButtonElement>, isA = true) => {
+    async (e: MouseEvent<HTMLButtonElement>) => {
       e.preventDefault()
       console.log('expected rows:', nRows, 'expected cols:', nCols);
       clearErrors(dispatch)
 
       // Trim each row
       const rows = textareaRef.current!.value.split('\n').map(row => row.trim())
-      console.log('rows:', rows);
+      console.log('rows:', rows)
+      let hasWrongNumbers = false
+
+      // If the last row is empty, delete it
+      if (rows[rows.length - 1] === '') {
+        rows.pop()
+      }
 
       // Will be changed later if errors
       setWrongColsCountError('')
@@ -43,6 +53,8 @@ const MatrixTextInsert: FC<MatrixTextInsertProps> = ({
         setWrongRowsCountError('')
       }
 
+      let newMatrix: Matrix = []
+
       for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
         const row = rows[rowIndex];
         console.log('Text row:', row, 'index:', rowIndex);
@@ -53,25 +65,41 @@ const MatrixTextInsert: FC<MatrixTextInsertProps> = ({
           setWrongColsCountError(`Matrix ${isA ? 'A' : 'B'} has ${nCols} columns but your row ${rowIndex + 1} has ${wordsInRow.length}`)
           return
         }
+
+        newMatrix.push([])
+
         console.log('Words in row:', wordsInRow);
         for (const word of wordsInRow) {
           console.log('Row:', rowIndex, 'word:', word);
 
-          if (!isInputNumeric(word)) {
+          if (!isStringNumeric(word)) {
             console.log('word is not numeric');
             console.log(rowIndex in errors);
             console.log(errors);
             addError(dispatch, rowIndex, word)
             console.log('new errors:', errors);
+            hasWrongNumbers = true
+          } else {
+            newMatrix[rowIndex].push(word)
           }
         }
       }
-      console.log('still');
+
       setWrongColsCountError('')
       console.log('NEW ERRORS:', errors);
-      if (!wrongRowsCountError && !wrongColsCountError && !Object.keys(errors).length) {
+      if (!wrongRowsCountError && !wrongColsCountError && !hasWrongNumbers) {
         console.log('ALL IS OK!');
-        //setIsInsertingA(false)
+        console.log('errors:', errors);
+        
+        newMatrix = updateValuesForMatrix(isA, newMatrix)
+        console.log('new matrix:', newMatrix);
+        const fillFunc = isA ? setAIsFilled : setBIsFilled
+
+        const setMatrixFunc = isA ? setA : setB
+        console.log('is a:', isA);
+        setMatrixFunc(newMatrix)
+        fillFunc(true)
+        setIsInserting(false)
       }
     }, [aDim, bDim, errors])
 

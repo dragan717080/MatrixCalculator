@@ -1,5 +1,7 @@
-import { FC, ChangeEvent, Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
+import { FC, ChangeEvent, MouseEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import MatrixTextInsert from './MatrixTextInsert';
 import useUpdateValuesForMatrix from '../lib/updateValuesForMatrix';
+import { isStringNumeric } from '../lib/utils';
 import { useMatrixStore, useModalStore } from '../store/zustandStore';
 
 const MatrixModal: FC = () => {
@@ -11,12 +13,20 @@ const MatrixModal: FC = () => {
   } = useMatrixStore()
   const { isOpen, setIsOpen } = useModalStore()
   const { updateValuesForMatrix } = useUpdateValuesForMatrix()
+
   const [aRows, aCols] = aDim
   const [bRows, bCols] = bDim
+
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null)
+
   const [inputCellsA, setInputCellsA] = useState<HTMLInputElement[]>([])
   const [inputCellsB, setInputCellsB] = useState<HTMLInputElement[]>([])
   const [isADisabled, setIsADisabled] = useState<boolean>(false)
   const [isBDisabled, setIsBDisabled] = useState<boolean>(false)
+  const [isInsertingA, setIsInsertingA] = useState<boolean>(false)
+  const [isInsertingB, setIsInsertingB] = useState<boolean>(false)
+  // Keep track for case that both text inserts are open simultaneously, set to false on first render
+  const [hasOpenedBefore, setHasOpenedBefore] = useState<boolean>(false)
 
   const allIsFilled = useMemo(() => {
     return isOnlyA ? aIsFilled : aIsFilled && bIsFilled;
@@ -39,12 +49,44 @@ const MatrixModal: FC = () => {
     const matrix = isA ? A : B;
     const nCols = isA ? aCols : bCols;
 
-    const inputCells = isA ? inputCellsA! : inputCellsB!;
+    let inputCells = isA ? inputCellsA! : inputCellsB!;
     console.log('There are', inputCells.length, 'input elements');
+    console.log('matrix in fill:', matrix);
+
+    if (!inputCells.length && !hasOpenedBefore) {
+      console.log('%cIS A:', 'color:red;font-size:22px', isA);
+      console.log('has opened before:', hasOpenedBefore);
+      console.log('is inserting A:', isInsertingA);
+      console.log('is inserting B:', isInsertingB);
+      console.log(`${isA ? 'A' : 'B'} has no input cells, will early return`);
+      return
+    }
+
+    if (!inputCells.length) {
+      const newAInputCells = Array.from(document.getElementsByClassName('cell-a') as HTMLCollectionOf<HTMLInputElement>)
+      const newBInputCells = Array.from(document.getElementsByClassName('cell-b') as HTMLCollectionOf<HTMLInputElement>)
+      inputCells = isA ? newAInputCells : newBInputCells
+    }
+
+    // In case it was in insert matrix, input cells will not be in DOM
+    const { width: cellWidth } = inputCells[0].getBoundingClientRect()
+    console.log('cell width:', cellWidth);
+
+    if (cellWidth === 0) {
+      console.log('resetting input cells');
+      const newAInputCells = Array.from(document.getElementsByClassName('cell-a') as HTMLCollectionOf<HTMLInputElement>)
+      const newBInputCells = Array.from(document.getElementsByClassName('cell-b') as HTMLCollectionOf<HTMLInputElement>)
+      setInputCellsA(newAInputCells);
+      setInputCellsB(newBInputCells);
+      inputCells = isA ? newAInputCells : newBInputCells
+    }
 
     inputCells.forEach((inputCell, index) => {
       const row = Math.floor(index / nCols);
       const col = index - row * nCols;
+
+      console.log('cell', inputCell);
+      console.log('new value of cell:', matrix[row][col]);
 
       if (matrix.length === 0) {
         inputCell.value = ''
@@ -75,7 +117,7 @@ const MatrixModal: FC = () => {
     const func = isA ? setA : setB;
     console.log('A:', A);
     console.log('new matrix in update value:', newMatrix);
-    console.log('new value:', value, typeof(value));
+    console.log('new value:', value, typeof (value));
 
     // Make a copy of the row that we want to modify
     const updatedRow = [...newMatrix[row]];
@@ -132,8 +174,7 @@ const MatrixModal: FC = () => {
       }
     }
 
-    const pattern = /^[\+\-]?\d*\.?\d+(?:[Ee][\+\-]?\d+)?$/;
-    const isNum = pattern.test(e.target.value);
+    const isNum = isStringNumeric(e.target.value);
     console.log('is num:', isNum);
 
     const isNegativeInput = newChar === '-'
@@ -158,8 +199,7 @@ const MatrixModal: FC = () => {
     if (isNum || firstCharIsNegative || newChar === '.' || e.target.value === '') {
       console.log('UPDATING');
       updateValue(row, col, e.target.value as unknown as number, isA);
-      //console.log(inputCellsA);
-      //console.log(inputCells.map(x => x.value === '-'));
+
       if (inputCells.every(x => x.value !== '-')) {
         disableFunc(false)
       } else {
@@ -188,6 +228,7 @@ const MatrixModal: FC = () => {
       console.log('new B in modal after calculate:', newB)
       setB(newB)
     }
+
     calculate()
   }
 
@@ -230,6 +271,40 @@ const MatrixModal: FC = () => {
   }
 
   useEffect(() => {
+    console.log('A changed:', A);
+  }, [A])
+
+  useEffect(() => {
+    console.log('filling input cells again');
+    if (isInsertingA) {
+      return
+    }
+
+    setInputCellsA(
+      Array.from(document.getElementsByClassName('cell-a') as HTMLCollectionOf<HTMLInputElement>)
+    );
+    setInputCellsB(
+      Array.from(document.getElementsByClassName('cell-b') as HTMLCollectionOf<HTMLInputElement>)
+    );
+    fillInputCells()
+  }, [isInsertingA])
+
+  useEffect(() => {
+    if (isInsertingB) {
+      return
+    }
+
+    setInputCellsA(
+      Array.from(document.getElementsByClassName('cell-a') as HTMLCollectionOf<HTMLInputElement>)
+    );
+    setInputCellsB(
+      Array.from(document.getElementsByClassName('cell-b') as HTMLCollectionOf<HTMLInputElement>)
+    );
+    fillInputCells()
+    fillInputCells(false)
+  }, [!isInsertingB])
+
+  useEffect(() => {
     setInputCellsA(
       Array.from(document.getElementsByClassName('cell-a') as HTMLCollectionOf<HTMLInputElement>)
     );
@@ -258,7 +333,7 @@ const MatrixModal: FC = () => {
     <>
       <div className={`modal ${isOpen ? 'block' : 'hidden'}`}>
         <div className='wrapper mt-[10%] text-white'>
-          <div className='modal-content max-h-[37rem] min-w-fit row space-x-4 h-full'>
+          <div className='modal-content max-h-[37rem] min-w-fit row flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 min-h-fit md:min-h-auto md:h-full'>
             {/* Matrix A input */}
             <div className='w-full min-w-72 col-v items-center bg-gray-550 border-2 border-primary rounded-xl overflow-hidden'>
               <div className='row w-full bg-primary px-3'>
@@ -269,58 +344,70 @@ const MatrixModal: FC = () => {
                   <button onClick={() => setIsOpen(false)}>X</button>
                 )}
               </div>
-              <div className='px-3'>
-                <div className='pt-5 pb-6 row space-x-3 text-sm md:text-md bold rounded-xl'>
-                  <button className='btn'>Insert matrix</button>
-                  <button disabled className='btn'>Restore matrix</button>
-                </div>
-                <div className='flex-1 row w-full'>
-                  <table className='matrix-table overflow-scroll md:overflow-auto text-center'>
-                    <thead>
-                      <tr>
-                        {/* First element is empty */}
-                        <th>&nbsp;</th>
-                        {Array.from({ length: aCols }).map((_, col) => (
-                          <th key={col}>A<span className='subindex'>{col + 1}</span></th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {Array.from({ length: aRows }).map((_, row) => (
-                        <tr key={row}>
-                          <td>{row + 1}</td>
-                          {Array.from({ length: aCols }).map((_, col) => (
-                            <td className='' key={col}>
-                              <input
-                                type='text'
-                                onChange={(e) => handleCellValueChange(e, row, col)}
-                                className='matrix-table-input-cell cell-a focus:bg-primary'
-                                data-gtm-form-interact-field-id='0'
-                              />
-                            </td>
-                          ))}
-                        </tr>
-                      ))
-                      }
-                    </tbody>
-                  </table>
-                </div>
-                <div className='flex flex-col space-y-1.5 mb-4'>
-                  <div className='row space-x-3 mt-6 mb-2.5'>
-                    <button onClick={() => clearMatrix()} className='btn'>Clear</button>
-                    <button onClick={() => fillWithZeros()} className='btn'>Fill empty cells with zero</button>
+              {!isInsertingA
+                ? (
+                  <div className='px-3'>
+                    <div className='pt-5 pb-6 row space-x-3 text-sm md:text-md bold rounded-xl'>
+                      <button
+                        onClick={() => { setHasOpenedBefore(true); setIsInsertingA(true) }}
+                        className='btn'
+                      >
+                        Insert matrix
+                      </button>
+                      <button disabled className='btn'>Restore matrix</button>
+                    </div>
+                    <div className='flex-1 row w-full'>
+                      <table className='matrix-table overflow-scroll md:overflow-auto text-center'>
+                        <thead>
+                          <tr>
+                            {/* First element is empty */}
+                            <th>&nbsp;</th>
+                            {Array.from({ length: aCols }).map((_, col) => (
+                              <th key={col}>A<span className='subindex'>{col + 1}</span></th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {Array.from({ length: aRows }).map((_, row) => (
+                            <tr key={row}>
+                              <td>{row + 1}</td>
+                              {Array.from({ length: aCols }).map((_, col) => (
+                                <td className='' key={col}>
+                                  <input
+                                    type='text'
+                                    onChange={(e) => handleCellValueChange(e, row, col)}
+                                    className='matrix-table-input-cell cell-a focus:bg-primary'
+                                    data-gtm-form-interact-field-id='0'
+                                  />
+                                </td>
+                              ))}
+                            </tr>
+                          ))
+                          }
+                        </tbody>
+                      </table>
+                    </div>
+                    <div className='flex flex-col space-y-1.5 mb-4'>
+                      <div className='row space-x-3 mt-6 mb-2.5'>
+                        <button onClick={() => clearMatrix()} className='btn'>Clear</button>
+                        <button onClick={() => fillWithZeros()} className='btn'>Fill empty cells with zero</button>
+                      </div>
+                      {allIsFilled && (
+                        <button
+                          disabled={isADisabled}
+                          onClick={() => handleCalculate()}
+                          className='btn'
+                        >
+                          Calculate
+                        </button>
+                      )}
+                    </div>
                   </div>
-                  {allIsFilled && (
-                    <button
-                      disabled={isADisabled}
-                      onClick={() => handleCalculate()}
-                      className='btn'
-                    >
-                      Calculate
-                    </button>
-                  )}
-                </div>
-              </div>
+                )
+                : (
+                  <MatrixTextInsert setIsInserting={setIsInsertingA} />
+                )
+              }
             </div>
             {/* Matrix B input */}
             {!isOnlyA && (
@@ -331,58 +418,69 @@ const MatrixModal: FC = () => {
                   </h3>
                   <button onClick={() => setIsOpen(false)}>X</button>
                 </div>
-                <div className='px-3'>
-                  <div className='pt-5 pb-6 row space-x-3 text-sm md:text-md bold rounded-xl'>
-                    <button className='btn'>Insert matrix</button>
-                    <button disabled className='btn'>Restore matrix</button>
-                  </div>
-                  <div className='flex-1 row w-full'>
-                    <table className='matrix-table overflow-scroll md:overflow-auto text-center'>
-                      <thead>
-                        <tr>
-                          {/* First element is empty */}
-                          <th>&nbsp;</th>
-                          {Array.from({ length: bCols }).map((_, col) => (
-                            <th key={col}>B<span className='subindex'>{col + 1}</span></th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {Array.from({ length: bRows }).map((_, row) => (
-                          <tr key={row}>
-                            <td>{row + 1}</td>
-                            {Array.from({ length: bCols }).map((_, col) => (
-                              <td className='' key={col}>
-                                <input
-                                  type='text'
-                                  onChange={(e) => handleCellValueChange(e, row, col, false)}
-                                  className='matrix-table-input-cell cell-b focus:bg-primary'
-                                  data-gtm-form-interact-field-id='0'
-                                />
-                              </td>
-                            ))}
-                          </tr>
-                        ))
-                        }
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-                <div className='flex flex-col space-y-1.5 mb-4'>
-                  <div className='row space-x-3 mt-6 mb-2.5'>
-                    <button onClick={() => clearMatrix(false)} className='btn'>Clear</button>
-                    <button onClick={() => fillWithZeros(false)} className='btn'>Fill empty cells with zero</button>
-                  </div>
-                  {allIsFilled && (
-                    <button
-                      disabled={isBDisabled}
-                      onClick={() => handleCalculate()}
-                      className='btn'
-                    >
-                      Calculate
-                    </button>
-                  )}
-                </div>
+                {!isInsertingB
+                  ? (
+                    <div className='px-3'>
+                      <div className='pt-5 pb-6 row space-x-3 text-sm md:text-md bold rounded-xl'>
+                        <button
+                          onClick={() => { setHasOpenedBefore(true); setIsInsertingB(true) }}
+                          className='btn'
+                        >
+                          Insert matrix
+                        </button>
+                        <button disabled className='btn'>Restore matrix</button>
+                      </div>
+                      <div className='flex-1 row w-full'>
+                        <table className='matrix-table overflow-scroll md:overflow-auto text-center'>
+                          <thead>
+                            <tr>
+                              {/* First element is empty */}
+                              <th>&nbsp;</th>
+                              {Array.from({ length: bCols }).map((_, col) => (
+                                <th key={col}>B<span className='subindex'>{col + 1}</span></th>
+                              ))}
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {Array.from({ length: bRows }).map((_, row) => (
+                              <tr key={row}>
+                                <td>{row + 1}</td>
+                                {Array.from({ length: bCols }).map((_, col) => (
+                                  <td className='' key={col}>
+                                    <input
+                                      type='text'
+                                      onChange={(e) => handleCellValueChange(e, row, col, false)}
+                                      className='matrix-table-input-cell cell-b focus:bg-primary'
+                                      data-gtm-form-interact-field-id='0'
+                                    />
+                                  </td>
+                                ))}
+                              </tr>
+                            ))
+                            }
+                          </tbody>
+                        </table>
+                      </div>
+                      <div className='flex flex-col space-y-1.5 mb-4'>
+                        <div className='row space-x-3 mt-6 mb-2.5'>
+                          <button onClick={() => clearMatrix(false)} className='btn'>Clear</button>
+                          <button onClick={() => fillWithZeros(false)} className='btn'>Fill empty cells with zero</button>
+                        </div>
+                        {allIsFilled && (
+                          <button
+                            disabled={isBDisabled}
+                            onClick={() => handleCalculate()}
+                            className='btn'
+                          >
+                            Calculate
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <MatrixTextInsert setIsInserting={setIsInsertingB} isA={false} />
+                  )
+                }
               </div>
             )}
           </div>
