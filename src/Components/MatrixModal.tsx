@@ -252,6 +252,8 @@ const MatrixModal: FC = () => {
       console.log('is A', isA);
       const inputCells = isA ? inputCellsA : inputCellsB;
 
+      console.log(inputCells);
+
       for (const inputCell of inputCells!) {
         if (!inputCell.value) {
           inputCell.value = '0';

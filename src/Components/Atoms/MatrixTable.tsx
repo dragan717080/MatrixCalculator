@@ -34,7 +34,7 @@ const MatrixTable = forwardRef<HTMLTableElement, MatrixTableProps>(
                   className={`${toHighlight && toHighlight(row, col, index) ? 'bg-gray-450 text-neutral-150' : ''} min-h-[2.3125rem] min-w-[2.3125rem] whitespace-nowrap`}
                   key={col}
                 >
-                  {getTableCellValue(row, col, A[row][col]!)}
+                  {getTableCellValue(row, col, A[row][col] as number)}
                 </td>
               ))}
             </tr>
