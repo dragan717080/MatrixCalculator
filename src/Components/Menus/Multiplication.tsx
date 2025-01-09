@@ -3,10 +3,10 @@ import MatrixDimensionsInput from '../Atoms/MatrixDimensionsInput'
 import MatrixTable from '../Atoms/MatrixTable'
 import ScrollWithSVGs from '../Atoms/ScrollWithSVGs'
 import getMultiplication from '../../lib/getMultiplication'
-import { wait } from '../../lib/utils'
+import { getCalcTime, wait } from '../../lib/utils'
 import { useMatrixStore } from '../../store/zustandStore'
 import { useModalStore } from '../../store/zustandStore'
-import Matrix, { Step } from '../../interfaces/Matrix'
+import { Step } from '../../interfaces/Matrix'
 
 const Multiplication: FC = () => {
   const {
@@ -15,7 +15,7 @@ const Multiplication: FC = () => {
     bDim, setBDim, B, setB, bIsFilled, setBIsFilled,
     setCalculate
   } = useMatrixStore()
-  const { isOpen } = useModalStore()
+  const { isOpen, setIsOpen } = useModalStore()
   const [toShowSolution, setToShowSolution] = useState<boolean>(false)
   const [steps, setSteps] = useState<Step[]>([])
   const [time, setTime] = useState<number>(-1)
@@ -23,18 +23,11 @@ const Multiplication: FC = () => {
   const solutionStepsRef = useRef<HTMLDivElement | null>(null)
 
   const calculateResult = () => {
-    const startTime = performance.now()
     console.log('A:', A)
     console.log('B:', B);
-    const result = getMultiplication(A, B)
+    const { time, funcResult: result } = getCalcTime(() => getMultiplication(A, B))
     setSteps(result)
-    console.log('Result of multiplication:', result)
-    const endTime = performance.now()
-    console.log('calc time:', endTime - startTime);
-    let calcTime = (endTime - startTime) / 1000
-    calcTime = Number.isInteger(calcTime) ? calcTime : parseFloat(calcTime.toFixed(3)) as unknown as number
-    // If it is lower than `0.001s`, set is to `0.001s`
-    setTime(Math.max(calcTime, 0.001))
+    setTime(time)
   }
 
   const toggleShowSolution = useCallback(async () => {
@@ -54,10 +47,22 @@ const Multiplication: FC = () => {
     setToShowSolution(!toShowSolution)
   }, [toShowSolution])
 
+  const recalculate = () => {
+    setTime(-1)
+    setADim([0, 0])
+    setA([])
+    setAIsFilled(false)
+    setBDim([0, 0])
+    setB([])
+    setBIsFilled(false)
+    setSteps([])
+    setToShowSolution(false)
+    setIsOpen(false)
+  }
+
   useEffect(() => {
     console.log('recalculating function');
     if (A && B || A && isOnlyA) {
-      //calculateResult(); // Recalculate whenever A or B changes
       setCalculate(calculateResult)
     }
   }, [A, B, aIsFilled, bIsFilled]);
@@ -72,20 +77,8 @@ const Multiplication: FC = () => {
     setBIsFilled(false)
   }, [])
 
-  const recalculate = () => {
-    setTime(-1)
-    setADim([0, 0])
-    setA([])
-    setAIsFilled(false)
-    setBDim([0, 0])
-    setB([])
-    setBIsFilled(false)
-    setSteps([])
-    setToShowSolution(false)
-  }
-
   return (
-    <div className=''>
+    <div className='col-h'>
       {aIsFilled && bIsFilled && !isOpen && (
         <div ref={solutionStepsRef}>
           {toShowSolution && (
@@ -103,15 +96,6 @@ const Multiplication: FC = () => {
                 </div>
                 {steps.map((step, index) => (
                   <div id={`step-${index + 2}`} className='pt-2 pb-3 border-b-darkgray' key={index}>
-                    {/* <p>{getStepText(step, index)}</p> */}
-                    {/*                   {!steps[index].swapRow && (
-                    <div className='mt-3'>
-                      {step.stepsExplanations.map((explanation, index) => (
-                        <p key={index}>{explanation}</p>
-                      ))}
-                    </div>
-                  )} */}
-                    {/* <p className={`${steps[index].swapRow && 'hidden'}`}></p> */}
                     <div>
                       <div className="flex flex-col space-y-1.5 pt-2 pb-2.5">
                         {(step.explanation as string[]).map((explanation, index) => (
@@ -150,10 +134,12 @@ const Multiplication: FC = () => {
         {aIsFilled && bIsFilled && !isOpen && (
           <>
             <div className={`
-            ${toShowSolution ? 'mt-7 md:mt-10 mb-4 md:mb-6' : 'mt-3 mb-1'}
-            row text-white space-x-5
-          `}
-            >
+              ${toShowSolution
+                ? 'mt-1 md:mt-2 mb-4 md:mb-6'
+                : 'mt-3 mb-1'
+              }
+              row text-white space-x-5
+            `}>
               <button
                 onClick={() => toggleShowSolution()}
                 className='btn btn-brighter'
@@ -167,7 +153,7 @@ const Multiplication: FC = () => {
                 Recalculate
               </button>
             </div>
-            {steps.length && (
+            {steps.length > 0 && (
               <section>
                 <MatrixTable nRows={aDim[0]} nCols={aDim[1]} A={steps[steps.length - 1].A} />
                 <div className='w-full flex'>

@@ -68,7 +68,7 @@ const Transpose: FC = () => {
   }
 
   return (
-    <div>
+    <div className='col-h'>
       {aIsFilled && !isOpen && C.length && (
         <>
           <MatrixTable ref={showOriginalRef} nRows={aRows} nCols={aCols} A={A} className='hidden' />

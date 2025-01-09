@@ -14,7 +14,7 @@ const Determinant: FC = () => {
     aDim, setADim, A, setA, aIsFilled, setAIsFilled,
     setBDim, setB, setBIsFilled
   } = useMatrixStore()
-  const { isOpen } = useModalStore()
+  const { isOpen, setIsOpen } = useModalStore()
 
   const solutionStepsRef = useRef<HTMLDivElement | null>(null)
 
@@ -50,6 +50,7 @@ const Determinant: FC = () => {
     setADim([0, 0])
     setA([])
     setAIsFilled(false)
+    setIsOpen(false)
   }
 
   /** 1-based indexing. */
@@ -150,6 +151,7 @@ const Determinant: FC = () => {
     setBDim([0, 0])
     setB([])
     setBIsFilled(false)
+    setToShowSolution(false)
   }, [])
 
   useEffect(() => {
@@ -161,7 +163,7 @@ const Determinant: FC = () => {
   }, [steps.length])
 
   return (
-    <div className=''>
+    <div className='col-h'>
       {aIsFilled && !isOpen && (
         <div ref={solutionStepsRef}>
           {toShowSolution && (
@@ -215,9 +217,12 @@ const Determinant: FC = () => {
       {aIsFilled && !isOpen && (
         <>
           <div className={`
-            ${toShowSolution ? 'mt-7 md:mt-10 mb-4 md:mb-6' : 'mt-3 mb-1'}
-            row text-white space-x-5
-        `}>
+            ${toShowSolution
+              ? 'mt-5 md:mt-7 mb-4 md:mb-6'
+              : 'mt-3 mb-1'
+            }
+              row text-white space-x-5
+            `}>
             <button
               onClick={() => toggleShowSolution()}
               className='btn btn-brighter'
@@ -226,7 +231,8 @@ const Determinant: FC = () => {
             </button>
             <button
               onClick={() => recalculate()}
-              className='btn btn-brighter'>
+              className='btn btn-brighter'
+            >
               Recalculate
             </button>
           </div>
