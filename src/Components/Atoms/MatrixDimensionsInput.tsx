@@ -9,7 +9,12 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
   isPower = false,
   isMultiplication = false,
 }) => {
-  const { isOnlyA, aDim, setADim, setA, bDim, setBDim, setB, setPower } = useMatrixStore()
+  const { 
+    isOnlyA,
+    aDim, setADim, setA,
+    bDim, setBDim, setB,
+    setPower
+  } = useMatrixStore()
   const { isOpen, setIsOpen } = useModalStore()
 
   const aRows = useRef<HTMLInputElement | null>(null)
@@ -90,7 +95,7 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
   }
 
   const handleSubmit = useCallback(
-    async (e: MouseEvent<HTMLButtonElement>) => {
+    (e: MouseEvent<HTMLButtonElement>) => {
       e.preventDefault();
       const newAValue = getNumericDimValue();
 
@@ -105,13 +110,13 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
 
 
         if (aIsSet && bIsSet) {
-          console.log("opening modal, both matrices are set");
+          console.log('opening modal, both matrices are set');
           setIsOpen(true);
         }
       } else {
-        console.log("a is set:", aIsSet);
+        console.log('a is set:', aIsSet);
         if (aIsSet) {
-          console.log("opening modal");
+          console.log('opening modal');
           setIsOpen(true);
         }
       }
@@ -196,7 +201,7 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
               inputMode='text'
               onChange={validateRange}
               className='p-1.5 pr-0 pb-1.5 pl-2.5 w-[50px] text-sm pointer outline-none rounded-lg focus:bg-primary'
-                           value={2} 
+              // value={2} 
             />
             <span className='px-2'>X</span>
             <input
@@ -206,7 +211,7 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
               inputMode='text'
               onChange={validateRange}
               className='p-1.5 pr-0 pb-1.5 pl-2.5 w-[50px] text-sm pointer outline-none rounded-lg focus:bg-primary'
-                           value={2} 
+              // value={2} 
             />
           </div>
         )}

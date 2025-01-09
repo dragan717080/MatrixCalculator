@@ -1,7 +1,7 @@
-import React, { FC, useEffect, useRef, useState } from 'react'
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import MatrixDimensionsInput from '../Atoms/MatrixDimensionsInput'
 import MatrixTable from '../Atoms/MatrixTable';
-import { wait } from '../../lib/utils';
+import { getCalcTime, transpose, wait } from '../../lib/utils';
 import { useMatrixStore, useModalStore } from '../../store/zustandStore'
 import Matrix from '../../interfaces/Matrix';
 
@@ -17,24 +17,12 @@ const Transpose: FC = () => {
 
   const calculateResult = () => {
     console.log('A in calculate', A);
-
-    const startTime = performance.now();
-    const transposed = Array.from({ length: aCols },
-      (_, row) => Array.from(
-        { length: aRows },
-        (_, col) => A[col][row]
-      ))
-
-    const endTime = performance.now();
-    console.log('calc time:', endTime - startTime);
-    let calcTime = (endTime - startTime) / 1000
-    calcTime = Number.isInteger(calcTime) ? calcTime : parseFloat(calcTime.toFixed(3)) as unknown as number
-    // If it is lower than `0.001s`, set is to `0.001s`
-    setTime(Math.max(calcTime, 0.001))
+    const { time, funcResult: transposed } = getCalcTime(() => transpose(A))
+    setTime(time)
     setC(transposed)
   }
 
-  const toggleShowOriginalMatrix = async () => {
+  const toggleShowOriginalMatrix = useCallback(async () => {
     console.log('before toggle:', showOriginalRef.current!)
     console.log('show original before toggle:', showOriginalMatrix)
     if (!showOriginalMatrix) {
@@ -49,12 +37,14 @@ const Transpose: FC = () => {
     }
     console.log('after toggle:', showOriginalRef.current!)
     setShowOriginalMatrix(!showOriginalMatrix)
-  }
+  }, [showOriginalMatrix])
 
   useEffect(() => {
-    console.log('recalculating function');
-    if (A) {
-      setC(A)
+    console.log('new A:', A);
+    console.log('new A is filled:', aIsFilled);
+    if (A && aIsFilled) {
+      console.log('recalculating function');
+      setC(A.length ? transpose(A) : [])
       setCalculate(calculateResult)
     }
   }, [A, aIsFilled])
@@ -66,22 +56,37 @@ const Transpose: FC = () => {
   }, [])
 
   const recalculate = () => {
+    console.log('setting again');
     setTime(-1)
     setADim([0, 0])
     setA([])
     setAIsFilled(false)
+    setC([])
+    setShowOriginalMatrix(false)
+    setIsOpen(false)
+    showOriginalRef.current!.classList.add('hidden')
   }
 
   return (
     <div>
-      <MatrixTable ref={showOriginalRef} nRows={aRows} nCols={aCols} A={A} className='hidden' />
-      {aIsFilled && !isOpen && (
-        <div className='row text-white space-x-5'>
-          <button className='btn' onClick={() => toggleShowOriginalMatrix()}>
-            {!showOriginalMatrix ? 'Show' : 'Hide'} matrix
-          </button>
-          <button onClick={() => recalculate()} className='btn'>Recalculate</button>
-        </div>
+      {aIsFilled && !isOpen && C.length && (
+        <>
+          <MatrixTable ref={showOriginalRef} nRows={aRows} nCols={aCols} A={A} className='hidden' />
+          <div className='row text-white space-x-5'>
+            <button
+              onClick={() => toggleShowOriginalMatrix()}
+              className='btn btn-brighter'
+            >
+              {!showOriginalMatrix ? 'Show' : 'Hide'} matrix
+            </button>
+            <button
+              onClick={() => recalculate()}
+              className='btn btn-brighter'
+            >
+              Recalculate
+            </button>
+          </div>
+        </>
       )}
       <div>
         <div className={`${isOpen || aIsFilled ? 'hidden' : 'block'}`}>
@@ -94,7 +99,7 @@ const Transpose: FC = () => {
           To understand transpose calculation better input any example and examine the solution.
           <MatrixDimensionsInput minValue={2} />
         </div>
-        {!isOpen && C.length && aIsFilled && (
+        {!isOpen && C.length > 0 && aIsFilled && (
           <section className='py-5'>
             <h3 className='bold mb-2'>Result</h3>
             <div className=''>

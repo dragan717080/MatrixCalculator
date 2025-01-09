@@ -220,11 +220,15 @@ const Determinant: FC = () => {
         `}>
             <button
               onClick={() => toggleShowSolution()}
-              className='btn'
+              className='btn btn-brighter'
             >
               {!toShowSolution ? 'Show' : 'Hide'} solution
             </button>
-            <button onClick={() => recalculate()} className='btn'>Recalculate</button>
+            <button
+              onClick={() => recalculate()}
+              className='btn btn-brighter'>
+              Recalculate
+            </button>
           </div>
           <section className={!toShowSolution ? 'pt-6' : 'pt-2'}>
             {typeof (determinant) !== 'undefined' && (

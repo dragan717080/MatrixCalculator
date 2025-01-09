@@ -80,6 +80,8 @@ const Multiplication: FC = () => {
     setBDim([0, 0])
     setB([])
     setBIsFilled(false)
+    setSteps([])
+    setToShowSolution(false)
   }
 
   return (
@@ -94,7 +96,7 @@ const Multiplication: FC = () => {
               <div className='mb-7'>
                 <div id='step-1' className='row-v px-3 border-b-darkgray'>
                   <ScrollWithSVGs aCols={aDim[1]} isFirst areBoth />
-                  <div className='row space-x-6'>
+                  <div className='row flex-col md:flex-row space-y-6 md:space-y-0 md:space-x-6 pb-6 md:pb-0'>
                     <MatrixTable nRows={aDim[0]} nCols={aDim[1]} A={A} />
                     <MatrixTable nRows={bDim[0]} nCols={bDim[1]} A={B} letter='B' />
                   </div>
@@ -154,11 +156,16 @@ const Multiplication: FC = () => {
             >
               <button
                 onClick={() => toggleShowSolution()}
-                className='btn'
+                className='btn btn-brighter'
               >
                 {!toShowSolution ? 'Show' : 'Hide'} solution
               </button>
-              <button onClick={() => recalculate()} className='btn'>Recalculate</button>
+              <button
+                onClick={() => recalculate()}
+                className='btn btn-brighter'
+              >
+                Recalculate
+              </button>
             </div>
             {steps.length && (
               <section>
