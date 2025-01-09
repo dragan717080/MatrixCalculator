@@ -1,11 +1,12 @@
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import MatrixDimensionsInput from '../Atoms/MatrixDimensionsInput'
 import MatrixTable from '../Atoms/MatrixTable'
+import ScrollWithSVGs from '../Atoms/ScrollWithSVGs'
+import useRecalculate from '../../hooks/useRecalculate'
 import getDeterminant from '../../lib/getDeterminant'
-import { wait } from '../../lib/utils'
+import { getCalcTime, wait } from '../../lib/utils'
 import { useMatrixStore, useModalStore } from '../../store/zustandStore'
 import { Step } from '../../interfaces/Determinant'
-import ScrollWithSVGs from '../Atoms/ScrollWithSVGs'
 
 const Determinant: FC = () => {
   const {
@@ -14,7 +15,7 @@ const Determinant: FC = () => {
     aDim, setADim, A, setA, aIsFilled, setAIsFilled,
     setBDim, setB, setBIsFilled
   } = useMatrixStore()
-  const { isOpen, setIsOpen } = useModalStore()
+  const { isOpen } = useModalStore()
 
   const solutionStepsRef = useRef<HTMLDivElement | null>(null)
 
@@ -25,32 +26,18 @@ const Determinant: FC = () => {
   const [actualCounts, setActualCounts] = useState<number[]>([])
   const [stepsSwapsIndexes, setStepsSwapsIndexes] = useState<{ [key: string]: number }>({} as { [key: string]: number })
 
+  const { recalculate } = useRecalculate({ setTime, setShow: setToShowSolution })
+
   const calculateResult = () => {
     console.log('A in calculate:', A)
-    const startTime = performance.now()
-
-    const { steps, result } = getDeterminant(A)
+    const { time, funcResult } = getCalcTime(() => getDeterminant(A))
+    const { steps, result } = funcResult
 
     setSteps(steps)
     console.log('%cSteps:', 'color:red;font-size:22px', steps);
     setDeterminant(result)
     console.log('%cDETERMINANT:', 'color:red;font-size:40', result);
-
-    const endTime = performance.now()
-    console.log('calc time:', endTime - startTime);
-    let calcTime = (endTime - startTime) / 1000
-    calcTime = Number.isInteger(calcTime) ? calcTime : parseFloat(calcTime.toFixed(3)) as unknown as number
-    // If it is lower than `0.001s`, set is to `0.001s`
-    setTime(Math.max(calcTime, 0.001))
-  }
-
-  const recalculate = () => {
-    console.log('in recalculate');
-    setTime(-1)
-    setADim([0, 0])
-    setA([])
-    setAIsFilled(false)
-    setIsOpen(false)
+    setTime(time)
   }
 
   /** 1-based indexing. */
@@ -66,7 +53,11 @@ const Determinant: FC = () => {
         x = parseFloat(x)
       }
 
-      const value = Number.isInteger(x) ? x : x!.toFixed(3)
+      if (typeof(x) === 'undefined') {
+        x = 0
+      }
+
+      const value = Number.isInteger(x) ? x : Math.round(x * 1000) / 1000
       return (value as number)! >= 0 ? String(value) : `(${value})`
     })
 
@@ -141,7 +132,7 @@ const Determinant: FC = () => {
       console.log('received A:', A);
       setCalculate(calculateResult)
     }
-  }, [aIsFilled]);
+  }, [A, aIsFilled]);
 
   useEffect(() => {
     setIsOnlyA(true)
@@ -162,11 +153,15 @@ const Determinant: FC = () => {
     console.log('new steps:', steps);
   }, [steps.length])
 
+  useEffect(() => {
+    console.log('A changed in determinant:', A);
+  }, [A])
+
   return (
     <div className='col-h'>
       {aIsFilled && !isOpen && (
         <div ref={solutionStepsRef}>
-          {toShowSolution && (
+          {toShowSolution && steps.length && (
             <div className='mb-7'>
               <div id='step-1' className='row-v px-3 border-b-darkgray'>
                 <ScrollWithSVGs aCols={aDim[1]} isFirst />
@@ -218,7 +213,7 @@ const Determinant: FC = () => {
         <>
           <div className={`
             ${toShowSolution
-              ? 'mt-5 md:mt-7 mb-4 md:mb-6'
+              ? 'mt-6 md:mt-4 mb-7 md:mb-8'
               : 'mt-3 mb-1'
             }
               row text-white space-x-5

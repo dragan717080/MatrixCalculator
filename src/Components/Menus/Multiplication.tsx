@@ -136,7 +136,7 @@ const Multiplication: FC = () => {
             <div className={`
               ${toShowSolution
                 ? 'mt-1 md:mt-2 mb-4 md:mb-6'
-                : 'mt-3 mb-1'
+                : 'mb-8 md:mb-12'
               }
               row text-white space-x-5
             `}>

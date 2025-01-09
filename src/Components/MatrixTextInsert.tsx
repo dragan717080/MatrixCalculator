@@ -1,6 +1,6 @@
 import { FC, ChangeEvent, MouseEvent, memo, useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { addError, clearErrors, errorsReducer, removeError } from '../lib/MatrixTextInsertReducer';
-import useUpdateValuesForMatrix from '../lib/updateValuesForMatrix';
+import useUpdateValuesForMatrix from '../hooks/useUpdateValuesForMatrix';
 import { isStringNumeric } from '../lib/utils';
 import { useMatrixStore, useModalStore } from '../store/zustandStore';
 import MatrixTextInsertProps, { ErrorsAction, ErrorsState } from '../interfaces/MatrixTextInsertProps';

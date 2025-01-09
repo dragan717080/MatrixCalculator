@@ -1,6 +1,7 @@
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import MatrixDimensionsInput from '../Atoms/MatrixDimensionsInput'
 import MatrixTable from '../Atoms/MatrixTable';
+import useRecalculate from '../../hooks/useRecalculate';
 import { getCalcTime, transpose, wait } from '../../lib/utils';
 import { useMatrixStore, useModalStore } from '../../store/zustandStore'
 import Matrix from '../../interfaces/Matrix';
@@ -8,12 +9,16 @@ import Matrix from '../../interfaces/Matrix';
 const Transpose: FC = () => {
   const { setIsOnlyA, setCalculate, aDim, setADim, A, setA, aIsFilled, setAIsFilled, setBIsFilled } = useMatrixStore()
   const { isOpen, setIsOpen } = useModalStore()
+
+  const showOriginalRef = useRef<HTMLTableElement | null>(null)
+
   const [C, setC] = useState<Matrix>(A)
   const [aRows, aCols] = aDim
   const [cRows, cCols] = [aDim[1], aDim[0]]
   const [time, setTime] = useState<number>(-1)
   const [showOriginalMatrix, setShowOriginalMatrix] = useState<boolean>(false)
-  const showOriginalRef = useRef<HTMLTableElement | null>(null)
+
+  const { recalculate } = useRecalculate({ setTime, setC, setShow: setShowOriginalMatrix, stepsRef: showOriginalRef })
 
   const calculateResult = () => {
     console.log('A in calculate', A);
@@ -54,18 +59,6 @@ const Transpose: FC = () => {
     setBIsFilled(false)
     setIsOnlyA(true)
   }, [])
-
-  const recalculate = () => {
-    console.log('setting again');
-    setTime(-1)
-    setADim([0, 0])
-    setA([])
-    setAIsFilled(false)
-    setC([])
-    setShowOriginalMatrix(false)
-    setIsOpen(false)
-    showOriginalRef.current!.classList.add('hidden')
-  }
 
   return (
     <div className='col-h'>
