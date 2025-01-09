@@ -1,16 +1,16 @@
-import { useEffect, useState } from 'react'
-import { Disclosure, Menu, Transition } from '@headlessui/react'
-import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
-import DropdownMenu, { IMenuOption } from './Atoms/DropdownMenu'
-import { FiLogOut, FiEdit, FiEdit2 } from 'react-icons/fi'
+import { MouseEvent, useEffect, useState } from 'react'
+import { Disclosure } from '@headlessui/react'
+import { Bars3Icon } from '@heroicons/react/24/outline'
 import { Link, useNavigate } from 'react-router-dom'
-import { useToast, EToastTypes } from '../contexts/ToastContext'
-import Logo from '../../public/logo.webp'
+import { useToast } from '../contexts/ToastContext'
 import AdvancedPropertiesToolbar from '../Components/NavbarToolbars/AdvancedPropertiesToolbar'
 import InversionsToolbar from './NavbarToolbars/InversionsToolbar'
 import LinearEquationsToolbar from './NavbarToolbars/LinearEquationsToolbar'
 import MatrixOperationsToolbar from './NavbarToolbars/MatrixOperationsToolbar'
 import NavbarMenuItem from './NavbarMenuItem'
+import { wait } from '../lib/utils'
+import DASH_NAVBAR_LINKS from '../constants/DashNavbarLinks'
+import Logo from '../../public/logo.webp'
 
 function classNames(...classes: Array<string>) {
   return classes.filter(Boolean).join(' ')
@@ -18,6 +18,12 @@ function classNames(...classes: Array<string>) {
 
 export default function DashNavbar() {
   const { showError } = useToast()
+
+  // For disclosure menu on small screens
+  const [activeIndex, setActiveIndex] = useState<number>(0)
+
+  // Track the visibility of each submenu
+  const [submenuVisible, setSubmenuVisible] = useState<{ [key: number]: boolean }>({})
 
   const [navigation, setNavigation] = useState([
     { name: 'Matrix Operations', href: '/', current: false, component: MatrixOperationsToolbar },
@@ -28,7 +34,34 @@ export default function DashNavbar() {
 
   const navigate = useNavigate()
 
-  const toolbarComponents = [MatrixOperationsToolbar, AdvancedPropertiesToolbar, InversionsToolbar, LinearEquationsToolbar]
+  // Handle submenu visibility when clicking a menu item
+  const handleChangePanelIndex = (e: MouseEvent<HTMLDivElement>, index: number) => {
+    setActiveIndex(index)
+
+    const slideContainer = document.getElementsByClassName('slide-container')[index]
+
+    if (!submenuVisible[index]) {
+      slideContainer.classList.remove('slide-exit-active')
+      console.log('to add enter');
+      slideContainer.classList.add('slide-enter-active')
+    } else {
+      console.log('to remove enter');
+      slideContainer.classList.remove('slide-enter-active')
+      slideContainer.classList.add('slide-exit-active')
+    }
+
+    // Toggle the visibility of the corresponding submenu
+    setSubmenuVisible((prevState) => ({
+      ...prevState,
+      [index]: !prevState[index], // Toggle visibility for the current index
+    }));
+  }
+
+  useEffect(() => {
+    const slideContainers = document.getElementsByClassName('slide-container')
+    console.log(slideContainers);
+
+  }, [])
 
   return (
     <Disclosure as="nav" className="bg-gray-800 h-16">
@@ -44,20 +77,21 @@ export default function DashNavbar() {
             </div>
             <div className="flex flex-1 items-center justify-center max-h-full sm:justify-start">
               <Link to='/'>
-              <div className="flex flex-shrink-0 items-center">
-                <img
-                  className="block h-8 w-auto lg:hidden"
-                  src={Logo}
-                  alt="Dragan Logo"
-                />
-                <img
-                  className="hidden h-8 w-auto lg:block"
-                  src={Logo}
-                  alt="Dragan Logo"
-                />
-              </div>
+                <div className="flex flex-shrink-0 items-center">
+                  <img
+                    className="block h-8 w-auto lg:hidden"
+                    src={Logo}
+                    alt="Dragan Logo"
+                  />
+                  <img
+                    className="hidden h-8 w-auto lg:block"
+                    src={Logo}
+                    alt="Dragan Logo"
+                  />
+                </div>
               </Link>
-              <div className="hidden sm:ml-6 sm:block">
+              {/* <div className="hidden sm:ml-6 sm:block"> */}
+              <div className="hidden">
                 <div className="flex space-x-4 h-16">
                   {navigation.map((toolbarComponent, index: number) => (
                     <div className='h-full row-v navbar-item-container' key={toolbarComponent.name}>
@@ -85,21 +119,38 @@ export default function DashNavbar() {
         </div>
 
         <Disclosure.Panel className="sm:hidden relative z-10 bg-deepazure">
-          <div className="px-2 pt-2 pb-3 flex flex-col gap-1">
-            {navigation.map((item) => (
-              <Link key={item.name} to={item.href}>
-                <Disclosure.Button
-                  className={classNames(
-                    item.current
-                      ? 'bg-gray-900 text-white'
-                      : 'text-gray-300 hover:bg-gray-700 hover:text-white',
-                    ' px-3 w-full py-2 rounded-md text-base font-medium flex'
-                  )}
-                  aria-current={item.current ? 'page' : undefined}
-                >
-                  {item.name}
-                </Disclosure.Button>
-              </Link>
+          <div className="flex flex-col items-start">
+            {DASH_NAVBAR_LINKS.map((item, index) => (
+              <div
+                onClick={(e) => handleChangePanelIndex(e, index)}
+                className={classNames(
+                  index === activeIndex
+                    ? 'bg-gray-900 text-white'
+                    : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                  ' w-full text-base bold'
+                )}
+                key={item.name}
+              >
+                <div className="row-v h-14">
+                  <h4 className='px-5'>{item.name}</h4>
+                </div>
+                {/* {submenuVisible[index] && ( */}
+                  <ul
+                    className={classNames(
+                      'slide-container slide-exit-active',
+                    )}
+                  >
+                    {item.subroutes.map((subroute) => (
+                      <li
+                        className="py-4 px-8 text-white border-b-lightgray"
+                        key={subroute.name}
+                      >
+                        <Link to={subroute.href}>{subroute.name}</Link>
+                      </li>
+                    ))}
+                  </ul>
+                {/* )} */}
+              </div>
             ))}
           </div>
         </Disclosure.Panel>

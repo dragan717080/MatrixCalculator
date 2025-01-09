@@ -369,7 +369,49 @@ table {
     border-bottom-color: #1F1D20;
 }
 
-.svg-up, .svg-down {
+.border-b-darkgray-2 {
+    border-bottom-width: 1px;
+    border-bottom-color: #1F1D20;
+}
+
+.border-b-lightgray {
+    border-bottom-width: 1px;
+    border-bottom-color: #D3D3D3;
+}
+
+.border-b-lightgray-2 {
+    border-bottom-width: 2px;
+    border-bottom-color: #D3D3D3;
+}
+
+.svg-up,
+.svg-down {
     fill: #006CBC;
     cursor: pointer;
+}
+
+/* Slide effect for mobile screens navbar menu */
+.slide-container {
+    overflow: hidden;
+    transition: max-height 0.9s ease-in-out, transform 0.9s ease-in-out;
+}
+
+.slide-enter {
+    max-height: 0;
+    transform: translateY(-100%);
+}
+
+.slide-enter-active {
+    max-height: 205px;
+    transform: translateY(0);
+}
+
+.slide-exit {
+    max-height: 205px;
+    transform: translateY(0);
+}
+
+.slide-exit-active {
+    max-height: 0;
+    transform: translateY(-100%);
 }
