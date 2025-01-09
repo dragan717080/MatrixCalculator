@@ -9,7 +9,7 @@ import LinearEquationsToolbar from './NavbarToolbars/LinearEquationsToolbar'
 import MatrixOperationsToolbar from './NavbarToolbars/MatrixOperationsToolbar'
 import NavbarMenuItem from './NavbarMenuItem'
 import { wait } from '../lib/utils'
-import DASH_NAVBAR_LINKS from '../constants/DashNavbarLinks'
+import DASH_NAVBAR_LINKS from '../constants/dashNavbarLinks'
 import Logo from '../../public/logo.webp'
 
 function classNames(...classes: Array<string>) {
@@ -90,8 +90,7 @@ export default function DashNavbar() {
                   />
                 </div>
               </Link>
-              {/* <div className="hidden sm:ml-6 sm:block"> */}
-              <div className="hidden">
+              <div className="hidden sm:ml-6 sm:block">
                 <div className="flex space-x-4 h-16">
                   {navigation.map((toolbarComponent, index: number) => (
                     <div className='h-full row-v navbar-item-container' key={toolbarComponent.name}>
@@ -134,7 +133,6 @@ export default function DashNavbar() {
                 <div className="row-v h-14">
                   <h4 className='px-5'>{item.name}</h4>
                 </div>
-                {/* {submenuVisible[index] && ( */}
                   <ul
                     className={classNames(
                       'slide-container slide-exit-active',
