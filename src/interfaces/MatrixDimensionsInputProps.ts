@@ -9,4 +9,6 @@ export default interface MatrixDimensionsInputProps {
   isSquare?: boolean
   isPower?: boolean
   isMultiplication?: boolean
+  // whether is `Addition/Substraction`
+  isAS?: boolean
 }

@@ -1,7 +1,7 @@
 import { FC, ChangeEvent, MouseEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import MatrixTextInsert from './MatrixTextInsert';
-import useUpdateValuesForMatrix from '../lib/updateValuesForMatrix';
-import { isStringNumeric } from '../lib/utils';
+import useUpdateValuesForMatrix from '../hooks/useUpdateValuesForMatrix';
+import { isStringNumeric, wait } from '../lib/utils';
 import { useMatrixStore, useModalStore } from '../store/zustandStore';
 
 const MatrixModal: FC = () => {
@@ -85,14 +85,14 @@ const MatrixModal: FC = () => {
       const row = Math.floor(index / nCols);
       const col = index - row * nCols;
 
-      console.log('cell', inputCell);
-      console.log('new value of cell:', matrix[row][col]);
-
       if (matrix.length === 0) {
         inputCell.value = ''
       } else {
         inputCell.value = matrix[row][col] as unknown as string ?? ''
       }
+
+      console.log('cell', inputCell);
+      console.log('new value of cell:', matrix[row][col]);
     });
   }
 
