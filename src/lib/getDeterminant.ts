@@ -99,6 +99,7 @@ const getDeterminant = (A: Matrix): DeterminantSolution => {
 
     // Handle row elimination
     const eliminationResult = eliminateValues(B, i);
+    console.log('Got result:', eliminationResult);
     steps.push({
       A: [...B.map(row => [...row])],
       swapRow: undefined,
@@ -114,7 +115,7 @@ const getDeterminant = (A: Matrix): DeterminantSolution => {
   // Multiply diagonal elements
   let D = 1;
   for (let i = 0; i < n; i++) {
-    D *= B[i][i]!;
+    D *= B[i][i] as number;
   }
 
   // Adjust sign
@@ -154,7 +155,7 @@ const eliminateValues = (
   A: Matrix,
   col: number
 ): { A: Matrix; toReturnEarly: boolean, stepsExplanations: string[] } => {
-  const pivot = A[col][col];
+  const pivot = A[col][col] as number;
   if (pivot === 0) {
     return { A, toReturnEarly: true, stepsExplanations: [`R${col} early return because A[${col}][${col}] is 0`] };
   }
@@ -167,12 +168,12 @@ const eliminateValues = (
       continue
     };
 
-    const coef = A[i][col]! / pivot!;
+    const coef = (A[i][col] as number) / pivot!;
 
     stepsExplanations.push(`R${i + 1} = R${i + 1} ${coef < 0 ? '+' : '-'} ${![-1, 1].includes(coef) ? Math.abs(Number.isInteger(coef) ? coef : parseFloat(coef?.toFixed(3).replace(/(\.\d*?[1-9])0+$|\.0+$/, '$1'))) : ''}R${col + 1}`)
 
     for (let j = col; j < A.length; j++) {
-      A[i][j]! -= A[col][j]! * coef;
+      (A[i][j] as number) -= (A[col][j] as number) * coef;
     }
   }
 
