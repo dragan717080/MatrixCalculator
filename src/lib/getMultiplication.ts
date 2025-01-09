@@ -86,7 +86,8 @@ import DotProduct from '../interfaces/Multiplication'
 const getMultiplication = (A: Matrix, B: Matrix): Step[] => {
   /** Captures the state of the matrix after each dot product. */
   const solution = [];
-  console.log('start A:', JSON.parse(JSON.stringify(A)));
+  // console.log('start A:', JSON.parse(JSON.stringify(A)));
+  console.log('%cstart A:', 'color:red;font-size:22px', JSON.parse(JSON.stringify(A)));
   console.log('start B:', JSON.parse(JSON.stringify(B)));
 
   // Create a deep copy of A to avoid mutating the original matrix
@@ -107,7 +108,7 @@ const getMultiplication = (A: Matrix, B: Matrix): Step[] => {
     console.log('New C:', JSON.parse(JSON.stringify(A)));
     // Log the row before pushing it to the solution array
     console.log('Updated row', i, ':', C[i]);
-    console.log('%cWill push to solution:', 'color:red;font-size:22px;', JSON.parse(JSON.stringify(C)));
+    // console.log('%cWill push to solution:', 'color:red;font-size:22px;', JSON.parse(JSON.stringify(C)));
 
     solution.push({
       A: JSON.parse(JSON.stringify(C)),
@@ -129,13 +130,12 @@ const getDotProduct = (
   j: number,
 ): DotProduct => {
   let sum = 0;
-
   let explanation = `A[${i}][${j}] = `
 
   for (let k = 0; k < A[i].length; k++) {
     console.log('k:', k)
-    const value = A[i][k]! * B[k][j]!
-    console.log('A value:', A[i][k], 'B value:', B[k][j], 'value:', A[i][k]! * B[k][j]!);
+    const value = (A[i][k] as number) * (B[k][j]! as number)
+    console.log('A value:', A[i][k], 'B value:', B[k][j], 'value:', (A[i][k] as number) * (B[k][j]! as number));
     sum += value;
     explanation += `${A[i][k]!} * ${B[k][j]!}`
 
