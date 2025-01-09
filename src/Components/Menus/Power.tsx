@@ -24,10 +24,6 @@ const Power: FC = () => {
   const [time, setTime] = useState<number>(-1)
   console.log('%cRERENDER', 'color:red;font-size:16px');
 
-  const getStepText = (index: number) => {
-    return index
-  }
-
   const calculateResult = () => {
     console.log('shall send A:', A);
     const { time, funcResult: result } = getCalcTime(() => getPower(A, power))
@@ -99,7 +95,11 @@ const Power: FC = () => {
                 {power !== 1 && steps.slice(0, -1).map((step, index) => (
                   <div id={`step-${index + 2}`} className='pt-2 pb-3 border-b-darkgray' key={index}>
                     <div>
-                      <span className=''>{getStepText(index)}</span>
+                      <span className=''>
+                        A<span className='superindex'>{index + 2}</span> = A{
+                          index > 0 && <span className='superindex'>{index + 1}</span>
+                        } * A
+                      </span>
                       <div className='row-v px-3'>
                         <ScrollWithSVGs aCols={aDim[1]} isLast={index === steps.length - 1} />
                         <MatrixTable
@@ -121,9 +121,9 @@ const Power: FC = () => {
         <div className={`${isOpen || aIsFilled ? 'hidden' : 'block'}`}>
           <h3 className='mb-4 text-lg bold'>Power</h3>
           <p className='flex flex-col space-y-2'>
-            <span className='leading-4'>Here you can raise a matrix to a power with complex numbers online for free. You can examine multiplication apart that was used to get the current power on every step.</span>
-            <span className='leading-4'>Matrix to the power of 0 gives an identity matrix.</span>
-            <span className='leading-4'>Matrix raised to the power 'n' is matrix multiplied by itself 'n' times, same as in algebra.</span>
+            <span className='leading-5'>Here you can raise a matrix to a power with complex numbers online for free. You can examine multiplication apart that was used to get the current power on every step.</span>
+            <span className='leading-5'>Matrix to the power of 0 gives an identity matrix.</span>
+            <span className='leading-5'>Matrix raised to the power 'n' is matrix multiplied by itself 'n' times, same as in algebra.</span>
           </p>
           <MatrixDimensionsInput minValue={1} isSquare={true} isPower={true} />
         </div>
@@ -132,7 +132,7 @@ const Power: FC = () => {
             <div className={`
               ${toShowSolution
                 ? 'mt-1 md:mt-2 mb-7 md:mb-10'
-                : 'mb-4 md:mb-6'
+                : 'mb-8 md:mb-12'
               }
               row text-white space-x-5
             `}>
@@ -156,6 +156,13 @@ const Power: FC = () => {
                 )}
                 {power === 1 && (
                   <p className='mt-6'>A raised to the power of 1 gives the same matrix</p>
+                )}
+                {power > 1 && (
+                  <span className=''>
+                    A<span className='superindex'>{power}</span> = A{
+                      power > 2 && <span className='superindex'>{power - 1}</span>
+                    } * A
+                  </span>
                 )}
                 <MatrixTable nRows={aDim[0]} nCols={aDim[1]} A={steps[steps.length - 1].A} />
                 <div className='w-full flex'>

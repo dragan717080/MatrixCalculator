@@ -263,10 +263,16 @@ ol {
     font-weight: 600;
 }
 
+.superindex {
+    position: relative;
+    top: -9px;
+    font-size: 11px;
+}
+
 .subindex {
     position: relative;
     bottom: -4px;
-    font-size: 8pt;
+    font-size: 11px;
 }
 
 .btn {
