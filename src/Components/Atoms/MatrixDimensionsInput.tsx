@@ -8,6 +8,7 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
   isSquare = false,
   isPower = false,
   isMultiplication = false,
+  isAS = false,
 }) => {
   const {
     isOnlyA,
@@ -190,7 +191,7 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
                   ref={powerRef}
                   type='text'
                   inputMode='text'
-                  onChange={(e) => validateRange(e, 0, 25)}
+                  onChange={(e) => validateRange(e, 0, 10)}
                   className='p-1.5 pr-0 pb-1.5 pl-2.5 w-[50px] text-sm pointer outline-none rounded-lg focus:bg-primary'
                 />
               </>
