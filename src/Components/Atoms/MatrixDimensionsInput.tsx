@@ -9,7 +9,7 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
   isPower = false,
   isMultiplication = false,
 }) => {
-  const { 
+  const {
     isOnlyA,
     aDim, setADim, setA,
     bDim, setBDim, setB,
@@ -103,11 +103,16 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
       const aIsSet = newAValue[0] !== 0 && newAValue[1] !== 0;
       setADim(newAValue);
 
+      const powerIsSet = isPower ? powerRef.current!.value.length : true
+
+      if (!powerIsSet) {
+        return
+      }
+
       if (!isOnlyA) {
         const newBValue = getNumericDimValue(false);
         setBDim(newBValue);
         const bIsSet = newBValue[0] !== 0 && newBValue[1] !== 0;
-
 
         if (aIsSet && bIsSet) {
           console.log('opening modal, both matrices are set');
@@ -151,68 +156,72 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
     <div className='row pt-7'>
       <form action=''>
         {/* Pick A */}
-        <div className='row'>
+        <div className='row justify-start'>
           <span className='mr-2'>Matrix {!isOnlyA ? 'A ' : ''}dimension:</span>
-          <input
-            required
-            ref={aRows}
-            type='text'
-            inputMode='text'
-            onChange={validateRange}
-            className='p-1.5 pr-0 pb-1.5 pl-2.5 w-[50px] text-sm pointer outline-none rounded-lg focus:bg-primary'
-            value={2}
-          />
-          {!isSquare && (
-            <>
-              <span className='px-2'>X</span>
+          <div className="row">
+            <input
+              required
+              ref={aRows}
+              type='text'
+              inputMode='text'
+              onChange={validateRange}
+              className='p-1.5 pr-0 pb-1.5 pl-2.5 w-[50px] text-sm pointer outline-none rounded-lg focus:bg-primary'
+              value={2}
+            />
+            {!isSquare && (
+              <>
+                <span className='px-2'>X</span>
+                <input
+                  required
+                  ref={aCols}
+                  type='text'
+                  inputMode='text'
+                  onChange={validateRange}
+                  className='p-1.5 pr-0 pb-1.5 pl-2.5 w-[50px] text-sm pointer outline-none rounded-lg focus:bg-primary'
+                  value={2}
+                />
+              </>
+            )}
+            {isPower && (
+              <>
+                <span className='px-2'>Power:</span>
+                <input
+                  required
+                  ref={powerRef}
+                  type='text'
+                  inputMode='text'
+                  onChange={(e) => validateRange(e, 0, 25)}
+                  className='p-1.5 pr-0 pb-1.5 pl-2.5 w-[50px] text-sm pointer outline-none rounded-lg focus:bg-primary'
+                />
+              </>
+            )}
+          </div>
+        </div>
+        {/* Pick B */}
+        {!isOnlyA && (
+          <div className='row justify-start mt-5'>
+            <span className='mr-2'>Matrix B dimension:</span>
+            <div className="row">
               <input
                 required
-                ref={aCols}
+                ref={bRows}
                 type='text'
                 inputMode='text'
                 onChange={validateRange}
                 className='p-1.5 pr-0 pb-1.5 pl-2.5 w-[50px] text-sm pointer outline-none rounded-lg focus:bg-primary'
-                value={2}
+              // value={2} 
               />
-            </>
-          )}
-          {isPower && (
-            <>
-              <span className='px-2'>Power:</span>
+              <span className='px-2'>X</span>
               <input
                 required
-                ref={powerRef}
+                ref={bCols}
                 type='text'
                 inputMode='text'
-                onChange={(e) => validateRange(e, 0, 25)}
+                onChange={validateRange}
                 className='p-1.5 pr-0 pb-1.5 pl-2.5 w-[50px] text-sm pointer outline-none rounded-lg focus:bg-primary'
+              // value={2} 
               />
-            </>
-          )}
-        </div>
-        {/* Pick B */}
-        {!isOnlyA && (
-          <div className='row mt-5'>
-            <span className='mr-2'>Matrix B dimension:</span>
-            <input
-              required
-              ref={bRows}
-              type='text'
-              inputMode='text'
-              onChange={validateRange}
-              className='p-1.5 pr-0 pb-1.5 pl-2.5 w-[50px] text-sm pointer outline-none rounded-lg focus:bg-primary'
-              // value={2} 
-            />
-            <span className='px-2'>X</span>
-            <input
-              required
-              ref={bCols}
-              type='text'
-              inputMode='text'
-              onChange={validateRange}
-              className='p-1.5 pr-0 pb-1.5 pl-2.5 w-[50px] text-sm pointer outline-none rounded-lg focus:bg-primary'
-              // value={2} 
-            />
+            </div>
           </div>
         )}
         <button
