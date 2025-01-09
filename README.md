@@ -13,7 +13,7 @@
 
 # <a name="no-link"></a>React Matrix Calculator
 
-### Matrix Calculator built with React, TypeScript, Tailwind and Vite. All the basic matrix operations as well as methods for solving systems of simultaneous linear equations are implemented.
+### Matrix Calculator built with React, TypeScript, Tailwind, Headless UI and Vite. All the basic matrix operations as well as methods for solving systems of simultaneous linear equations are implemented.
 
 </div>
 &nbsp;&nbsp;&nbsp;&nbsp;
