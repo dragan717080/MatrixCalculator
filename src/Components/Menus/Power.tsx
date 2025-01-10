@@ -14,7 +14,6 @@ const Power: FC = () => {
     setIsOnlyA,
     setCalculate,
     aDim, setADim, aIsFilled, A, setA, setAIsFilled,
-    setBDim, setB, setBIsFilled,
     power, setPower
   } = useMatrixStore()
   const { isOpen } = useModalStore()
@@ -31,11 +30,14 @@ const Power: FC = () => {
   const { resetParams } = useResetParams({})
 
   const calculateResult = () => {
-    console.log('shall send A:', A);
+    const aIsFilled = !A.length || !A.flat().every(x => typeof (x) !== 'string')
+    if (!aIsFilled) {
+      return
+    }
+
     const { time, funcResult: result } = getCalcTime(() => getPower(A, power))
-    console.log('A:', A)
+
     setSteps(result)
-    console.log('Result of power of', power, ':', result)
     setTime(time)
   }
 
@@ -58,8 +60,13 @@ const Power: FC = () => {
 
   useEffect(() => {
     console.log('recalculating function');
+    console.log('A:', A);
     if (A) {
+      console.log('shall set calculate');
       setCalculate(calculateResult)
+      if (aIsFilled) {
+        calculateResult()
+      }
     }
   }, [A, aIsFilled]);
 

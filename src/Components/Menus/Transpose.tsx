@@ -8,8 +8,8 @@ import Matrix from '../../interfaces/Matrix';
 import useResetParams from '../../hooks/useResetParams';
 
 const Transpose: FC = () => {
-  const { setIsOnlyA, setCalculate, aDim, setADim, A, setA, aIsFilled, setAIsFilled, setBIsFilled } = useMatrixStore()
-  const { isOpen, setIsOpen } = useModalStore()
+  const { setCalculate, aDim, setADim, A, setA, aIsFilled, setAIsFilled, setBIsFilled } = useMatrixStore()
+  const { isOpen } = useModalStore()
 
   const showOriginalRef = useRef<HTMLTableElement | null>(null)
 
@@ -84,7 +84,7 @@ const Transpose: FC = () => {
       )}
       <div>
         <div className={`${isOpen || aIsFilled ? 'hidden' : 'block'}`}>
-          <h3 className='bold'>Transpose</h3>
+          <h3 className='mb-4 text-lg bold'>Transpose</h3>
           The algorithm of matrix transpose is pretty simple.
           <ul>
             <li>A new matrix is obtained the following way: each [i, j] element of the new matrix gets the value of the [j, i] element of the original one.</li>

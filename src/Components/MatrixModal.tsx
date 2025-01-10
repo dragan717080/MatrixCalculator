@@ -51,10 +51,13 @@ const MatrixModal: FC = () => {
 
     let inputCells = isA ? inputCellsA! : inputCellsB!;
     console.log('There are', inputCells.length, 'input elements');
-    console.log('matrix in fill:', matrix);
+    console.log('isA:', isA, 'matrix in fill:', matrix);
 
     if (!inputCells.length && !hasOpenedBefore) {
       console.log('%cIS A:', 'color:red;font-size:22px', isA);
+      console.log('aDim:', aDim);
+      console.log('%cbDim:', 'color:red;font-size:26px', bDim);
+
       console.log('has opened before:', hasOpenedBefore);
       console.log('is inserting A:', isInsertingA);
       console.log('is inserting B:', isInsertingB);
@@ -124,7 +127,7 @@ const MatrixModal: FC = () => {
 
       console.log('cell', inputCell);
       // To do: remove
-      if (matrix.length && typeof(matrix[row][col]) !== 'undefined') {
+      if (matrix.length && typeof (matrix[row][col]) !== 'undefined') {
         console.log('new value of cell:', matrix[row][col])
       }
     };
@@ -153,7 +156,7 @@ const MatrixModal: FC = () => {
     console.log('new matrix in update value:', newMatrix);
     console.log('new value:', value, typeof (value));
 
-    if (typeof(newMatrix[row]) === 'undefined') {
+    if (typeof (newMatrix[row]) === 'undefined') {
       newMatrix.push([])
     }
     // Make a copy of the row that we want to modify
@@ -357,8 +360,7 @@ const MatrixModal: FC = () => {
 
   // to do: remove
   useEffect(() => {
-    // @ts-ignore
-    setA([1, 2, 3, 4])
+    //setA([1, 2, 3, 4])
     //setAIsFilled(true)
     setIsOpen(false)
     console.log('closing modal');
@@ -367,6 +369,10 @@ const MatrixModal: FC = () => {
   useEffect(() => {
     console.log('is open in modal:', isOpen);
   }, [isOpen])
+
+  useEffect(() => {
+    console.log('%cnew bDim:', 'color:green;font-size:26px', bDim);
+  }, [bDim])
 
   return (
     <>

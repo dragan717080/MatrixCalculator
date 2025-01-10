@@ -33,7 +33,7 @@ const Determinant: FC = () => {
 
   const calculateResult = () => {
     // It will go to this function again when `A` changes with `updateValuesForMatrix`
-    if (!A.flat().every(x => typeof(x) !== 'string')) {
+    if (!A.length || !A.flat().every(x => typeof(x) !== 'string')) {
       return
     }
 
@@ -208,7 +208,7 @@ const Determinant: FC = () => {
         </div>
       )}
       <div className={`${isOpen || aIsFilled ? 'hidden' : 'block'}`}>
-        <h3 className='bold'>Determinant</h3>
+        <h3 className='mb-4 text-lg bold'>Determinant</h3>
         <p>
           Here you can calculate a determinant of a matrix with complex numbers online for free with a very detailed solution. Determinant is calculated by reducing a matrix to row echelon form and multiplying its main diagonal elements.
         </p>

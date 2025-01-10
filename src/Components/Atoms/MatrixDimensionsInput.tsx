@@ -18,7 +18,7 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
     sign, setSign,
   } = useMatrixStore()
   const { isOpen, setIsOpen } = useModalStore()
-  console.log('%cRERENDER', 'color:red;font-size:16px');
+  // console.log('%cRERENDER', 'color:red;font-size:16px');
 
   const aRows = useRef<HTMLInputElement | null>(null)
   const aCols = useRef<HTMLInputElement | null>(null)
@@ -55,7 +55,7 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
       : aRows.current!.value.length && aCols.current!.value.length
 
     console.log('only A:', isOnlyA);
-    const bIsFilled = !isOnlyA
+    const bIsFilled = !isOnlyA && !isAS
       ? isSquare
         ? bRows.current?.value.length || 0
         : (bRows.current!.value.length || 0) && (bCols.current!.value.length || 0)
@@ -115,14 +115,23 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
       }
 
       if (!isOnlyA) {
-        const newBValue = getNumericDimValue(false);
-        setBDim(newBValue);
-        const bIsSet = newBValue[0] !== 0 && newBValue[1] !== 0;
+        let bIsSet
+
+        if (isAS) {
+          bIsSet = aIsSet
+          console.log('setting bDim as:', [parseInt(aRows.current!.value), parseInt(aCols.current!.value)]);
+          setBDim([parseInt(aRows.current!.value), parseInt(aCols.current!.value)])
+        } else {
+          const newBValue = getNumericDimValue(false);
+          setBDim(newBValue);
+          bIsSet = newBValue[0] !== 0 && newBValue[1] !== 0
+        }
 
         if (aIsSet && bIsSet) {
           console.log('opening modal, both matrices are set');
           setIsOpen(true);
         }
+        console.log('A is set:', aIsSet, 'B is set:', bIsSet);
       } else {
         console.log('a is set:', aIsSet);
         if (aIsSet) {
@@ -170,8 +179,8 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
       <form action=''>
         {/* Pick A */}
         <div className='row justify-start'>
-          <span className='mr-2'>Matrix {!isOnlyA ? 'A ' : ''}dimension:</span>
-          <div className="row">
+          <span className='mr-2'>Matri{isAS ? 'ces' : 'x'} {!isOnlyA && !isAS ? 'A ' : ''}dimension{isAS ? 's' : ''}:</span>
+          <div className='row'>
             <input
               required
               ref={aRows}
@@ -181,7 +190,7 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
               className='p-1.5 pr-0 pb-1.5 pl-2.5 w-[50px] text-sm pointer outline-none rounded-lg focus:bg-primary'
             // value={2}
             />
-            {!isSquare && (
+            {(!isSquare || isAS) && (
               <>
                 <span className='px-2'>X</span>
                 <input
@@ -225,10 +234,10 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
           </div>
         </div>
         {/* Pick B */}
-        {!isOnlyA && (
+        {!isOnlyA && !isAS && (
           <div className='row justify-start mt-5'>
             <span className='mr-2'>Matrix B dimension:</span>
-            <div className="row">
+            <div className='row'>
               <input
                 required
                 ref={bRows}

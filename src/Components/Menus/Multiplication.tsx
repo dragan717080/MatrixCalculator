@@ -30,6 +30,10 @@ const Multiplication: FC = () => {
   const { resetParams } = useResetParams({ onlyHasA: false })
 
   const calculateResult = () => {
+    // It will go to this function again when `A` or `B` change with `updateValuesForMatrix`
+    if (!A.length || !A.flat().every(x => typeof (x) !== 'string') || !B.length || !B.flat().every(x => typeof (x) !== 'string')) {
+      return
+    }
     console.log('A:', A)
     console.log('B:', B);
     const { time, funcResult: result } = getCalcTime(() => getMultiplication(A, B))
@@ -55,11 +59,14 @@ const Multiplication: FC = () => {
   }, [toShowSolution])
 
   useEffect(() => {
-    console.log('recalculating function');
+    console.log('recalculating function')
     if (A && B) {
       setCalculate(calculateResult)
+      if (aIsFilled && bIsFilled) {
+        calculateResult()
+      }
     }
-  }, [A, B, aIsFilled, bIsFilled]);
+  }, [A, B, aIsFilled, bIsFilled])
 
   useEffect(() => {
     resetParams()
@@ -72,10 +79,10 @@ const Multiplication: FC = () => {
           {toShowSolution && (
             <>
               {steps.length > 0 && (
-                <h3 className='bold leading-4'>Original matrices</h3>
+                <h3 className='bold leading-4 mb-3'>Original matrices</h3>
               )}
               <div className='mb-7'>
-                <div id='step-1' className='row-v px-3 border-b-darkgray'>
+                <div id='step-1' className='row-v pb-2 px-3 border-b-darkgray'>
                   <ScrollWithSVGs aCols={aDim[1]} isFirst areBoth />
                   <div className='row flex-col md:flex-row space-y-6 md:space-y-0 md:space-x-6 pb-6 md:pb-0'>
                     <MatrixTable nRows={aDim[0]} nCols={aDim[1]} A={A} />
@@ -109,7 +116,8 @@ const Multiplication: FC = () => {
         </div>
       )}
       <div>
-        <div className={`${isOpen || aIsFilled && bIsFilled ? 'hidden' : 'block'}`}><h3 className='bold'>Multiplication</h3>
+        <div className={`${isOpen || aIsFilled && bIsFilled ? 'hidden' : 'block'}`}>
+          <h3 className='mb-4 text-lg bold'>Multiplication</h3>
           <ol>
             <li>The main condition of matrix multiplication is that the number of columns of the 1st matrix must equal to the number of rows of the 2nd one.</li>
             <li className='text-red-500'>A cols = B rows</li>
