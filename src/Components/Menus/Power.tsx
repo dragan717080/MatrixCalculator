@@ -4,6 +4,7 @@ import MatrixTable from '../Atoms/MatrixTable'
 import ScrollWithSVGs from '../Atoms/ScrollWithSVGs'
 import useRecalculate from '../../hooks/useRecalculate'
 import useResetParams from '../../hooks/useResetParams'
+import useToggleShowSolution from '../../hooks/useToggleShowSolution'
 import getPower from '../../lib/getPower'
 import { getCalcTime, wait } from '../../lib/utils'
 import { useMatrixStore, useModalStore } from '../../store/zustandStore'
@@ -11,7 +12,6 @@ import Matrix, { Step } from '../../interfaces/Matrix'
 
 const Power: FC = () => {
   const {
-    setIsOnlyA,
     setCalculate,
     aDim, setADim, aIsFilled, A, setA, setAIsFilled,
     power, setPower
@@ -23,11 +23,12 @@ const Power: FC = () => {
   const [toShowSolution, setToShowSolution] = useState<boolean>(false)
   const [steps, setSteps] = useState<Step[]>([])
   const [time, setTime] = useState<number>(-1)
-  // console.log('%cRERENDER', 'color:red;font-size:16px');
 
   const { recalculate } = useRecalculate({ setTime, setShow: setToShowSolution, setSteps, stepsRef: solutionStepsRef, isPower: true })
 
   const { resetParams } = useResetParams({})
+
+  const { toggleShowSolution } = useToggleShowSolution({ solutionStepsRef, toShowSolution, setToShowSolution })
 
   const calculateResult = () => {
     const aIsFilled = !A.length || !A.flat().every(x => typeof (x) !== 'string')
@@ -40,23 +41,6 @@ const Power: FC = () => {
     setSteps(result)
     setTime(time)
   }
-
-  const toggleShowSolution = useCallback(async () => {
-    console.log('before toggle:', solutionStepsRef.current!)
-    console.log('show original before toggle:', toShowSolution)
-    if (!toShowSolution) {
-      solutionStepsRef.current!.classList.remove('hidden')
-      solutionStepsRef.current!.classList.add('fade-in-table')
-      solutionStepsRef.current!.classList.remove('fade-out-table')
-    } else {
-      solutionStepsRef.current!.classList.remove('fade-in-table')
-      solutionStepsRef.current!.classList.add('fade-out-table')
-      await wait(700)
-      solutionStepsRef.current!.classList.add('hidden')
-    }
-    console.log('after toggle:', solutionStepsRef.current!)
-    setToShowSolution(!toShowSolution)
-  }, [toShowSolution])
 
   useEffect(() => {
     console.log('recalculating function');

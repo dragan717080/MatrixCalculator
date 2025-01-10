@@ -35,3 +35,16 @@ export interface UseResetParamsProps {
   isPower?: boolean
   isSign?: boolean
 }
+
+/**
+ * @type {useToggleShowSolutionProps}
+ *
+ * @property {RefObject<HTMLElement>} solutionStepsRef - Reference to the solution element.
+ * @property {boolean} toShowSolution - Current state of the visibility.
+ * @property {Dispatch<SetStateAction<boolean>>} setToShowSolution - Function to update visibility state.
+ */
+export interface useToggleShowSolutionProps {
+  solutionStepsRef: RefObject<HTMLElement>
+  toShowSolution: boolean
+  setToShowSolution: Dispatch<SetStateAction<boolean>>
+}

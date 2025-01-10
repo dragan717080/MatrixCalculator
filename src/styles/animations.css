@@ -19,7 +19,7 @@
     }
 }
 
-@keyframes table-fade-in-from-none {
+@keyframes content-fade-in-from-none {
     0% {
         display: none;
         opacity: 0;

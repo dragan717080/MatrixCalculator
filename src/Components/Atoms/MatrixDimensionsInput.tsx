@@ -179,7 +179,7 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
 
   // If sign was reset after `recalculate`, reflect the change
   useEffect(() => {
-    if (sign !== signRef.current!.value) {
+    if (signRef.current && sign !== signRef.current!.value) {
       signRef.current!.selectedIndex = sign === '+' ? 0 : 1
     }
   }, [sign])

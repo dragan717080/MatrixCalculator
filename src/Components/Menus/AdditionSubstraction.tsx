@@ -4,6 +4,7 @@ import MatrixTable from '../Atoms/MatrixTable'
 import ScrollWithSVGs from '../Atoms/ScrollWithSVGs'
 import useRecalculate from '../../hooks/useRecalculate'
 import useResetParams from '../../hooks/useResetParams'
+import useToggleShowSolution from '../../hooks/useToggleShowSolution'
 import { getCalcTime, wait } from '../../lib/utils'
 import { useMatrixStore, useModalStore } from '../../store/zustandStore'
 import Matrix, { Step } from '../../interfaces/Matrix'
@@ -28,6 +29,8 @@ const AdditionSubstraction: FC = () => {
 
   const { resetParams } = useResetParams({ onlyHasA: false, isSign: true, })
 
+  const { toggleShowSolution } = useToggleShowSolution({ solutionStepsRef, toShowSolution, setToShowSolution })
+
   const calculateResult = () => {
     // It will go to this function again when `A` or `B` change with `updateValuesForMatrix`
     if (!A.length || !A.flat().every(x => typeof (x) !== 'string') || !B.length || !B.flat().every(x => typeof (x) !== 'string')) {
@@ -42,21 +45,6 @@ const AdditionSubstraction: FC = () => {
     setC(result)
     setTime(time)
   }
-
-  const toggleShowSolution = useCallback(async () => {
-    if (!toShowSolution) {
-      solutionStepsRef.current!.classList.remove('hidden')
-      solutionStepsRef.current!.classList.add('fade-in-table')
-      solutionStepsRef.current!.classList.remove('fade-out-table')
-    } else {
-      solutionStepsRef.current!.classList.remove('fade-in-table')
-      solutionStepsRef.current!.classList.add('fade-out-table')
-      await wait(700)
-      solutionStepsRef.current!.classList.add('hidden')
-    }
-
-    setToShowSolution(!toShowSolution)
-  }, [toShowSolution])
 
   useEffect(() => {
     console.log('recalculating function');

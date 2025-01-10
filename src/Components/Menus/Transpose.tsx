@@ -2,6 +2,7 @@ import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import MatrixDimensionsInput from '../Atoms/MatrixDimensionsInput'
 import MatrixTable from '../Atoms/MatrixTable';
 import useRecalculate from '../../hooks/useRecalculate';
+import useToggleShowSolution from '../../hooks/useToggleShowSolution';
 import { getCalcTime, transpose, wait } from '../../lib/utils';
 import { useMatrixStore, useModalStore } from '../../store/zustandStore'
 import Matrix from '../../interfaces/Matrix';
@@ -23,29 +24,14 @@ const Transpose: FC = () => {
 
   const { resetParams } = useResetParams({ onlyHasA: true })
 
+  const { toggleShowSolution: toggleShowOriginalMatrix } = useToggleShowSolution({ solutionStepsRef: showOriginalRef, toShowSolution: showOriginalMatrix, setToShowSolution: setShowOriginalMatrix })
+
   const calculateResult = () => {
     console.log('A in calculate', A);
     const { time, funcResult: transposed } = getCalcTime(() => transpose(A))
     setTime(time)
     setC(transposed)
   }
-
-  const toggleShowOriginalMatrix = useCallback(async () => {
-    console.log('before toggle:', showOriginalRef.current!)
-    console.log('show original before toggle:', showOriginalMatrix)
-    if (!showOriginalMatrix) {
-      showOriginalRef.current!.classList.remove('hidden')
-      showOriginalRef.current!.classList.add('fade-in-table')
-      showOriginalRef.current!.classList.remove('fade-out-table')
-    } else {
-      showOriginalRef.current!.classList.remove('fade-in-table')
-      showOriginalRef.current!.classList.add('fade-out-table')
-      await wait(700)
-      showOriginalRef.current!.classList.add('hidden')
-    }
-    console.log('after toggle:', showOriginalRef.current!)
-    setShowOriginalMatrix(!showOriginalMatrix)
-  }, [showOriginalMatrix])
 
   useEffect(() => {
     console.log('new A:', A);

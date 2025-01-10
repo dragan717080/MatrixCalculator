@@ -4,6 +4,7 @@ import MatrixTable from '../Atoms/MatrixTable'
 import ScrollWithSVGs from '../Atoms/ScrollWithSVGs'
 import useRecalculate from '../../hooks/useRecalculate'
 import useResetParams from '../../hooks/useResetParams'
+import useToggleShowSolution from '../../hooks/useToggleShowSolution'
 import getDeterminant from '../../lib/getDeterminant'
 import { getCalcTime, wait } from '../../lib/utils'
 import { useMatrixStore, useModalStore } from '../../store/zustandStore'
@@ -30,6 +31,8 @@ const Determinant: FC = () => {
   const { recalculate } = useRecalculate({ setTime, setShow: setToShowSolution })
 
   const { resetParams } = useResetParams({})
+
+  const { toggleShowSolution } = useToggleShowSolution({ solutionStepsRef, toShowSolution, setToShowSolution })
 
   const calculateResult = () => {
     // It will go to this function again when `A` changes with `updateValuesForMatrix`
@@ -117,23 +120,6 @@ const Determinant: FC = () => {
     console.log('%cStep indexes to indexes without swaps:', 'color:red;font-size:30px;', d);
     setStepsSwapsIndexes(d);
   }, [steps.length]);
-
-  const toggleShowSolution = useCallback(async () => {
-    console.log('before toggle:', solutionStepsRef.current!)
-    console.log('show original before toggle:', toShowSolution)
-    if (!toShowSolution) {
-      solutionStepsRef.current!.classList.remove('hidden')
-      solutionStepsRef.current!.classList.add('fade-in-table')
-      solutionStepsRef.current!.classList.remove('fade-out-table')
-    } else {
-      solutionStepsRef.current!.classList.remove('fade-in-table')
-      solutionStepsRef.current!.classList.add('fade-out-table')
-      await wait(700)
-      solutionStepsRef.current!.classList.add('hidden')
-    }
-    console.log('after toggle:', solutionStepsRef.current!)
-    setToShowSolution(!toShowSolution)
-  }, [toShowSolution])
 
   useEffect(() => {
     console.log('recalculating function');
