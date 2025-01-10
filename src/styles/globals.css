@@ -390,6 +390,10 @@ table {
     border-bottom-color: #D3D3D3;
 }
 
+input {
+    transition: background-color 0.8s ease;
+}
+
 .svg-up,
 .svg-down {
     fill: #006CBC;
