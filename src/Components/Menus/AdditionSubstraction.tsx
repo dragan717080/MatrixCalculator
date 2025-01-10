@@ -7,6 +7,7 @@ import useResetParams from '../../hooks/useResetParams'
 import { getCalcTime, wait } from '../../lib/utils'
 import { useMatrixStore, useModalStore } from '../../store/zustandStore'
 import Matrix, { Step } from '../../interfaces/Matrix'
+import getAS from '../../lib/getAS'
 
 const AdditionSubstraction: FC = () => {
   const {
@@ -19,22 +20,28 @@ const AdditionSubstraction: FC = () => {
 
   const solutionStepsRef = useRef<HTMLDivElement | null>(null)
 
-  const [toShowSolution, setToShowSolution] = useState<boolean>(false)
-  const [steps, setSteps] = useState<Step[]>([])
+  const [C, setC] = useState<Matrix>(A)
   const [time, setTime] = useState<number>(-1)
+  const [toShowSolution, setToShowSolution] = useState<boolean>(false)
   // console.log('%cRERENDER', 'color:red;font-size:16px');
 
-  const { recalculate } = useRecalculate({ setTime, setShow: setToShowSolution, setSteps, stepsRef: solutionStepsRef, isSign: true })
+  const { recalculate } = useRecalculate({ setTime, setC, setShow: setToShowSolution, stepsRef: solutionStepsRef, isSign: true })
 
   const { resetParams } = useResetParams({ onlyHasA: false, isSign: true, })
 
   const calculateResult = () => {
+    // It will go to this function again when `A` or `B` change with `updateValuesForMatrix`
+    if (!A.length || !A.flat().every(x => typeof (x) !== 'string') || !B.length || !B.flat().every(x => typeof (x) !== 'string')) {
+      return
+    }
     console.log('A:', A)
     console.log('B:', B);
     console.log('sign:', sign);
-    // const { time, funcResult: result } = getCalcTime(() => getMultiplication(A, B))
-    // setSteps(result)
-    // setTime(time)
+    const { time, funcResult: result } = getCalcTime(() => getAS(A, B, sign))
+    console.log(`Result of ${sign === '+' ? 'addition' : 'substraction'}`)
+    console.log(result)
+    setC(result)
+    setTime(time)
   }
 
   const toggleShowSolution = useCallback(async () => {
@@ -56,10 +63,15 @@ const AdditionSubstraction: FC = () => {
 
   useEffect(() => {
     console.log('recalculating function');
+    console.log(A);
+    console.log(B);
     if (A && B) {
       setCalculate(calculateResult)
+      if (aIsFilled && bIsFilled) {
+        calculateResult()
+      }
     }
-  }, [A, B, aIsFilled, bIsFilled]);
+  }, [A, B, aIsFilled, bIsFilled])
 
   useEffect(() => {
     resetParams()
@@ -71,52 +83,29 @@ const AdditionSubstraction: FC = () => {
         <div ref={solutionStepsRef}>
           {toShowSolution && (
             <>
-              {steps.length > 0 && (
-                <h3 className='bold leading-4'>Original matrices</h3>
-              )}
+              <h3 className='bold leading-4'>Original matrices</h3>
               <div className='mb-7'>
                 <div id='step-1' className='row-v px-3 border-b-darkgray'>
-                  <ScrollWithSVGs aCols={aDim[1]} isFirst areBoth />
                   <div className='row flex-col md:flex-row space-y-6 md:space-y-0 md:space-x-6 pb-6 md:pb-0'>
                     <MatrixTable nRows={aDim[0]} nCols={aDim[1]} A={A} />
                     <MatrixTable nRows={bDim[0]} nCols={bDim[1]} A={B} letter='B' />
                   </div>
                 </div>
-                {steps.map((step, index) => (
-                  <div id={`step-${index + 2}`} className='pt-2 pb-3 border-b-darkgray' key={index}>
-                    <div>
-                      <div className="flex flex-col space-y-1.5 pt-2 pb-2.5">
-                        {(step.explanation as string[]).map((explanation, index) => (
-                          <p key={index}>{explanation}</p>
-                        ))}
-                      </div>
-                      <div className='row-v px-3'>
-                        <ScrollWithSVGs aCols={aDim[1]} isLast={index === steps.length - 1} />
-                        <MatrixTable
-                          nRows={step.A.length}
-                          nCols={step.A[0].length}
-                          A={step.A}
-                          toHighlight={(row: number, col: number, index: number | undefined) => row === index}
-                          index={index}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                ))}
               </div>
             </>
           )}
         </div>
       )}
       <div>
-        <div className={`${isOpen || aIsFilled && bIsFilled ? 'hidden' : 'block'}`}><h3 className='bold'>Multiplication</h3>
-          <ol>
-            <li>The main condition of matrix multiplication is that the number of columns of the 1st matrix must equal to the number of rows of the 2nd one.</li>
-            <li className='text-red-500'>A cols = B rows</li>
-            <li>As a result of multiplication you will get a new matrix that has the same quantity of rows as the 1st one has and the same quantity of columns as the 2nd one.</li>
-            <li>For example if you multiply a matrix of 'n' x 'k' by 'k' x 'm' size you'll get a new one of 'n' x 'm' dimension.</li>
-          </ol>
-          To understand matrix multiplication better input any example and examine the solution.
+        <div className={`${isOpen || aIsFilled && bIsFilled ? 'hidden' : 'block'}`}>
+          <h3 className='mb-4 text-lg bold'>Addition and Substraction</h3>
+          <p>
+            Matrix addition or subtraction is calculated by addition or subtraction of corresponding elements.<br/>
+            As a result you get a new matrix with the same dimension.<br/>
+            <span>
+              For example, C<span className='subindex'>1</span><span className='subindex'>1</span> = A<span className='subindex'>1</span><span className='subindex'>1</span> {sign} B<span className='subindex'>1</span><span className='subindex'>1</span>
+            </span>
+          </p>
           <MatrixDimensionsInput minValue={1} isAS={true} />
         </div>
         {aIsFilled && bIsFilled && !isOpen && (
@@ -141,9 +130,9 @@ const AdditionSubstraction: FC = () => {
                 Recalculate
               </button>
             </div>
-            {steps.length > 0 && (
+            {time > -1 && (
               <section>
-                <MatrixTable nRows={aDim[0]} nCols={aDim[1]} A={steps[steps.length - 1].A} />
+                <MatrixTable nRows={aDim[0]} nCols={aDim[1]} A={C} />
                 <div className='w-full flex'>
                   <span className='ml-auto pt-2'>
                     Computation time: <span>{time}</span>sec.
