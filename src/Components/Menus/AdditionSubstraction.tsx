@@ -23,7 +23,6 @@ const AdditionSubstraction: FC = () => {
   const [C, setC] = useState<Matrix>(A)
   const [time, setTime] = useState<number>(-1)
   const [toShowSolution, setToShowSolution] = useState<boolean>(false)
-  // console.log('%cRERENDER', 'color:red;font-size:16px');
 
   const { recalculate } = useRecalculate({ setTime, setC, setShow: setToShowSolution, stepsRef: solutionStepsRef, isSign: true })
 
@@ -45,8 +44,6 @@ const AdditionSubstraction: FC = () => {
   }
 
   const toggleShowSolution = useCallback(async () => {
-    console.log('before toggle:', solutionStepsRef.current!)
-    console.log('show original before toggle:', toShowSolution)
     if (!toShowSolution) {
       solutionStepsRef.current!.classList.remove('hidden')
       solutionStepsRef.current!.classList.add('fade-in-table')
@@ -57,7 +54,7 @@ const AdditionSubstraction: FC = () => {
       await wait(700)
       solutionStepsRef.current!.classList.add('hidden')
     }
-    console.log('after toggle:', solutionStepsRef.current!)
+
     setToShowSolution(!toShowSolution)
   }, [toShowSolution])
 

@@ -2,9 +2,6 @@ import { Sign } from '../interfaces/Determinant';
 import Matrix from '../interfaces/Matrix';
 
 const getAS = (A: Matrix, B: Matrix, sign: Sign): Matrix => {
-  console.log('A:', A);
-  console.log('B:', B);
-
   return Array.from(
     { length: A.length },
     (_, row) =>

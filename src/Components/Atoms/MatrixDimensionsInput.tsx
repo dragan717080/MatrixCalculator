@@ -12,7 +12,7 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
 }) => {
   const {
     isOnlyA,
-    aDim, setADim, setA,
+    aDim, setADim, A, setA, aIsFilled,
     bDim, setBDim, setB,
     power, setPower,
     sign, setSign,
@@ -30,6 +30,9 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
   const submitRef = useRef<HTMLButtonElement | null>(null)
 
   const [allIsFilled, setAllIsFilled] = useState<boolean>(false)
+
+  // Track for sign changes, if it is changed in last setup, return it to `+`
+  const [isFirstLoaded, setIsFirstLoaded] = useState<boolean>(false)
 
   /** For matrix inputs compare with `minValue` from props, for other take argument in func. */
   const validateRange = useCallback((
@@ -173,6 +176,25 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
       powerRef.current.value = ''
     }
   }, [power])
+
+  // If sign was reset after `recalculate`, reflect the change
+  useEffect(() => {
+    if (sign !== signRef.current!.value) {
+      signRef.current!.selectedIndex = sign === '+' ? 0 : 1
+    }
+  }, [sign])
+
+  useEffect(() => {
+    setIsFirstLoaded(true)
+  }, [])
+
+  useEffect(() => {
+    console.log('%cNEW A:', 'color:red;font-size:26px', A);
+    /** When sign is changed and was in `recalculate`, reset it to `+` */
+    if (aIsFilled) {
+      
+    }
+  }, [A, aIsFilled])
 
   return (
     <div className='row pt-7'>

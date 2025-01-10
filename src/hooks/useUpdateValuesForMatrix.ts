@@ -23,8 +23,7 @@ const useUpdateValuesForMatrix = () => {
     const newMatrix: (string | undefined | number)[][] = matrix.map(row =>
       row.map(element => (element !== undefined ? String(element) : element))
     )
-
-    console.log('updating values');
+    // console.log('updating values');
 
     for (const row in newMatrix) {
       for (const col in newMatrix[0]) {
@@ -43,7 +42,7 @@ const useUpdateValuesForMatrix = () => {
         }
 
         newMatrix[row][col] = parseFloat(newMatrix[row][col] as unknown as string)
-        console.log('shall push value:', parseFloat(newMatrix[row][col] as unknown as string));
+        // console.log('shall push value:', parseFloat(newMatrix[row][col] as unknown as string));
       }
     }
 
