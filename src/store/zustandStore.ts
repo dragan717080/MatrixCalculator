@@ -39,4 +39,6 @@ export const useMatrixStore = create<MatrixStore>((set) => ({
   setPower: (value) => set((state) => ({ power: value })),
   isMultiplication: false,
   setIsMultiplication: (value) => set((state) => ({ isMultiplication: value })),
+  sign: '+',
+  setSign: (value) => set((state) => ({ sign: value })),
 }))
