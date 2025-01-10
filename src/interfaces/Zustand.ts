@@ -1,3 +1,4 @@
+import { Sign } from './Determinant';
 import Matrix, { TwoNumbers } from './Matrix'
 
 export interface NavbarPortalStore {
@@ -34,4 +35,6 @@ export interface MatrixStore {
   setPower: (value: number) => void;
   isMultiplication: boolean;
   setIsMultiplication: (value: boolean) => void;
+  sign: Sign;
+  setSign: (value: Sign) => void;
 }

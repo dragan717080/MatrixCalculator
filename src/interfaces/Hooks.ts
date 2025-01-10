@@ -1,6 +1,6 @@
-import { Dispatch, RefObject, SetStateAction } from 'react';
-import Matrix, { Step } from './Matrix';
-import { Step as DeterminantStep } from './Determinant';
+import { Dispatch, RefObject, SetStateAction } from 'react'
+import Matrix, { Step } from './Matrix'
+import { Step as DeterminantStep } from './Determinant'
 
 /**
  * @type {UseRecalculateProps}
@@ -11,6 +11,7 @@ import { Step as DeterminantStep } from './Determinant';
  * @property {Dispatch<SetStateAction<Step[]>> | Dispatch<SetStateAction<DeterminantStep[]|>>} [setSteps] - Optional parameter, defaults to false.
  * @property {RefObject<HTMLElement>} [stepsRef] - Optional reference to the DOM element representing previous steps, to hide when recalculated.
  * @property {boolean} [isPower] - Defaults to false.
+ * @property {boolean} [isSign] - Defaults to false.
  */
 export interface UseRecalculateProps {
   setTime: Dispatch<SetStateAction<number>>
@@ -19,14 +20,18 @@ export interface UseRecalculateProps {
   setSteps?: Dispatch<SetStateAction<Step[]>> | Dispatch<SetStateAction<DeterminantStep[]>>
   stepsRef?: RefObject<HTMLElement>
   isPower?: boolean
+  isSign?: boolean
 }
 
 /**
  * @type {UseResetParamsProps}
  *
  * @property {boolean} [onlyHasA] - Defaults to true.
+ * @property {boolean} [isPower] - Defaults to false.
+ * @property {boolean} [isSign] - Defaults to false.
  */
 export interface UseResetParamsProps {
   onlyHasA?: boolean
   isPower?: boolean
+  isSign?: boolean
 }

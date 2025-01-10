@@ -13,13 +13,15 @@ const useRecalculate = ({
   setSteps,
   stepsRef,
   isPower,
+  isSign,
 }: UseRecalculateProps) => {
   const { 
     isOnlyA, setIsOnlyA,
     setCalculate,
     aDim, setADim, A, setA, aIsFilled, setAIsFilled,
     setBDim, setB, setBIsFilled,
-    setPower
+    setPower,
+    setSign,
   } = useMatrixStore()
   const { setIsOpen } = useModalStore()
 
@@ -56,6 +58,10 @@ const useRecalculate = ({
 
     if (isPower) {
       setPower(-1)
+    }
+
+    if (isSign) {
+      setSign('+')
     }
   }
 
