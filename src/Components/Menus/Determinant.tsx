@@ -3,6 +3,7 @@ import MatrixDimensionsInput from '../Atoms/MatrixDimensionsInput'
 import MatrixTable from '../Atoms/MatrixTable'
 import ScrollWithSVGs from '../Atoms/ScrollWithSVGs'
 import useRecalculate from '../../hooks/useRecalculate'
+import useResetParams from '../../hooks/useResetParams'
 import getDeterminant from '../../lib/getDeterminant'
 import { getCalcTime, wait } from '../../lib/utils'
 import { useMatrixStore, useModalStore } from '../../store/zustandStore'
@@ -28,7 +29,15 @@ const Determinant: FC = () => {
 
   const { recalculate } = useRecalculate({ setTime, setShow: setToShowSolution })
 
+  const { resetParams } = useResetParams({})
+
   const calculateResult = () => {
+    // It will go to this function again when `A` changes with `updateValuesForMatrix`
+    if (!A.flat().every(x => typeof(x) !== 'string')) {
+      return
+    }
+
+    console.log('has only numbers:', A.flat().every(x => typeof(x) !== 'string'));
     console.log('A in calculate:', A)
     const { time, funcResult } = getCalcTime(() => getDeterminant(A))
     const { steps, result } = funcResult
@@ -131,18 +140,14 @@ const Determinant: FC = () => {
     if (A) {
       console.log('received A:', A);
       setCalculate(calculateResult)
+      if (aIsFilled) {
+        calculateResult()
+      }
     }
   }, [A, aIsFilled]);
 
   useEffect(() => {
-    setIsOnlyA(true)
-    setADim([0, 0])
-    setA([])
-    setAIsFilled(false)
-    setBDim([0, 0])
-    setB([])
-    setBIsFilled(false)
-    setToShowSolution(false)
+    resetParams()
   }, [])
 
   useEffect(() => {
@@ -154,14 +159,14 @@ const Determinant: FC = () => {
   }, [steps.length])
 
   useEffect(() => {
-    console.log('A changed in determinant:', A);
+    console.log('A changed in determinant:', A)
   }, [A])
 
   return (
     <div className='col-h'>
       {aIsFilled && !isOpen && (
         <div ref={solutionStepsRef}>
-          {toShowSolution && steps.length && (
+          {toShowSolution && steps.length > 0 && (
             <div className='mb-7'>
               <div id='step-1' className='row-v px-3 border-b-darkgray'>
                 <ScrollWithSVGs aCols={aDim[1]} isFirst />

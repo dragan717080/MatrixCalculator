@@ -14,15 +14,19 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
     isOnlyA,
     aDim, setADim, setA,
     bDim, setBDim, setB,
-    setPower
+    power, setPower,
+    sign, setSign,
   } = useMatrixStore()
   const { isOpen, setIsOpen } = useModalStore()
+  console.log('%cRERENDER', 'color:red;font-size:16px');
 
   const aRows = useRef<HTMLInputElement | null>(null)
   const aCols = useRef<HTMLInputElement | null>(null)
   const bRows = useRef<HTMLInputElement | null>(null)
   const bCols = useRef<HTMLInputElement | null>(null)
   const powerRef = useRef<HTMLInputElement | null>(null)
+  const signRef = useRef<HTMLSelectElement | null>(null)
+
   const submitRef = useRef<HTMLButtonElement | null>(null)
 
   const [allIsFilled, setAllIsFilled] = useState<boolean>(false)
@@ -153,6 +157,14 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
     console.log('isOpen in input:', isOpen);
   }, [isOpen])
 
+  useEffect(() => {
+    if (power === -1 && powerRef.current) {
+      console.log('previous value:', powerRef.current!.value);
+      console.log('%cnew power value:', 'color:red;font-size:26px', power);
+      powerRef.current.value = ''
+    }
+  }, [power])
+
   return (
     <div className='row pt-7'>
       <form action=''>
@@ -167,7 +179,7 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
               inputMode='text'
               onChange={validateRange}
               className='p-1.5 pr-0 pb-1.5 pl-2.5 w-[50px] text-sm pointer outline-none rounded-lg focus:bg-primary'
-              value={2}
+            // value={2}
             />
             {!isSquare && (
               <>
@@ -179,7 +191,7 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
                   inputMode='text'
                   onChange={validateRange}
                   className='p-1.5 pr-0 pb-1.5 pl-2.5 w-[50px] text-sm pointer outline-none rounded-lg focus:bg-primary'
-                  value={2}
+                // value={2}
                 />
               </>
             )}
@@ -194,6 +206,20 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
                   onChange={(e) => validateRange(e, 0, 10)}
                   className='p-1.5 pr-0 pb-1.5 pl-2.5 w-[50px] text-sm pointer outline-none rounded-lg focus:bg-primary'
                 />
+              </>
+            )}
+            {isAS && (
+              <>
+                <select
+                  required
+                  ref={signRef}
+                  inputMode='text'
+                  onChange={() => setSign(sign === '+' ? '-' : '+')}
+                  className='p-1.5 pr-0 pb-1.5 pl-2.5 w-[50px] text-sm pointer outline-none rounded-lg focus:bg-primary'
+                >
+                  <option>+</option>
+                  <option>-</option>
+                </select>
               </>
             )}
           </div>

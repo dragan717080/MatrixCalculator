@@ -2,6 +2,8 @@ import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import MatrixDimensionsInput from '../Atoms/MatrixDimensionsInput'
 import MatrixTable from '../Atoms/MatrixTable'
 import ScrollWithSVGs from '../Atoms/ScrollWithSVGs'
+import useRecalculate from '../../hooks/useRecalculate'
+import useResetParams from '../../hooks/useResetParams'
 import getMultiplication from '../../lib/getMultiplication'
 import { getCalcTime, wait } from '../../lib/utils'
 import { useMatrixStore } from '../../store/zustandStore'
@@ -16,11 +18,16 @@ const Multiplication: FC = () => {
     setCalculate
   } = useMatrixStore()
   const { isOpen, setIsOpen } = useModalStore()
+
+  const solutionStepsRef = useRef<HTMLDivElement | null>(null)
+
   const [toShowSolution, setToShowSolution] = useState<boolean>(false)
   const [steps, setSteps] = useState<Step[]>([])
   const [time, setTime] = useState<number>(-1)
 
-  const solutionStepsRef = useRef<HTMLDivElement | null>(null)
+  const { recalculate } = useRecalculate({ setTime, setShow: setToShowSolution, setSteps, stepsRef: solutionStepsRef })
+
+  const { resetParams } = useResetParams({ onlyHasA: false })
 
   const calculateResult = () => {
     console.log('A:', A)
@@ -47,19 +54,6 @@ const Multiplication: FC = () => {
     setToShowSolution(!toShowSolution)
   }, [toShowSolution])
 
-  const recalculate = () => {
-    setTime(-1)
-    setADim([0, 0])
-    setA([])
-    setAIsFilled(false)
-    setBDim([0, 0])
-    setB([])
-    setBIsFilled(false)
-    setSteps([])
-    setToShowSolution(false)
-    setIsOpen(false)
-  }
-
   useEffect(() => {
     console.log('recalculating function');
     if (A && B || A && isOnlyA) {
@@ -68,13 +62,7 @@ const Multiplication: FC = () => {
   }, [A, B, aIsFilled, bIsFilled]);
 
   useEffect(() => {
-    setIsOnlyA(false)
-    setADim([0, 0])
-    setA([])
-    setAIsFilled(false)
-    setBDim([0, 0])
-    setB([])
-    setBIsFilled(false)
+    resetParams()
   }, [])
 
   return (

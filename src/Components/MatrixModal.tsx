@@ -81,19 +81,53 @@ const MatrixModal: FC = () => {
       inputCells = isA ? newAInputCells : newBInputCells
     }
 
-    inputCells.forEach((inputCell, index) => {
+    for (let index = 0; index < inputCells.length; index++) {
+      const inputCell = inputCells[index]
       const row = Math.floor(index / nCols);
       const col = index - row * nCols;
 
       if (matrix.length === 0) {
         inputCell.value = ''
       } else {
+        console.log(matrix);
+        console.log(aDim, bDim);
+        /** If came from cancel previously, `aDim` and `A` will mismatch, then reset `A` (or `B`). */
+        const expectedDim = isA ? aDim : bDim
+
+        if (matrix.length !== expectedDim[0] || matrix[0].length !== expectedDim[1]) {
+          console.log('Was in cancel, so dimensions mismatch');
+          console.log('Will have input cells:', inputCells.length);
+          const newAInputCells = Array.from(document.getElementsByClassName('cell-a') as HTMLCollectionOf<HTMLInputElement>)
+          setInputCellsA(newAInputCells);
+
+          for (const cell of newAInputCells) {
+            cell.value = ''
+          }
+
+          setA([])
+
+          if (!isA) {
+            const newBInputCells = Array.from(document.getElementsByClassName('cell-b') as HTMLCollectionOf<HTMLInputElement>)
+            setInputCellsB(newBInputCells)
+
+            for (const cell of newBInputCells) {
+              cell.value = ''
+            }
+
+            setB([])
+          }
+
+          return;
+        }
         inputCell.value = matrix[row][col] as unknown as string ?? ''
       }
 
       console.log('cell', inputCell);
-      console.log('new value of cell:', matrix[row][col]);
-    });
+      // To do: remove
+      if (matrix.length && typeof(matrix[row][col]) !== 'undefined') {
+        console.log('new value of cell:', matrix[row][col])
+      }
+    };
   }
 
   /** Initially fill matrices with `rows` * undefined */
@@ -119,6 +153,9 @@ const MatrixModal: FC = () => {
     console.log('new matrix in update value:', newMatrix);
     console.log('new value:', value, typeof (value));
 
+    if (typeof(newMatrix[row]) === 'undefined') {
+      newMatrix.push([])
+    }
     // Make a copy of the row that we want to modify
     const updatedRow = [...newMatrix[row]];
 

@@ -5,6 +5,7 @@ import useRecalculate from '../../hooks/useRecalculate';
 import { getCalcTime, transpose, wait } from '../../lib/utils';
 import { useMatrixStore, useModalStore } from '../../store/zustandStore'
 import Matrix from '../../interfaces/Matrix';
+import useResetParams from '../../hooks/useResetParams';
 
 const Transpose: FC = () => {
   const { setIsOnlyA, setCalculate, aDim, setADim, A, setA, aIsFilled, setAIsFilled, setBIsFilled } = useMatrixStore()
@@ -19,6 +20,8 @@ const Transpose: FC = () => {
   const [showOriginalMatrix, setShowOriginalMatrix] = useState<boolean>(false)
 
   const { recalculate } = useRecalculate({ setTime, setC, setShow: setShowOriginalMatrix, stepsRef: showOriginalRef })
+
+  const { resetParams } = useResetParams({ onlyHasA: true })
 
   const calculateResult = () => {
     console.log('A in calculate', A);
@@ -55,9 +58,7 @@ const Transpose: FC = () => {
   }, [A, aIsFilled])
 
   useEffect(() => {
-    setAIsFilled(false)
-    setBIsFilled(false)
-    setIsOnlyA(true)
+    resetParams()
   }, [])
 
   return (

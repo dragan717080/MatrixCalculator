@@ -10,9 +10,17 @@ const useRecalculate = ({
   setTime,
   setC,
   setShow,
-  stepsRef
+  setSteps,
+  stepsRef,
+  isPower,
 }: UseRecalculateProps) => {
-  const { setIsOnlyA, setCalculate, aDim, setADim, A, setA, aIsFilled, setAIsFilled, setBIsFilled } = useMatrixStore()
+  const { 
+    isOnlyA, setIsOnlyA,
+    setCalculate,
+    aDim, setADim, A, setA, aIsFilled, setAIsFilled,
+    setBDim, setB, setBIsFilled,
+    setPower
+  } = useMatrixStore()
   const { setIsOpen } = useModalStore()
 
   const recalculate = () => {
@@ -33,6 +41,21 @@ const useRecalculate = ({
 
     if (stepsRef) {
       stepsRef.current!.classList.add('hidden')
+    }
+
+    if (setSteps) {
+      setSteps([])
+    }
+
+    if (!isOnlyA) {
+      setBDim([0, 0])
+      setB([])
+      setBIsFilled(false)
+    }
+    console.log('is power in recalculate:', isPower);
+
+    if (isPower) {
+      setPower(-1)
     }
   }
 

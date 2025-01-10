@@ -2,6 +2,8 @@ import React, { FC, useCallback, useRef, useState, useEffect } from 'react'
 import MatrixDimensionsInput from '../Atoms/MatrixDimensionsInput'
 import MatrixTable from '../Atoms/MatrixTable'
 import ScrollWithSVGs from '../Atoms/ScrollWithSVGs'
+import useRecalculate from '../../hooks/useRecalculate'
+import useResetParams from '../../hooks/useResetParams'
 import getPower from '../../lib/getPower'
 import { getCalcTime, wait } from '../../lib/utils'
 import { useMatrixStore, useModalStore } from '../../store/zustandStore'
@@ -13,16 +15,20 @@ const Power: FC = () => {
     setCalculate,
     aDim, setADim, aIsFilled, A, setA, setAIsFilled,
     setBDim, setB, setBIsFilled,
-    power
+    power, setPower
   } = useMatrixStore()
-  const { isOpen, setIsOpen } = useModalStore()
+  const { isOpen } = useModalStore()
 
   const solutionStepsRef = useRef<HTMLDivElement | null>(null)
 
   const [toShowSolution, setToShowSolution] = useState<boolean>(false)
   const [steps, setSteps] = useState<Step[]>([])
   const [time, setTime] = useState<number>(-1)
-  console.log('%cRERENDER', 'color:red;font-size:16px');
+  // console.log('%cRERENDER', 'color:red;font-size:16px');
+
+  const { recalculate } = useRecalculate({ setTime, setShow: setToShowSolution, setSteps, stepsRef: solutionStepsRef, isPower: true })
+
+  const { resetParams } = useResetParams({})
 
   const calculateResult = () => {
     console.log('shall send A:', A);
@@ -50,17 +56,6 @@ const Power: FC = () => {
     setToShowSolution(!toShowSolution)
   }, [toShowSolution])
 
-  const recalculate = () => {
-    console.log('setting again');
-    setIsOnlyA(true)
-    setTime(-1)
-    setADim([0, 0])
-    setA([])
-    setAIsFilled(false)
-    setIsOpen(false)
-    setToShowSolution(false)
-  }
-
   useEffect(() => {
     console.log('recalculating function');
     if (A) {
@@ -69,14 +64,12 @@ const Power: FC = () => {
   }, [A, aIsFilled]);
 
   useEffect(() => {
-    setIsOnlyA(true)
-    setADim([0, 0])
-    setA([])
-    setAIsFilled(false)
-    setBDim([0, 0])
-    setB([])
-    setBIsFilled(false)
+    resetParams()
   }, [])
+
+  useEffect(() => {
+    console.log('new power value:', power);
+  }, [power])
 
   return (
     <div className='col-h'>
@@ -95,17 +88,20 @@ const Power: FC = () => {
                 {power !== 1 && steps.slice(0, -1).map((step, index) => (
                   <div id={`step-${index + 2}`} className='pt-2 pb-3 border-b-darkgray' key={index}>
                     <div>
-                      <span className=''>
-                        A<span className='superindex'>{index + 2}</span> = A{
-                          index > 0 && <span className='superindex'>{index + 1}</span>
-                        } * A
-                      </span>
+                      <div className='mt-2 w-full text-center'>
+                        <span>
+                          A<span className='superindex'>{index + 2}</span> = A{
+                            index > 0 && <span className='superindex'>{index + 1}</span>
+                          } * A
+                        </span>
+                      </div>
                       <div className='row-v px-3'>
                         <ScrollWithSVGs aCols={aDim[1]} isLast={index === steps.length - 1} />
                         <MatrixTable
                           nRows={step.A.length}
                           nCols={step.A[0].length}
                           A={step.A}
+                          className='!my-4'
                           index={index}
                         />
                       </div>
@@ -151,19 +147,21 @@ const Power: FC = () => {
             </div>
             {steps.length > 0 && (
               <section>
-                {power === 0 && (
-                  <p className='mt-6'>A raised to the power of 0 gives an identity matrix</p>
-                )}
-                {power === 1 && (
-                  <p className='mt-6'>A raised to the power of 1 gives the same matrix</p>
-                )}
-                {power > 1 && (
-                  <span className=''>
-                    A<span className='superindex'>{power}</span> = A{
-                      power > 2 && <span className='superindex'>{power - 1}</span>
-                    } * A
-                  </span>
-                )}
+                <div className='w-full text-center'>
+                  {power === 0 && (
+                    <p className='mt-6'>A raised to the power of 0 gives an identity matrix</p>
+                  )}
+                  {power === 1 && (
+                    <p className='mt-6'>A raised to the power of 1 gives the same matrix</p>
+                  )}
+                  {power > 1 && (
+                    <span>
+                      A<span className='superindex'>{power}</span> = A{
+                        power > 2 && <span className='superindex'>{power - 1}</span>
+                      } * A
+                    </span>
+                  )}
+                </div>
                 <MatrixTable nRows={aDim[0]} nCols={aDim[1]} A={steps[steps.length - 1].A} />
                 <div className='w-full flex'>
                   <span className='ml-auto pt-2'>
