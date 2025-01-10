@@ -1,4 +1,4 @@
-import React, { FC, ChangeEvent, MouseEvent, useCallback, useRef, useEffect, useState } from 'react'
+import React, { FC, ChangeEvent, MouseEvent, memo, useCallback, useRef, useEffect, useState } from 'react'
 import MatrixDimensionsInputProps from '../../interfaces/MatrixDimensionsInputProps'
 import { TwoNumbers } from '../../interfaces/Matrix'
 import { useMatrixStore, useModalStore } from '../../store/zustandStore'
@@ -215,7 +215,7 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
                   ref={signRef}
                   inputMode='text'
                   onChange={() => setSign(sign === '+' ? '-' : '+')}
-                  className='p-1.5 pr-0 pb-1.5 pl-2.5 w-[50px] text-sm pointer outline-none rounded-lg focus:bg-primary'
+                  className='ml-5 p-1.5 pr-0 pb-1.5 pl-2 w-[50px] text-sm pointer outline-none rounded-lg focus:bg-primary'
                 >
                   <option>+</option>
                   <option>-</option>
@@ -265,4 +265,4 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
   )
 }
 
-export default MatrixDimensionsInput
+export default memo(MatrixDimensionsInput)

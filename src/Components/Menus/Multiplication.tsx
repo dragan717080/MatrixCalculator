@@ -56,7 +56,7 @@ const Multiplication: FC = () => {
 
   useEffect(() => {
     console.log('recalculating function');
-    if (A && B || A && isOnlyA) {
+    if (A && B) {
       setCalculate(calculateResult)
     }
   }, [A, B, aIsFilled, bIsFilled]);
