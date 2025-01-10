@@ -360,14 +360,14 @@ table {
 
 .fade-in {
     max-width: fit-content;
-    -webkit-animation: content-fade-in-from-none 0.9s ease-in-out;
-    animation: content-fade-in-from-none 0.9s ease-in-out;
+    -webkit-animation: content-fade-in 0.9s ease-in-out forwards;
+    animation: content-fade-in 0.9s ease-in-out forwards;
 }
 
 .fade-out {
     max-width: fit-content;
-    -webkit-animation: table-fade-out-from-none 0.9s ease-in-out;
-    animation: table-fade-out-from-none 0.9s ease-in-out;
+    -webkit-animation: content-fade-out 0.9s ease-in-out forwards;
+    animation: content-fade-out 0.9s ease-in-out forwards;
 }
 
 .border-b-darkgray {
