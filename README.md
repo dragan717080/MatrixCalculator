@@ -10,7 +10,7 @@
 
 </div>
 
-### Matrix Calculator built with React, TypeScript, Tailwind, Headless UI and Vite. All the matrix operations as well as methods for solving systems of simultaneous linear equations are implemented.
+### Matrix Calculator app built with React, TypeScript, Tailwind, Headless UI and Vite. All the matrix operations as well as methods for solving systems of simultaneous linear equations are implemented.
 
 ## Technologies Used
 
@@ -44,4 +44,3 @@ Please refer to the respective documentation of each technology for more in-dept
 [stars]: https://img.shields.io/github/stars/dragan717080/MatrixCalculator
 
 ## App hosted on Vercel
-
