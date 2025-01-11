@@ -53,9 +53,9 @@ const Multiplication: FC = () => {
 
   /** Format text of given step index and explanation index with the `subindex` span class. */
   const getExplanationText = (index: number, explanationIndex: number) => {
-/*     const [indices, equation] = getIndicesFromEquation(steps, index, explanationIndex)
-    console.log('indices:', indices)
-    console.log('equation:', equation); */
+    /*     const [indices, equation] = getIndicesFromEquation(steps, index, explanationIndex)
+        console.log('indices:', indices)
+        console.log('equation:', equation); */
 
     return steps[index].explanation[explanationIndex]
   }
@@ -116,8 +116,12 @@ const Multiplication: FC = () => {
                         {(step.explanation as string[]).map((explanation, explanationIndex) => (
                           <div className='row w-full' key={explanationIndex}>
                             C
-                            <span className='subindex'>{steps[index].indices ? steps[index].indices[explanationIndex][0] : ''}</span>
-                            <span className='subindex'>{steps[index].indices ? steps[index].indices[explanationIndex][1] : ''}</span>
+                            <span className="subindex">
+                              {steps[index]?.indices?.[explanationIndex]?.[0] ?? ''}
+                            </span>
+                            <span className="subindex">
+                              {steps[index]?.indices?.[explanationIndex]?.[1] ?? ''}
+                            </span>
                             <span className='pl-1 pr-2'> = </span>
                             {steps[index].explanation[explanationIndex]}
                           </div>
@@ -151,7 +155,7 @@ const Multiplication: FC = () => {
             <li>As a result of multiplication you will get a new matrix that has the same quantity of rows as the 1st one has and the same quantity of columns as the 2nd one.</li>
             <li>For example if you multiply a matrix of 'n' x 'k' by 'k' x 'm' size you'll get a new one of 'n' x 'm' dimension.</li>
           </ol>
-          To understand matrix multiplication better input any example and examine the solution.
+          <span>To understand matrix multiplication better input any example and examine the solution.</span>
           <MatrixDimensionsInput minValue={1} isMultiplication={true} />
         </div>
         {aIsFilled && bIsFilled && !isOpen && (

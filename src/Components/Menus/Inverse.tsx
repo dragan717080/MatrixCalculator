@@ -75,15 +75,23 @@ const Inverse: FC = () => {
     <div className='col-h'>
       {aIsFilled && !isOpen && (
         <div ref={solutionStepsRef}>
-          1
+          {toShowSolution && (
+            <>
+              1
+            </>
+          )}
         </div>
       )}
       <div ref={descriptionAndInputRef} className='hidden'>
         <div className={`${isOpen || aIsFilled ? 'hidden' : 'block'}`}>
-          <h3 className='mb-4 text-lg bold'>Determinant</h3>
-          <p>
-            Here you can calculate a determinant of a matrix with complex numbers online for free with a very detailed solution. Determinant is calculated by reducing a matrix to row echelon form and multiplying its main diagonal elements.
-          </p>
+          <h3 className='mb-4 text-lg bold'>Inverse</h3>
+          <ol>
+            <li>If a determinant of the matrix (which must be square) is zero, inverse doesn't exist</li>
+            <li>Matrix has the identity matrix of the same dimension appended to it.</li>
+            <li>Reduce the <span className='bold'>left</span> matrix to row echelon form using elementary row operations for the whole matrix (including the right one).</li>
+            <li>As a result you will get the inverse calculated on the right.</li>
+          </ol>
+          <span>To understand inverse calculation better input any example and examine the solution.</span>
           <MatrixDimensionsInput minValue={1} isSquare={true} />
         </div>
         {aIsFilled && !isOpen && (

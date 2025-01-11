@@ -15,7 +15,6 @@
 ## Technologies Used
 
 - **React.js**
-
 React.js is a JavaScript library for building user interfaces, developed by Facebook. It uses a component-based architecture to create reusable UI components. React's virtual DOM improves performance by efficiently updating and rendering only the necessary components.
 
 - **TypeScript**  
@@ -36,7 +35,17 @@ Please refer to the respective documentation of each technology for more in-dept
 
 ## How to use
 
+1. Clone this repository
+`git clone https://github.com/dragan717080/MatrixCalculator.git`
 
+2. Navigate to the newly created directory
+`cd MatrixCalculator`
+
+3. Install dependencies
+`yarn`
+
+4. Start development server
+`yarn dev`
 
 &nbsp;&nbsp;&nbsp;&nbsp;
 
@@ -44,3 +53,5 @@ Please refer to the respective documentation of each technology for more in-dept
 [stars]: https://img.shields.io/github/stars/dragan717080/MatrixCalculator
 
 ## App hosted on Vercel
+
+https://matrixpert-3thv1i3jp-dragan717s-projects.vercel.app/

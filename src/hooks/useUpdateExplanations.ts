@@ -1,5 +1,6 @@
 import { getIndicesFromEquation } from '../lib/utils';
 import { UseUpdateExplanationsProps } from '../interfaces/Hooks';
+import { Step } from '../interfaces/Matrix';
 
 /**
  * For components that need to update explanations (e.g. `Multiplication`),
@@ -10,8 +11,7 @@ const useUpdateExplanations = ({ steps, setSteps }: UseUpdateExplanationsProps) 
     console.log('%cUpdating explanations', 'color:red;font-size:22px');
     console.log('steps:', steps);
 
-    const updatedExplanations = []
-    const newSteps = structuredClone(steps)
+    const newSteps: Step[] = structuredClone(steps)
 
     for (let stepIndex = 0; stepIndex < steps.length; stepIndex++) {
       (steps[stepIndex].explanation as string[]).forEach((expl, index) => {
