@@ -3,12 +3,7 @@
 ![stars] ![repo-size]
 
 <picture>
-  <img src="frontend/public/react-light.webp" height="133" width="133" alt="React">
-</picture>
-
-<picture>
-    <source srcset="api/laravel-logo.png">
-    <img alt="Laravel" width="133" height="133">
+  <img src="public/react-light.webp" height="133" width="133" alt="React">
 </picture>
 
 # <a name="no-link"></a>React Matrix Calculator
