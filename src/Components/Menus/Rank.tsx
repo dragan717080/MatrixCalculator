@@ -54,8 +54,10 @@ const Rank: FC = () => {
 
   /** After completing all steps, get the equation for multiplying elements on upper (main) diagonal. */
   const getRankEquation = () => {
+    console.log('FINAL STEP:', JSON.parse(JSON.stringify(steps))[JSON.parse(JSON.stringify(steps)).length - 1].A);
     const strValues = getStrValuesOfMainDiagonal(steps)
     const nonZeroElements = strValues.filter(s => parseFloat(s) !== 0)
+    console.log(nonZeroElements.length);
 
     return nonZeroElements.length === 0
       ? '0, since all main diagonal elements are 0'
@@ -98,11 +100,29 @@ const Rank: FC = () => {
                     </span>
                   </div>
                 )}
+                {A.length !== 1 && A[0].length === 1 && (
+                  <div className="w-full row">
+                    <span>
+                      A has only one column so since A
+                      <span className="subindex">1</span><span className="subindex">1</span> is {
+                        A[0][0] === 0 ? '0' : 'not 0'
+                      } it will be {Number(A[0][0] !== 0)}
+                    </span>
+                  </div>
+                )}
                 <div id='step-1' className='row-v px-3 border-b-darkgray'>
                   {steps.length > 0 && (
                     <ScrollWithSVGs aCols={aDim[1]} isFirst />
                   )}
-                  <MatrixTable nRows={aDim[0]} nCols={aDim[1]} A={A} />
+                  <MatrixTable
+                    nRows={aDim[0]}
+                    nCols={aDim[1]}
+                    A={A}
+                    toHighlight={A.length === 1 || A[0].length === 1
+                      ? (row, col) => row === 0 && col === 0
+                      : undefined
+                    }
+                  />
                 </div>
                 {steps.map((step, index) => (
                   <div id={`step-${index + 2}`} className='pt-2 pb-3 border-b-darkgray' key={index}>
@@ -125,12 +145,12 @@ const Rank: FC = () => {
                     </div>
                   </div>
                 ))}
-                {steps.length > 0 && (
+                {steps.length > 0 && A[0].length > 1 && (
                   <div id={`step-${steps.length + 2}`} className='pt-2'>
                     <p>Count non zero main diagonal elements</p>
                     <div className='row-v px-3'>
                       <ScrollWithSVGs aCols={aDim[1]} isLast />
-                      <MatrixTable nRows={aDim[0]} nCols={aDim[1]} A={steps[steps.length - 1].A} toHighlight={(row, col) => row === col} />
+                      <MatrixTable nRows={aDim[0]} nCols={aDim[1]} A={steps[steps.length - 1].A} toHighlight={(row, col) => row === col && steps[steps.length - 1].A[row][col] != 0} />
                     </div>
                     <p>Rank = <span className='code-block'> {getRankEquation()}</span></p>
                   </div>

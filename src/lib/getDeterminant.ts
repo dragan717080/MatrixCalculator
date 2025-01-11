@@ -94,6 +94,7 @@ const getDeterminant = (A: Matrix): DeterminantSolution => {
         sign: swapResult.sign,
         stepsExplanations: [`Swapping rows ${swapResult.swapRow[0] + 1} and ${swapResult.swapRow[1] + 1}, changing the sign to ${swapResult.sign}`]
       });
+
       sign = swapResult.sign;
     }
 

@@ -80,15 +80,21 @@ import Matrix, { SolutionWithNumericResult, Step, TwoNumbers } from '../interfac
  * Matrix rank = `len([1, -10, -13])` = 3
  */
 const getRank = (A: Matrix): SolutionWithNumericResult => {
-  const m = A.length
-  const steps = [];
+  const [m, n] = [A.length, A[0].length]
+  const steps: Step[] = [];
 
   // Make a copy of `A` to avoid directly mutating state
-  const B = A.map(row => [...row]);
+  const B: Matrix = JSON.parse(JSON.stringify(A))
+
+  // Matrices with only one column will not need elimination steps
+  if (n === 1) {
+    const result = Number(Number(A[0][0]) !== 0)
+
+    return { result, steps }
+  }
 
   // Gaussian elimination steps
   for (let i = 0; i < m - 1; i++) {
-    console.log('In swap');
     // Handle row swapping
     const swapResult = swapRows(B, i);
     if (swapResult.swapRow) {
@@ -100,20 +106,33 @@ const getRank = (A: Matrix): SolutionWithNumericResult => {
     }
 
     // Handle row elimination
+    if (i >= n) {
+      break
+    }
+
     const eliminationResult = eliminateValues(B, i);
     console.log('Got result:', eliminationResult);
     steps.push({
       A: [...B.map(row => [...row])],
       explanation: eliminationResult.stepsExplanations
     });
+
+    if (eliminationResult.toReturnEarly) {
+      continue;
+    }
   }
 
   // Count amount of non zero elements on maindiagonal
-  const result = m === 1
-    ? Number(A[0][0] !== 0)
-    : steps[steps.length - 1].A.reduce((acc, row, index) => acc + Number(A[index][index] !== 0), 0)
 
-  return { result, steps };
+  if (m === 1) {
+    return { result: Number(A[0][0] !== 0), steps }
+  }
+
+  const upperDiagonalValues = steps[steps.length - 1].A.flatMap((row, i) => row.filter((_, j) => i === j))
+  console.log('Upper diag values:', upperDiagonalValues);
+  const result = upperDiagonalValues.reduce((acc, x) => Number(acc) + Number(x !== 0), 0)
+
+  return { result: result as number, steps };
 };
 
 /** Handles swapping rows if needed */
@@ -143,6 +162,7 @@ const eliminateValues = (
   col: number
 ): { A: Matrix; toReturnEarly: boolean, stepsExplanations: string[] } => {
   const pivot = A[col][col] as number;
+
   if (pivot === 0) {
     return { A, toReturnEarly: true, stepsExplanations: [`R${col} early return because A[${col + 1}][${col + 1}] is 0`] };
   }
@@ -152,14 +172,22 @@ const eliminateValues = (
   for (let i = col + 1; i < A.length; i++) {
     if (A[i][col] === 0) {
       stepsExplanations.push(`R${i + 1} at column ${col + 1} is already 0, so this step is skipped.`)
-      continue
+      break
     };
 
     const coef = (A[i][col] as number) / pivot!;
+    if (Number.isNaN(coef)) {
+      continue
+    }
+    
 
     stepsExplanations.push(`R${i + 1} = R${i + 1} ${coef < 0 ? '+' : '-'} ${![-1, 1].includes(coef) ? Math.abs(Number.isInteger(coef) ? coef : parseFloat(coef?.toFixed(3).replace(/(\.\d*?[1-9])0+$|\.0+$/, '$1'))) : ''}R${col + 1}`)
 
     for (let j = col; j < A.length; j++) {
+      if (j >= A[0].length) {
+        break
+      }
+
       (A[i][j] as number) -= (A[col][j] as number) * coef;
     }
   }

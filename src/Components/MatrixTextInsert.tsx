@@ -3,7 +3,7 @@ import { addError, clearErrors, errorsReducer, removeError } from '../lib/Matrix
 import useUpdateValuesForMatrix from '../hooks/useUpdateValuesForMatrix';
 import { isStringNumeric } from '../lib/utils';
 import { useMatrixStore, useModalStore } from '../store/zustandStore';
-import MatrixTextInsertProps, { ErrorsAction, ErrorsState } from '../interfaces/MatrixTextInsertProps';
+import MatrixTextInsertProps from '../interfaces/MatrixTextInsertProps';
 import Matrix from '../interfaces/Matrix';
 
 const MatrixTextInsert: FC<MatrixTextInsertProps> = ({
@@ -19,8 +19,8 @@ const MatrixTextInsert: FC<MatrixTextInsertProps> = ({
 
   const [wrongRowsCountError, setWrongRowsCountError] = useState<string>('')
   const [wrongColsCountError, setWrongColsCountError] = useState<string>('')
-  console.log('%cIN INSERT', 'font-size:40px');
-  console.log('isA:', isA);
+  // console.log('%cIN INSERT', 'font-size:40px');
+  // console.log('isA:', isA);
   
 
   const nRows = isA ? aDim[0] : bDim[0]
@@ -29,12 +29,12 @@ const MatrixTextInsert: FC<MatrixTextInsertProps> = ({
   const handleContinue = useCallback(
     async (e: MouseEvent<HTMLButtonElement>) => {
       e.preventDefault()
-      console.log('expected rows:', nRows, 'expected cols:', nCols);
+      // console.log('expected rows:', nRows, 'expected cols:', nCols);
       clearErrors(dispatch)
 
       // Trim each row
       const rows = textareaRef.current!.value.split('\n').map(row => row.trim())
-      console.log('rows:', rows)
+      // console.log('rows:', rows)
       let hasWrongNumbers = false
 
       // If the last row is empty, delete it
@@ -46,7 +46,7 @@ const MatrixTextInsert: FC<MatrixTextInsertProps> = ({
       setWrongColsCountError('')
 
       if (rows.length !== nRows) {
-        console.log(`Matrix ${isA ? 'A' : 'B'} has ${nRows} rows but your input has ${rows.length}`);
+        // console.log(`Matrix ${isA ? 'A' : 'B'} has ${nRows} rows but your input has ${rows.length}`);
         setWrongRowsCountError(`Matrix ${isA ? 'A' : 'B'} has ${nRows} rows but your input has ${rows.length}`)
         return
       } else {
@@ -57,27 +57,27 @@ const MatrixTextInsert: FC<MatrixTextInsertProps> = ({
 
       for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
         const row = rows[rowIndex];
-        console.log('Text row:', row, 'index:', rowIndex);
+        // console.log('Text row:', row, 'index:', rowIndex);
         const wordsInRow = row.split(/\s+/)
 
         if (wordsInRow.length !== nCols) {
-          console.log(`Matrix ${isA ? 'A' : 'B'} has ${nCols} columns but your input has ${wordsInRow.length}`)
+          // console.log(`Matrix ${isA ? 'A' : 'B'} has ${nCols} columns but your input has ${wordsInRow.length}`)
           setWrongColsCountError(`Matrix ${isA ? 'A' : 'B'} has ${nCols} columns but your row ${rowIndex + 1} has ${wordsInRow.length}`)
           return
         }
 
         newMatrix.push([])
 
-        console.log('Words in row:', wordsInRow);
+        // console.log('Words in row:', wordsInRow);
         for (const word of wordsInRow) {
           console.log('Row:', rowIndex, 'word:', word);
 
           if (!isStringNumeric(word)) {
-            console.log('word is not numeric');
-            console.log(rowIndex in errors);
-            console.log(errors);
+            // console.log('word is not numeric');
+            // console.log(rowIndex in errors);
+            // console.log(errors);
             addError(dispatch, rowIndex, word)
-            console.log('new errors:', errors);
+            // console.log('new errors:', errors);
             hasWrongNumbers = true
           } else {
             newMatrix[rowIndex].push(word)
@@ -86,17 +86,17 @@ const MatrixTextInsert: FC<MatrixTextInsertProps> = ({
       }
 
       setWrongColsCountError('')
-      console.log('NEW ERRORS:', errors);
+      // console.log('NEW ERRORS:', errors);
       if (!wrongRowsCountError && !wrongColsCountError && !hasWrongNumbers) {
-        console.log('ALL IS OK!');
-        console.log('errors:', errors);
+        // console.log('ALL IS OK!');
+        // console.log('errors:', errors);
         
         newMatrix = updateValuesForMatrix(isA, newMatrix)
-        console.log('new matrix:', newMatrix);
+        // console.log('new matrix:', newMatrix);
         const fillFunc = isA ? setAIsFilled : setBIsFilled
 
         const setMatrixFunc = isA ? setA : setB
-        console.log('is a:', isA);
+        // console.log('is a:', isA);
         setMatrixFunc(newMatrix)
         fillFunc(true)
         setIsInserting(false)
@@ -104,7 +104,7 @@ const MatrixTextInsert: FC<MatrixTextInsertProps> = ({
     }, [aDim, bDim, errors])
 
   useEffect(() => {
-    console.log('new errors:', errors);
+    // console.log('new errors:', errors);
   }, [Object.keys(errors).length])
 
   return (
