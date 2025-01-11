@@ -1,4 +1,5 @@
-import Matrix from '../interfaces/Matrix'
+import { Step as DeterminantStep } from '../interfaces/Determinant'
+import Matrix, { Step } from '../interfaces/Matrix'
 import { CalcTimeResult } from '../interfaces/Utils'
 
 export const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
@@ -30,4 +31,37 @@ export const isStringNumeric = (s: string) => {
   const pattern = /^[\+\-]?\d*\.?\d+(?:[Ee][\+\-]?\d+)?$/;
 
   return pattern.test(s);
+}
+
+/**
+ * Get string values of main diagonal elements.
+ *
+ * @param {DeterminantStep[]|Step[]} steps
+ * @param {boolean} [toPutInBrackets] - Optional parameter.
+ * Whether to put number in brackets for better formatting,
+ * e.g. for `determinant` -3 will become (-3).
+ * Defaults to false.
+ */
+export const getStrValuesOfMainDiagonal = (
+  steps: DeterminantStep[]|Step[],
+  toPutInBrackets=false
+): string[] => {
+  const upperDiagonalValues = steps[steps.length - 1].A.flatMap((row, i) => row.filter((_, j) => i === j))
+
+  const strValues = upperDiagonalValues.map(x => {
+    if (typeof (x) === 'string') {
+      x = parseFloat(x)
+    }
+
+    if (typeof (x) === 'undefined') {
+      x = 0
+    }
+
+    const value = Number.isInteger(x) ? x : Math.round(x * 1000) / 1000
+    return toPutInBrackets
+      ? (value as number)! >= 0 ? String(value) : `(${value})`
+      : String(value)
+  })
+
+  return strValues
 }

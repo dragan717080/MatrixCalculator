@@ -6,7 +6,7 @@ import useRecalculate from '../../hooks/useRecalculate'
 import useResetParams from '../../hooks/useResetParams'
 import useToggleShowSolution from '../../hooks/useToggleShowSolution'
 import getDeterminant from '../../lib/getDeterminant'
-import { getCalcTime } from '../../lib/utils'
+import { getCalcTime, getStrValuesOfMainDiagonal } from '../../lib/utils'
 import { useMatrixStore, useModalStore } from '../../store/zustandStore'
 import { Step } from '../../interfaces/Determinant'
 
@@ -58,21 +58,7 @@ const Determinant: FC = () => {
 
   /** After completing all steps, get the equation for multiplying elements on upper (main) diagonal. */
   const getMultiplyEquation = () => {
-    const upperDiagonalValues = steps[steps.length - 1].A.flatMap((row, i) => row.filter((_, j) => i === j));
-
-    const strValues = upperDiagonalValues.map(x => {
-      if (typeof (x) === 'string') {
-        x = parseFloat(x)
-      }
-
-      if (typeof (x) === 'undefined') {
-        x = 0
-      }
-
-      const value = Number.isInteger(x) ? x : Math.round(x * 1000) / 1000
-      return (value as number)! >= 0 ? String(value) : `(${value})`
-    })
-
+    const strValues = getStrValuesOfMainDiagonal(steps, true)
     const equation = strValues.join(' X ')
 
     return `${equation} = ${determinant}`

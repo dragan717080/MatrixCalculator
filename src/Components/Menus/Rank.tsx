@@ -6,14 +6,14 @@ import useRecalculate from '../../hooks/useRecalculate'
 import useResetParams from '../../hooks/useResetParams'
 import useToggleShowSolution from '../../hooks/useToggleShowSolution'
 import getRank from '../../lib/getRank'
-import { getCalcTime } from '../../lib/utils'
+import { getCalcTime, getStrValuesOfMainDiagonal } from '../../lib/utils'
 import { useMatrixStore, useModalStore } from '../../store/zustandStore'
 import { Step } from '../../interfaces/Matrix'
 
 const Rank: FC = () => {
   const {
     setCalculate,
-    aDim, setADim, aIsFilled, A, setA, setAIsFilled,
+    aDim, aIsFilled, A, setA, setAIsFilled,
   } = useMatrixStore()
   const { isOpen } = useModalStore()
 
@@ -54,21 +54,7 @@ const Rank: FC = () => {
 
   /** After completing all steps, get the equation for multiplying elements on upper (main) diagonal. */
   const getRankEquation = () => {
-    const upperDiagonalValues = steps[steps.length - 1].A.flatMap((row, i) => row.filter((_, j) => i === j));
-
-    const strValues = upperDiagonalValues.map(x => {
-      if (typeof (x) === 'string') {
-        x = parseFloat(x)
-      }
-
-      if (typeof (x) === 'undefined') {
-        x = 0
-      }
-
-      const value = Number.isInteger(x) ? x : Math.round(x * 1000) / 1000
-      return String(value)
-    })
-
+    const strValues = getStrValuesOfMainDiagonal(steps)
     const nonZeroElements = strValues.filter(s => parseFloat(s) !== 0)
 
     return nonZeroElements.length === 0
