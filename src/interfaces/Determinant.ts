@@ -1,4 +1,4 @@
-import Matrix from "./Matrix"
+import Matrix from './Matrix'
 
 export interface Step {
   A: Matrix
