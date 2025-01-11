@@ -13,13 +13,15 @@
 
 # <a name="no-link"></a>React Matrix Calculator
 
-### Matrix Calculator built with React, TypeScript, Tailwind, Headless UI and Vite. All the basic matrix operations as well as methods for solving systems of simultaneous linear equations are implemented.
+</div>
+
+### Matrix Calculator built with React, TypeScript, Tailwind, Headless UI and Vite. All the matrix operations as well as methods for solving systems of simultaneous linear equations are implemented.
 
 ## Technologies Used
 
 - **React.js**
 
-React is a JavaScript library for building user interfaces, developed by Facebook. It uses a component-based architecture to create reusable UI components. React's virtual DOM improves performance by efficiently updating and rendering only the necessary components.
+React.js is a JavaScript library for building user interfaces, developed by Facebook. It uses a component-based architecture to create reusable UI components. React's virtual DOM improves performance by efficiently updating and rendering only the necessary components.
 
 - **TypeScript**  
 TypeScript is a superset of JavaScript that adds static typing to the language. It helps catch errors at compile-time, leading to more robust and maintainable code. It has enhanced tooling support, clear type definitions, and seamless integration with popular frameworks like React.
@@ -41,7 +43,6 @@ Please refer to the respective documentation of each technology for more in-dept
 
 
 
-</div>
 &nbsp;&nbsp;&nbsp;&nbsp;
 
 [repo-size]: https://img.shields.io/github/repo-size/dragan717080/MatrixCalculator
