@@ -1,5 +1,5 @@
 import { Step as DeterminantStep } from '../interfaces/Determinant'
-import Matrix, { Step } from '../interfaces/Matrix'
+import Matrix, { Step, TwoNumbers } from '../interfaces/Matrix'
 import { CalcTimeResult } from '../interfaces/Utils'
 
 export const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
@@ -43,8 +43,8 @@ export const isStringNumeric = (s: string) => {
  * Defaults to false.
  */
 export const getStrValuesOfMainDiagonal = (
-  steps: DeterminantStep[]|Step[],
-  toPutInBrackets=false
+  steps: DeterminantStep[] | Step[],
+  toPutInBrackets = false
 ): string[] => {
   const upperDiagonalValues = steps[steps.length - 1].A.flatMap((row, i) => row.filter((_, j) => i === j))
 
@@ -64,4 +64,20 @@ export const getStrValuesOfMainDiagonal = (
   })
 
   return strValues
+}
+
+/** Format text of given step index and explanation index with the `subindex` span class. */
+export const getIndicesFromEquation = (
+  explanation: string,
+  withOneBasedIndex = false,
+): [TwoNumbers, string] => {
+  const splits = explanation.split(' = ')
+  const [strIndices, equation] = [splits[0], splits.slice(1, explanation.length - 1).join(' = ')]
+  let indices = strIndices.match(/\d+/g)!.map(num => parseInt(num, 10)) as TwoNumbers
+
+  if (withOneBasedIndex) {
+    indices = [indices[0] + 1, indices[1] + 1]
+  }
+
+  return [indices, equation]
 }

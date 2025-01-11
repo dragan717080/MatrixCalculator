@@ -11,6 +11,8 @@ export interface Step {
   A: Matrix,
   swapRow?: TwoNumbers
   explanation: string|string[]|(string|string[])[]
+  /** Matrix indices */
+  indices?: (TwoNumbers)[]
 }
 
 export interface SolutionWithNumericResult {

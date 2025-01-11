@@ -1,4 +1,4 @@
-import React, { FC, useRef, useState, useEffect } from 'react'
+import React, { FC, useRef, useState, useEffect, useDeferredValue } from 'react'
 import MatrixDimensionsInput from '../Atoms/MatrixDimensionsInput'
 import MatrixTable from '../Atoms/MatrixTable'
 import ScrollWithSVGs from '../Atoms/ScrollWithSVGs'
@@ -19,6 +19,8 @@ const Rank: FC = () => {
 
   const solutionStepsRef = useRef<HTMLDivElement | null>(null)
 
+  const descriptionAndInputRef = useRef<HTMLDivElement | null>(null)
+
   const [rank, setRank] = useState<number | undefined>(undefined)
   const [toShowSolution, setToShowSolution] = useState<boolean>(false)
   const [steps, setSteps] = useState<Step[]>([])
@@ -26,7 +28,7 @@ const Rank: FC = () => {
 
   const { recalculate } = useRecalculate({ setTime, setShow: setToShowSolution, setSteps, stepsRef: solutionStepsRef, isPower: true })
 
-  const { resetParams } = useResetParams({})
+  const { resetParams } = useResetParams({ descriptionAndInputRef })
 
   const { toggleShowSolution } = useToggleShowSolution({ solutionStepsRef, toShowSolution, setToShowSolution })
 
@@ -160,7 +162,7 @@ const Rank: FC = () => {
           )}
         </div>
       )}
-      <div>
+      <div ref={descriptionAndInputRef} className='hidden'>
         <div className={`${isOpen || aIsFilled ? 'hidden' : 'block'}`}>
           <h3 className='mb-4 text-lg bold'>Rank</h3>
           <ol>

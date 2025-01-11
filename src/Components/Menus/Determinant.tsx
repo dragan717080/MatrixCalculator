@@ -21,16 +21,18 @@ const Determinant: FC = () => {
 
   const solutionStepsRef = useRef<HTMLDivElement | null>(null)
 
+  const descriptionAndInputRef = useRef<HTMLDivElement | null>(null)
+
   const [determinant, setDeterminant] = useState<number | undefined>(undefined)
   const [time, setTime] = useState<number>(-1)
   const [steps, setSteps] = useState<Step[]>([])
   const [toShowSolution, setToShowSolution] = useState<boolean>(false)
   const [actualCounts, setActualCounts] = useState<number[]>([])
-  const [stepsSwapsIndexes, setStepsSwapsIndexes] = useState<{ [key: string]: number }>({} as { [key: string]: number })
+  const [stepsSwapsIndices, setStepsSwapsIndices] = useState<{ [key: string]: number }>({} as { [key: string]: number })
 
   const { recalculate } = useRecalculate({ setTime, setShow: setToShowSolution })
 
-  const { resetParams } = useResetParams({})
+  const { resetParams } = useResetParams({ descriptionAndInputRef })
 
   const { toggleShowSolution } = useToggleShowSolution({ solutionStepsRef, toShowSolution, setToShowSolution })
 
@@ -70,16 +72,16 @@ const Determinant: FC = () => {
         return typeof (step.swapRow) !== 'undefined'
           ? `Swapping rows ${step.swapRow[0] + 1} and ${step.swapRow[1] + 1}, changing the sign to ${step.sign}`
           // Text will have 1-based indexing so need `+1`
-          : `Eliminate elements in the ${stepsSwapsIndexes[index] + 1}${getOrderNumberToStr(
-            stepsSwapsIndexes[index] + 1)} column under the ${stepsSwapsIndexes[index] + 1}${getOrderNumberToStr(
-              stepsSwapsIndexes[index] + 1)} element`;
+          : `Eliminate elements in the ${stepsSwapsIndices[index] + 1}${getOrderNumberToStr(
+            stepsSwapsIndices[index] + 1)} column under the ${stepsSwapsIndices[index] + 1}${getOrderNumberToStr(
+              stepsSwapsIndices[index] + 1)} element`;
       },
-    [steps.length, actualCounts.length, Object.keys(stepsSwapsIndexes).length])
+    [steps.length, actualCounts.length, Object.keys(stepsSwapsIndices).length])
 
   const getHighlight = (step: Step, index: number, row: number, col: number) =>
     step.swapRow
       ? step.swapRow?.includes(row)
-      : row > stepsSwapsIndexes[index] && col === stepsSwapsIndexes[index]
+      : row > stepsSwapsIndices[index] && col === stepsSwapsIndices[index]
 
   // Memoized function to calculate actual counts based on `steps.length`
   useMemo(() => {
@@ -90,7 +92,7 @@ const Determinant: FC = () => {
 
     const stepsWithoutSwaps = steps.filter(x => typeof (x.swapRow) === 'undefined')
 
-    // Track indexes of `steps` in relation to filtered steps without swaps
+    // Track indices of `steps` in relation to filtered steps without swaps
     // e.g. if first 5 elements are 'swap, no swap, no swap, no swap, swap',
     // it should return '{ 1 -> 0, 2 -> 1, 3 -> 2 }
     const d = {} as { [key: string]: number }
@@ -103,8 +105,8 @@ const Determinant: FC = () => {
 
       d[i as unknown as string] = stepsWithoutSwaps.indexOf(step)
     }
-    console.log('%cStep indexes to indexes without swaps:', 'color:red;font-size:30px;', d);
-    setStepsSwapsIndexes(d);
+    console.log('%cStep indices to indices without swaps:', 'color:red;font-size:30px;', d);
+    setStepsSwapsIndices(d);
   }, [steps.length]);
 
   useEffect(() => {
@@ -152,7 +154,16 @@ const Determinant: FC = () => {
                 {steps.length > 1 && (
                   <ScrollWithSVGs aCols={aDim[1]} isFirst />
                 )}
-                <MatrixTable nRows={aDim[0]} nCols={aDim[1]} A={A} />
+                <MatrixTable
+                  nRows={aDim[0]}
+                  nCols={aDim[1]}
+                  A={A}
+                  toHighlight={
+                    A.length === 1 || A[0].length === 1
+                      ? (row, col) => row === 0 && col === 0
+                      : undefined
+                  }
+                />
               </div>
               {steps.map((step, index) => (
                 <div id={`step-${index + 1}`} className='pt-2 pb-3 border-b-darkgray' key={index}>
@@ -191,50 +202,52 @@ const Determinant: FC = () => {
           )}
         </div>
       )}
-      <div className={`${isOpen || aIsFilled ? 'hidden' : 'block'}`}>
-        <h3 className='mb-4 text-lg bold'>Determinant</h3>
-        <p>
-          Here you can calculate a determinant of a matrix with complex numbers online for free with a very detailed solution. Determinant is calculated by reducing a matrix to row echelon form and multiplying its main diagonal elements.
-        </p>
-        <MatrixDimensionsInput minValue={1} isSquare={true} />
-      </div>
-      {aIsFilled && !isOpen && (
-        <>
-          <div className={`
+      <div ref={descriptionAndInputRef} className='hidden'>
+        <div className={`${isOpen || aIsFilled ? 'hidden' : 'block'}`}>
+          <h3 className='mb-4 text-lg bold'>Determinant</h3>
+          <p>
+            Here you can calculate a determinant of a matrix with complex numbers online for free with a very detailed solution. Determinant is calculated by reducing a matrix to row echelon form and multiplying its main diagonal elements.
+          </p>
+          <MatrixDimensionsInput minValue={1} isSquare={true} />
+        </div>
+        {aIsFilled && !isOpen && (
+          <>
+            <div className={`
             ${toShowSolution
-              ? 'mt-6 md:mt-4 mb-7 md:mb-8'
-              : 'mt-3 mb-1'
-            }
+                ? 'mt-6 md:mt-4 mb-7 md:mb-8'
+                : 'mt-3 mb-1'
+              }
               row text-white space-x-5
             `}>
-            <button
-              onClick={() => toggleShowSolution()}
-              className='btn btn-brighter'
-            >
-              {!toShowSolution ? 'Show' : 'Hide'} solution
-            </button>
-            <button
-              onClick={() => recalculate()}
-              className='btn btn-brighter'
-            >
-              Recalculate
-            </button>
-          </div>
-          <section className={!toShowSolution ? 'pt-6' : 'pt-2'}>
-            {typeof (determinant) !== 'undefined' && (
-              <>
-                <h3 className='bold mb-2'>Result</h3>
-                <p>Δ = {determinant}</p>
-              </>
-            )}
-            <div className='w-full flex'>
-              <span className='ml-auto pt-2'>
-                Computation time: <span>{time !== - 1 ? time : '0.000'}</span>sec.
-              </span>
+              <button
+                onClick={() => toggleShowSolution()}
+                className='btn btn-brighter'
+              >
+                {!toShowSolution ? 'Show' : 'Hide'} solution
+              </button>
+              <button
+                onClick={() => recalculate()}
+                className='btn btn-brighter'
+              >
+                Recalculate
+              </button>
             </div>
-          </section>
-        </>
-      )}
+            <section className={!toShowSolution ? 'pt-6' : 'pt-2'}>
+              {typeof (determinant) !== 'undefined' && (
+                <>
+                  <h3 className='bold mb-2'>Result</h3>
+                  <p>Δ = {determinant}</p>
+                </>
+              )}
+              <div className='w-full flex'>
+                <span className='ml-auto pt-2'>
+                  Computation time: <span>{time !== - 1 ? time : '0.000'}</span>sec.
+                </span>
+              </div>
+            </section>
+          </>
+        )}
+      </div>
     </div>
   )
 }

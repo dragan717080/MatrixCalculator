@@ -17,9 +17,11 @@ const AdditionSubstraction: FC = () => {
     bDim, setBDim, B, setB, bIsFilled, setBIsFilled,
     sign
   } = useMatrixStore()
-  const { isOpen, setIsOpen } = useModalStore()
+  const { isOpen } = useModalStore()
 
   const solutionStepsRef = useRef<HTMLDivElement | null>(null)
+
+  const descriptionAndInputRef = useRef<HTMLDivElement | null>(null)
 
   const [C, setC] = useState<Matrix>(A)
   const [time, setTime] = useState<number>(-1)
@@ -27,7 +29,7 @@ const AdditionSubstraction: FC = () => {
 
   const { recalculate } = useRecalculate({ setTime, setC, setShow: setToShowSolution, stepsRef: solutionStepsRef, isSign: true })
 
-  const { resetParams } = useResetParams({ onlyHasA: false, isSign: true, })
+  const { resetParams } = useResetParams({ onlyHasA: false, isSign: true, descriptionAndInputRef })
 
   const { toggleShowSolution } = useToggleShowSolution({ solutionStepsRef, toShowSolution, setToShowSolution })
 
@@ -81,7 +83,7 @@ const AdditionSubstraction: FC = () => {
           )}
         </div>
       )}
-      <div>
+      <div ref={descriptionAndInputRef} className='hidden'>
         <div className={`${isOpen || aIsFilled && bIsFilled ? 'hidden' : 'block'}`}>
           <h3 className='mb-4 text-lg bold'>Addition and Substraction</h3>
           <p>

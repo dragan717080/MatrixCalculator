@@ -20,13 +20,15 @@ const Power: FC = () => {
 
   const solutionStepsRef = useRef<HTMLDivElement | null>(null)
 
+  const descriptionAndInputRef = useRef<HTMLDivElement | null>(null)
+
   const [toShowSolution, setToShowSolution] = useState<boolean>(false)
   const [steps, setSteps] = useState<Step[]>([])
   const [time, setTime] = useState<number>(-1)
 
   const { recalculate } = useRecalculate({ setTime, setShow: setToShowSolution, setSteps, stepsRef: solutionStepsRef, isPower: true })
 
-  const { resetParams } = useResetParams({})
+  const { resetParams } = useResetParams({ descriptionAndInputRef })
 
   const { toggleShowSolution } = useToggleShowSolution({ solutionStepsRef, toShowSolution, setToShowSolution })
 
@@ -104,7 +106,7 @@ const Power: FC = () => {
           )}
         </div>
       )}
-      <div>
+      <div ref={descriptionAndInputRef} className='hidden'>
         <div className={`${isOpen || aIsFilled ? 'hidden' : 'block'}`}>
           <h3 className='mb-4 text-lg bold'>Power</h3>
           <p className='flex flex-col space-y-2'>

@@ -17,7 +17,7 @@ const NavbarMenuItem: FC<NavbarMenuItemProps> = ({ ComponentToRender, index }) =
   const [isHovered, setIsHovered] = useState<boolean>(false)
   const navbarMenuItemRef = useRef<HTMLDivElement | null>(null)
 
-  const toolbarRef = useRef<HTMLDivElement|null>(null!)
+  const toolbarRef = useRef<HTMLDivElement | null>(null!)
 
   const getNavbarPortalStyling = () => {
     if (!navbarMenuItemRef.current) {

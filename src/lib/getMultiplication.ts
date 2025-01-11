@@ -1,4 +1,4 @@
-import Matrix, { Step } from '../interfaces/Matrix'
+import Matrix, { Step, TwoNumbers } from '../interfaces/Matrix'
 import DotProduct from '../interfaces/Multiplication'
 
 /**
@@ -91,18 +91,21 @@ const getMultiplication = (A: Matrix, B: Matrix): Step[] => {
   console.log('start B:', JSON.parse(JSON.stringify(B)));
 
   // Create a deep copy of A to avoid mutating the original matrix
-  let C = A.map(row => [...row]);
+  let C = Array.from({ length: A.length }, () =>
+    Array((B[0].length)))
 
-  const explanationSteps = []
+  console.log('Start C:', C);
 
   for (let i = 0; i < A.length; i++) {
     let explanationRow = []
+    let indicesRow: TwoNumbers[] = []
 
     for (let j = 0; j < B[0].length; j++) {
       console.log(`A[${i}][${j}] will be product of ${i}th row of A and ${j}th col of B`);
-      const { value, explanation } = getDotProduct(A, B, i, j)  // Calculate the dot product
+      const { value, explanation, indices } = getDotProduct(A, B, i, j)  // Calculate the dot product
       C[i][j] = value
       explanationRow.push(explanation)
+      indicesRow.push(indices)
     }
 
     console.log('New C:', JSON.parse(JSON.stringify(A)));
@@ -112,7 +115,8 @@ const getMultiplication = (A: Matrix, B: Matrix): Step[] => {
 
     solution.push({
       A: JSON.parse(JSON.stringify(C)),
-      explanation: explanationRow
+      explanation: explanationRow,
+      indices: indicesRow
     });
     console.log('New solution:', solution)
   }
@@ -130,7 +134,11 @@ const getDotProduct = (
   j: number,
 ): DotProduct => {
   let sum = 0;
-  let explanation = `A[${i}][${j}] = `
+
+  /** Explanation display will be changed in the `Multiplication` component,
+   * that will add the `subindex` span to display row/col. */
+  let explanation = ''
+  //let explanation = `A[${i}][${j}] = `
 
   for (let k = 0; k < A[i].length; k++) {
     console.log('k:', k)
@@ -151,6 +159,8 @@ const getDotProduct = (
   console.log(`Explanation for ${i} ${j}: ${explanation}`);
   return {
     value: Math.round(sum * 1000) / 1000,
-    explanation
+    explanation,
+    // One based indices
+    indices: [i + 1, j + 1]
   }
 }

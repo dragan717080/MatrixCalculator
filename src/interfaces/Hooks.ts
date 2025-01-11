@@ -29,11 +29,14 @@ export interface UseRecalculateProps {
  * @property {boolean} [onlyHasA] - Defaults to true.
  * @property {boolean} [isPower] - Defaults to false.
  * @property {boolean} [isSign] - Defaults to false.
+ * @property {RefObject<HTMLElement>} [descriptionAndInputRef] - Optional parameter,
+ * ref holding description and input, unhide it once loaded.
  */
 export interface UseResetParamsProps {
   onlyHasA?: boolean
   isPower?: boolean
   isSign?: boolean
+  descriptionAndInputRef?: RefObject<HTMLElement>
 }
 
 /**
@@ -47,4 +50,15 @@ export interface useToggleShowSolutionProps {
   solutionStepsRef: RefObject<HTMLElement>
   toShowSolution: boolean
   setToShowSolution: Dispatch<SetStateAction<boolean>>
+}
+
+/**
+ * @type {useUpdateExplanationsProps}
+ * 
+ * @property {Step[]} steps - Original steps.
+ * @property {Dispatch<SetStateAction<Step[]>>} setSteps - Dispatch action to update with new steps.
+ */
+export interface UseUpdateExplanationsProps {
+  steps: Step[],
+  setSteps: Dispatch<SetStateAction<Step[]>>
 }

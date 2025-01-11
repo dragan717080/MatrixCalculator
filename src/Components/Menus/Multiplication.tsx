@@ -1,12 +1,13 @@
-import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
+import React, { FC, useCallback, useEffect, useReducer, useRef, useState } from 'react'
 import MatrixDimensionsInput from '../Atoms/MatrixDimensionsInput'
 import MatrixTable from '../Atoms/MatrixTable'
 import ScrollWithSVGs from '../Atoms/ScrollWithSVGs'
 import useRecalculate from '../../hooks/useRecalculate'
 import useResetParams from '../../hooks/useResetParams'
+import useUpdateExplanations from '../../hooks/useUpdateExplanations'
 import useToggleShowSolution from '../../hooks/useToggleShowSolution'
 import getMultiplication from '../../lib/getMultiplication'
-import { getCalcTime, wait } from '../../lib/utils'
+import { getCalcTime, getIndicesFromEquation, wait } from '../../lib/utils'
 import { useMatrixStore } from '../../store/zustandStore'
 import { useModalStore } from '../../store/zustandStore'
 import { Step } from '../../interfaces/Matrix'
@@ -18,19 +19,24 @@ const Multiplication: FC = () => {
     bDim, setBDim, B, setB, bIsFilled, setBIsFilled,
     setCalculate
   } = useMatrixStore()
-  const { isOpen, setIsOpen } = useModalStore()
+  const { isOpen } = useModalStore()
 
   const solutionStepsRef = useRef<HTMLDivElement | null>(null)
+
+  const descriptionAndInputRef = useRef<HTMLDivElement | null>(null)
 
   const [toShowSolution, setToShowSolution] = useState<boolean>(false)
   const [steps, setSteps] = useState<Step[]>([])
   const [time, setTime] = useState<number>(-1)
+  const [didUpdateExplanations, setDidUpdateExplanations] = useState<boolean>(false)
 
   const { recalculate } = useRecalculate({ setTime, setShow: setToShowSolution, setSteps, stepsRef: solutionStepsRef })
 
-  const { resetParams } = useResetParams({ onlyHasA: false })
+  const { resetParams } = useResetParams({ onlyHasA: false, descriptionAndInputRef })
 
   const { toggleShowSolution } = useToggleShowSolution({ solutionStepsRef, toShowSolution, setToShowSolution })
+
+  const { updateExplanations } = useUpdateExplanations({ steps, setSteps })
 
   const calculateResult = () => {
     // It will go to this function again when `A` or `B` change with `updateValuesForMatrix`
@@ -40,8 +46,23 @@ const Multiplication: FC = () => {
     console.log('A:', A)
     console.log('B:', B);
     const { time, funcResult: result } = getCalcTime(() => getMultiplication(A, B))
+    console.log('FINAL STEP:', result[result.length - 1].A);
     setSteps(result)
     setTime(time)
+  }
+
+  /** Format text of given step index and explanation index with the `subindex` span class. */
+  const getExplanationText = (index: number, explanationIndex: number) => {
+/*     const [indices, equation] = getIndicesFromEquation(steps, index, explanationIndex)
+    console.log('indices:', indices)
+    console.log('equation:', equation); */
+
+    return steps[index].explanation[explanationIndex]
+  }
+
+  /** For UX, initially hide `div` holding description and input, and unhide on page load. */
+  const unhideDescriptionAndInputRef = () => {
+    descriptionAndInputRef.current!.classList.remove('hidden')
   }
 
   useEffect(() => {
@@ -56,6 +77,19 @@ const Multiplication: FC = () => {
 
   useEffect(() => {
     resetParams()
+  }, [])
+
+  useEffect(() => {
+    console.log('New steps:', steps);
+
+    if (steps.length && !isOpen && !didUpdateExplanations) {
+      //updateExplanations()
+      setDidUpdateExplanations(true)
+    }
+  }, [steps, isOpen])
+
+  useEffect(() => {
+    unhideDescriptionAndInputRef()
   }, [])
 
   return (
@@ -78,9 +112,15 @@ const Multiplication: FC = () => {
                 {steps.map((step, index) => (
                   <div id={`step-${index + 2}`} className='pt-2 pb-3 border-b-darkgray' key={index}>
                     <div>
-                      <div className="flex flex-col space-y-1.5 pt-2 pb-2.5">
-                        {(step.explanation as string[]).map((explanation, index) => (
-                          <p key={index}>{explanation}</p>
+                      <div className='flex flex-col space-y-1.5 pt-2 pb-2.5'>
+                        {(step.explanation as string[]).map((explanation, explanationIndex) => (
+                          <div className='row w-full' key={explanationIndex}>
+                            C
+                            <span className='subindex'>{steps[index].indices ? steps[index].indices[explanationIndex][0] : ''}</span>
+                            <span className='subindex'>{steps[index].indices ? steps[index].indices[explanationIndex][1] : ''}</span>
+                            <span className='pl-1 pr-2'> = </span>
+                            {steps[index].explanation[explanationIndex]}
+                          </div>
                         ))}
                       </div>
                       <div className='row-v px-3'>
@@ -91,6 +131,7 @@ const Multiplication: FC = () => {
                           A={step.A}
                           toHighlight={(row: number, col: number, index: number | undefined) => row === index}
                           index={index}
+                          letter='C'
                         />
                       </div>
                     </div>
@@ -101,7 +142,7 @@ const Multiplication: FC = () => {
           )}
         </div>
       )}
-      <div>
+      <div ref={descriptionAndInputRef} className='hidden'>
         <div className={`${isOpen || aIsFilled && bIsFilled ? 'hidden' : 'block'}`}>
           <h3 className='mb-4 text-lg bold'>Multiplication</h3>
           <ol>
@@ -137,7 +178,12 @@ const Multiplication: FC = () => {
             </div>
             {steps.length > 0 && (
               <section>
-                <MatrixTable nRows={aDim[0]} nCols={aDim[1]} A={steps[steps.length - 1].A} />
+                <MatrixTable
+                  nRows={steps[steps.length - 1].A.length}
+                  nCols={steps[steps.length - 1].A[0].length}
+                  A={steps[steps.length - 1].A}
+                  letter='C'
+                />
                 <div className='w-full flex'>
                   <span className='ml-auto pt-2'>
                     Computation time: <span>{time}</span>sec.

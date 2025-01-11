@@ -5,6 +5,7 @@ import { useMatrixStore } from '../store/zustandStore'
 const useResetParams = ({
   onlyHasA = true,
   isSign = false,
+  descriptionAndInputRef
 }: UseResetParamsProps) => {
   const {
     setIsOnlyA,
@@ -22,6 +23,12 @@ const useResetParams = ({
 
     if (isSign) {
       setSign('+')
+    }
+
+    if (descriptionAndInputRef) {
+      console.log('%creceived descriptionAndInputRef:', 'color:red;font-size:26px', descriptionAndInputRef);
+      
+      descriptionAndInputRef.current!.classList.remove('hidden')
     }
   }
 
