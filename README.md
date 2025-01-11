@@ -41,15 +41,19 @@ Please refer to the respective documentation of each technology for more in-dept
 ## How to use
 
 1. Clone this repository
+
 `git clone https://github.com/dragan717080/MatrixCalculator.git`
 
 2. Navigate to the newly created directory
+
 `cd MatrixCalculator`
 
 3. Install dependencies
+
 `yarn`
 
 4. Start development server
+
 `yarn dev`
 
 &nbsp;&nbsp;&nbsp;&nbsp;
