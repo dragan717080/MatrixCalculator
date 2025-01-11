@@ -50,18 +50,18 @@ const MatrixModal: FC = () => {
     const nCols = isA ? aCols : bCols;
 
     let inputCells = isA ? inputCellsA! : inputCellsB!;
-    console.log('There are', inputCells.length, 'input elements');
-    console.log('isA:', isA, 'matrix in fill:', matrix);
+    // console.log('There are', inputCells.length, 'input elements');
+    // console.log('isA:', isA, 'matrix in fill:', matrix);
 
     if (!inputCells.length && !hasOpenedBefore) {
-      console.log('%cIS A:', 'color:red;font-size:22px', isA);
-      console.log('aDim:', aDim);
-      console.log('%cbDim:', 'color:red;font-size:26px', bDim);
+      // console.log('%cIS A:', 'color:red;font-size:22px', isA);
+      // console.log('aDim:', aDim);
+      // console.log('%cbDim:', 'color:red;font-size:26px', bDim);
 
-      console.log('has opened before:', hasOpenedBefore);
-      console.log('is inserting A:', isInsertingA);
-      console.log('is inserting B:', isInsertingB);
-      console.log(`${isA ? 'A' : 'B'} has no input cells, will early return`);
+      // console.log('has opened before:', hasOpenedBefore);
+      // console.log('is inserting A:', isInsertingA);
+      // console.log('is inserting B:', isInsertingB);
+      // console.log(`${isA ? 'A' : 'B'} has no input cells, will early return`);
       return
     }
 
@@ -73,10 +73,10 @@ const MatrixModal: FC = () => {
 
     // In case it was in insert matrix, input cells will not be in DOM
     const { width: cellWidth } = inputCells[0].getBoundingClientRect()
-    console.log('cell width:', cellWidth);
+    // console.log('cell width:', cellWidth);
 
     if (cellWidth === 0) {
-      console.log('resetting input cells');
+      // console.log('resetting input cells');
       const newAInputCells = Array.from(document.getElementsByClassName('cell-a') as HTMLCollectionOf<HTMLInputElement>)
       const newBInputCells = Array.from(document.getElementsByClassName('cell-b') as HTMLCollectionOf<HTMLInputElement>)
       setInputCellsA(newAInputCells);
@@ -92,14 +92,14 @@ const MatrixModal: FC = () => {
       if (matrix.length === 0) {
         inputCell.value = ''
       } else {
-        console.log(matrix);
-        console.log(aDim, bDim);
+        // console.log(matrix);
+        // console.log(aDim, bDim);
         /** If came from cancel previously, `aDim` and `A` will mismatch, then reset `A` (or `B`). */
         const expectedDim = isA ? aDim : bDim
 
         if (matrix.length !== expectedDim[0] || matrix[0].length !== expectedDim[1]) {
-          console.log('Was in cancel, so dimensions mismatch');
-          console.log('Will have input cells:', inputCells.length);
+          // console.log('Was in cancel, so dimensions mismatch');
+          // console.log('Will have input cells:', inputCells.length);
           const newAInputCells = Array.from(document.getElementsByClassName('cell-a') as HTMLCollectionOf<HTMLInputElement>)
           setInputCellsA(newAInputCells);
 
@@ -125,10 +125,10 @@ const MatrixModal: FC = () => {
         inputCell.value = matrix[row][col] as unknown as string ?? ''
       }
 
-      console.log('cell', inputCell);
+      // console.log('cell', inputCell);
       // To do: remove
       if (matrix.length && typeof (matrix[row][col]) !== 'undefined') {
-        console.log('new value of cell:', matrix[row][col])
+        // console.log('new value of cell:', matrix[row][col])
       }
     };
   }
@@ -147,14 +147,14 @@ const MatrixModal: FC = () => {
   /** Update the state with one new value immutably. */
   const updateValue = (row: number, col: number, value: number, isA = true) => {
     const matrix = isA ? A : B;
-    console.log('is a:', isA);
-    console.log('original matrix:', matrix);
+    // console.log('is a:', isA);
+    // console.log('original matrix:', matrix);
     // Make a shallow copy of the previous matrix
     const newMatrix = [...matrix];
     const func = isA ? setA : setB;
-    console.log('A:', A);
-    console.log('new matrix in update value:', newMatrix);
-    console.log('new value:', value, typeof (value));
+    // console.log('A:', A);
+    // console.log('new matrix in update value:', newMatrix);
+    // console.log('new value:', value, typeof (value));
 
     if (typeof (newMatrix[row]) === 'undefined') {
       newMatrix.push([])
@@ -186,15 +186,15 @@ const MatrixModal: FC = () => {
     col: number,
     isA: boolean = true
   ) => {
-    console.log('Row:', row);
-    console.log('Col:', col);
-    console.log('value:', e.target.value);
+    // console.log('Row:', row);
+    // console.log('Col:', col);
+    // console.log('value:', e.target.value);
 
     // Only allow one dot
     let dotsCount = [...e.target.value].filter(x => x === '.').length;
-    console.log('DOTS COUNT:', dotsCount);
-    console.log('is a in handle:', isA);
-    console.log(e.target);
+    // console.log('DOTS COUNT:', dotsCount);
+    // console.log('is a in handle:', isA);
+    // console.log(e.target);
 
     // @ts-ignore:next-line
     const newChar = e.nativeEvent.data;
@@ -207,7 +207,7 @@ const MatrixModal: FC = () => {
       dotsCount--;
 
       if (e.target.value.length === 1 || dotsCount > 0) {
-        console.log('preventing input value change');
+        // console.log('preventing input value change');
         e.target.value = ''
 
         return;
@@ -215,12 +215,13 @@ const MatrixModal: FC = () => {
     }
 
     const isNum = isStringNumeric(e.target.value);
-    console.log('is num:', isNum);
+    // console.log('is num:', isNum);
 
     const isNegativeInput = newChar === '-'
     const firstCharIsNegative = e.target.value.length === 1 && isNegativeInput
-    console.log('first char is neg:', firstCharIsNegative);
-    console.log('is matrix filled:', checkIfIsMatrixFilled(fillFunc, isA));
+    // console.log('first char is neg:', firstCharIsNegative);
+    // console.log('is matrix filled:', checkIfIsMatrixFilled(fillFunc, isA));
+    checkIfIsMatrixFilled(fillFunc, isA)
     if (firstCharIsNegative) {
       disableFunc(true)
       fillFunc(false)
@@ -237,7 +238,7 @@ const MatrixModal: FC = () => {
     // Only update the value if it matches the pattern
     // Allow empty input and values like `2.` as well
     if (isNum || firstCharIsNegative || newChar === '.' || e.target.value === '') {
-      console.log('UPDATING');
+      // console.log('UPDATING');
       updateValue(row, col, e.target.value as unknown as number, isA);
 
       if (inputCells.every(x => x.value !== '-')) {
@@ -247,7 +248,7 @@ const MatrixModal: FC = () => {
       }
     } else {
       // Prevent the input from updating if it's invalid
-      console.log('NOT UPDATING');
+      // console.log('NOT UPDATING');
       e.target.value = e.target.value.slice(0, -1);
       if (e.target.value.length === 0) {
         fillFunc(false)
@@ -257,15 +258,15 @@ const MatrixModal: FC = () => {
 
   const handleCalculate = () => {
     setIsOpen(false)
-    console.log('old A in modal before calculate:', A)
+    // console.log('old A in modal before calculate:', A)
     const newA = updateValuesForMatrix()
-    console.log('new A in modal after calculate:', newA)
+    // console.log('new A in modal after calculate:', newA)
     setA(newA)
 
     if (!isOnlyA) {
-      console.log('old B in modal before calculate:', B)
+      // console.log('old B in modal before calculate:', B)
       const newB = updateValuesForMatrix(false)
-      console.log('new B in modal after calculate:', newB)
+      // console.log('new B in modal after calculate:', newB)
       setB(newB)
     }
 
@@ -289,10 +290,10 @@ const MatrixModal: FC = () => {
       func!(newMatrix);
       fillFunc(true);
 
-      console.log('is A', isA);
+      // console.log('is A', isA);
       const inputCells = isA ? inputCellsA : inputCellsB;
 
-      console.log(inputCells);
+      // console.log(inputCells);
 
       for (const inputCell of inputCells!) {
         if (!inputCell.value) {
@@ -313,11 +314,11 @@ const MatrixModal: FC = () => {
   }
 
   useEffect(() => {
-    console.log('A changed:', A);
+    // console.log('A changed:', A);
   }, [A])
 
   useEffect(() => {
-    console.log('filling input cells again');
+    // console.log('filling input cells again');
     if (isInsertingA) {
       return
     }
@@ -354,8 +355,8 @@ const MatrixModal: FC = () => {
       Array.from(document.getElementsByClassName('cell-b') as HTMLCollectionOf<HTMLInputElement>)
     );
     initialFillMatrices();
-    console.log('input cells A:', inputCellsA);
-    console.log('input cells B:', inputCellsB);
+    // console.log('input cells A:', inputCellsA);
+    // console.log('input cells B:', inputCellsB);
   }, [aDim[0], aDim[1], bDim[0], bDim[1]]);
 
   // to do: remove
@@ -363,15 +364,15 @@ const MatrixModal: FC = () => {
     //setA([1, 2, 3, 4])
     //setAIsFilled(true)
     setIsOpen(false)
-    console.log('closing modal');
+    // console.log('closing modal');
   }, []);
 
   useEffect(() => {
-    console.log('is open in modal:', isOpen);
+    // console.log('is open in modal:', isOpen);
   }, [isOpen])
 
   useEffect(() => {
-    console.log('%cnew bDim:', 'color:green;font-size:26px', bDim);
+    // console.log('%cnew bDim:', 'color:green;font-size:26px', bDim);
   }, [bDim])
 
   return (

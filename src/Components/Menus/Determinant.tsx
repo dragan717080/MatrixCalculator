@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
 import MatrixDimensionsInput from '../Atoms/MatrixDimensionsInput'
 import MatrixTable from '../Atoms/MatrixTable'
 import ScrollWithSVGs from '../Atoms/ScrollWithSVGs'
@@ -6,7 +6,7 @@ import useRecalculate from '../../hooks/useRecalculate'
 import useResetParams from '../../hooks/useResetParams'
 import useToggleShowSolution from '../../hooks/useToggleShowSolution'
 import getDeterminant from '../../lib/getDeterminant'
-import { getCalcTime, wait } from '../../lib/utils'
+import { getCalcTime } from '../../lib/utils'
 import { useMatrixStore, useModalStore } from '../../store/zustandStore'
 import { Step } from '../../interfaces/Determinant'
 
@@ -36,19 +36,19 @@ const Determinant: FC = () => {
 
   const calculateResult = () => {
     // It will go to this function again when `A` changes with `updateValuesForMatrix`
-    if (!A.length || !A.flat().every(x => typeof(x) !== 'string')) {
+    if (!A.length || !A.flat().every(x => typeof (x) !== 'string')) {
       return
     }
 
-    console.log('has only numbers:', A.flat().every(x => typeof(x) !== 'string'));
+    console.log('has only numbers:', A.flat().every(x => typeof (x) !== 'string'));
     console.log('A in calculate:', A)
     const { time, funcResult } = getCalcTime(() => getDeterminant(A))
     const { steps, result } = funcResult
 
-    setSteps(steps)
-    console.log('%cSteps:', 'color:red;font-size:22px', steps);
     setDeterminant(result)
     console.log('%cDETERMINANT:', 'color:red;font-size:40', result);
+    setSteps(steps)
+    console.log('%cSteps:', 'color:red;font-size:22px', steps);
     setTime(time)
   }
 
@@ -65,7 +65,7 @@ const Determinant: FC = () => {
         x = parseFloat(x)
       }
 
-      if (typeof(x) === 'undefined') {
+      if (typeof (x) === 'undefined') {
         x = 0
       }
 
@@ -152,10 +152,20 @@ const Determinant: FC = () => {
     <div className='col-h'>
       {aIsFilled && !isOpen && (
         <div ref={solutionStepsRef}>
-          {toShowSolution && steps.length > 0 && (
+          {toShowSolution && (
             <div className='mb-7'>
+              {A.length === 1 && (
+                <div className="w-full row">
+                  <span>
+                    A has only one row so Δ =
+                    A<span className="subindex">1</span><span className="subindex">1</span> = {A[0][0]}
+                  </span>
+                </div>
+              )}
               <div id='step-1' className='row-v px-3 border-b-darkgray'>
-                <ScrollWithSVGs aCols={aDim[1]} isFirst />
+                {steps.length > 1 && (
+                  <ScrollWithSVGs aCols={aDim[1]} isFirst />
+                )}
                 <MatrixTable nRows={aDim[0]} nCols={aDim[1]} A={A} />
               </div>
               {steps.map((step, index) => (
@@ -180,15 +190,17 @@ const Determinant: FC = () => {
                   </div>
                 </div>
               ))}
-              <div id={`step-${steps.length + 2}`} className='pt-2'>
-                <p>Multiply the main diagonal elements</p>
-                <p>Sign: {steps[steps.length - 1].sign}</p>
-                <div className='row-v px-3'>
-                  <ScrollWithSVGs aCols={aDim[1]} isLast />
-                  <MatrixTable nRows={aDim[0]} nCols={aDim[1]} A={steps[steps.length - 1].A} toHighlight={(row, col) => row === col} />
+              {steps.length > 0 && (
+                <div id={`step-${steps.length + 2}`} className='pt-2'>
+                  <p>Multiply the main diagonal elements</p>
+                  <p>Sign: {steps[steps.length - 1].sign}</p>
+                  <div className='row-v px-3'>
+                    <ScrollWithSVGs aCols={aDim[1]} isLast />
+                    <MatrixTable nRows={aDim[0]} nCols={aDim[1]} A={steps[steps.length - 1].A} toHighlight={(row, col) => row === col} />
+                  </div>
+                  <p>Δ = {steps[steps.length - 1].sign === '-' && '-'}{getMultiplyEquation()}</p>
                 </div>
-                <p>Δ = {steps[steps.length - 1].sign === '-' && '-'}{getMultiplyEquation()}</p>
-              </div>
+              )}
             </div>
           )}
         </div>
@@ -198,7 +210,7 @@ const Determinant: FC = () => {
         <p>
           Here you can calculate a determinant of a matrix with complex numbers online for free with a very detailed solution. Determinant is calculated by reducing a matrix to row echelon form and multiplying its main diagonal elements.
         </p>
-        <MatrixDimensionsInput minValue={2} isSquare={true} />
+        <MatrixDimensionsInput minValue={1} isSquare={true} />
       </div>
       {aIsFilled && !isOpen && (
         <>

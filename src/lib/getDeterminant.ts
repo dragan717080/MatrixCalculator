@@ -1,5 +1,5 @@
-import { DeterminantSolution, EliminationStep, Sign, Step } from '../interfaces/Determinant';
-import Matrix from '../interfaces/Matrix';
+import { DeterminantSolution, Sign, Step } from '../interfaces/Determinant';
+import Matrix from '../interfaces/Matrix'
 
 /**
  * Gaussian elimination to get upper triangular form.
@@ -8,13 +8,13 @@ import Matrix from '../interfaces/Matrix';
  * 
  * Example matrix:
  * 
- *    1    3      7      8
+ *    1    3    7    8
  * 
- *    4    2      5      4
+ *    4    2    5    4
  * 
- *    5    8      1      6
+ *    5    8    1    6
  * 
- *    6    7      2      3
+ *    6    7    2    3
  *
  * The pivot element is the first element of the first row: 1
  * To eliminate the elements below 1 1 in the first column (i.e., 4, 5, 6),
@@ -157,7 +157,7 @@ const eliminateValues = (
 ): { A: Matrix; toReturnEarly: boolean, stepsExplanations: string[] } => {
   const pivot = A[col][col] as number;
   if (pivot === 0) {
-    return { A, toReturnEarly: true, stepsExplanations: [`R${col} early return because A[${col}][${col}] is 0`] };
+    return { A, toReturnEarly: true, stepsExplanations: [`R${col} early return because A[${col + 1}][${col + 1}] is 0`] };
   }
 
   const stepsExplanations = []

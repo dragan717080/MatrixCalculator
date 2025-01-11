@@ -40,9 +40,9 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
     min: number = minValue,
     max: number = 25
   ) => {
-    console.log('in validate range, last char:', e.target.value[e.target.value.length - 1]);
+    // console.log('in validate range, last char:', e.target.value[e.target.value.length - 1]);
     if (!Number.isInteger(parseInt(e.target.value[e.target.value.length - 1]))) {
-      console.log('wrote non int');
+      // console.log('wrote non int');
       e.target.value = e.target.value.slice(0, -1)
     }
 
@@ -57,7 +57,7 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
       ? aRows.current!.value.length
       : aRows.current!.value.length && aCols.current!.value.length
 
-    console.log('only A:', isOnlyA);
+    // console.log('only A:', isOnlyA);
     const bIsFilled = !isOnlyA && !isAS
       ? isSquare
         ? bRows.current?.value.length || 0
@@ -66,17 +66,17 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
 
     const powerIsFilled = isPower
       ? powerRef.current!.value.length : true
-    console.log(powerIsFilled);
+    // console.log(powerIsFilled);
 
     /** If multiplication is passed, `A` cols must be same as `B` rows. */
     const multiplicationIsOk = isMultiplication
       ? aCols.current!.value.length && aCols.current!.value === bRows.current!.value
       : true
     const newAllIsFilled = Boolean(aIsFilled && bIsFilled && powerIsFilled && multiplicationIsOk)
-    console.log('a is filled:', aIsFilled, 'b is filled:', bIsFilled, 'power is filled:', powerIsFilled,
+/*     console.log('a is filled:', aIsFilled, 'b is filled:', bIsFilled, 'power is filled:', powerIsFilled,
       'multiplication is ok:', multiplicationIsOk
     );
-    console.log(newAllIsFilled);
+    console.log(newAllIsFilled); */
 
     if (newAllIsFilled && powerRef.current) {
       setPower(parseInt(powerRef.current!.value))
@@ -122,7 +122,7 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
 
         if (isAS) {
           bIsSet = aIsSet
-          console.log('setting bDim as:', [parseInt(aRows.current!.value), parseInt(aCols.current!.value)]);
+          // console.log('setting bDim as:', [parseInt(aRows.current!.value), parseInt(aCols.current!.value)]);
           setBDim([parseInt(aRows.current!.value), parseInt(aCols.current!.value)])
         } else {
           const newBValue = getNumericDimValue(false);
@@ -131,14 +131,14 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
         }
 
         if (aIsSet && bIsSet) {
-          console.log('opening modal, both matrices are set');
+          // console.log('opening modal, both matrices are set');
           setIsOpen(true);
         }
-        console.log('A is set:', aIsSet, 'B is set:', bIsSet);
+        // console.log('A is set:', aIsSet, 'B is set:', bIsSet);
       } else {
-        console.log('a is set:', aIsSet);
+        // console.log('a is set:', aIsSet);
         if (aIsSet) {
-          console.log('opening modal');
+          // console.log('opening modal');
           setIsOpen(true);
         }
       }
@@ -147,7 +147,7 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
   )
 
   useEffect(() => {
-    console.log('new A dim in input:', aDim)
+    // console.log('new A dim in input:', aDim)
     if (aDim[0] === 0 && aRows.current) {
       aRows.current.value = ''
     }
@@ -166,13 +166,13 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
   }, [aDim[0], aDim[1], bDim[0], bDim[1]])
 
   useEffect(() => {
-    console.log('isOpen in input:', isOpen);
+    // console.log('isOpen in input:', isOpen);
   }, [isOpen])
 
   useEffect(() => {
     if (power === -1 && powerRef.current) {
-      console.log('previous value:', powerRef.current!.value);
-      console.log('%cnew power value:', 'color:red;font-size:26px', power);
+      // console.log('previous value:', powerRef.current!.value);
+      // console.log('%cnew power value:', 'color:red;font-size:26px', power);
       powerRef.current.value = ''
     }
   }, [power])
@@ -189,7 +189,7 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
   }, [])
 
   useEffect(() => {
-    console.log('%cNEW A:', 'color:red;font-size:26px', A);
+    // console.log('%cNEW A:', 'color:red;font-size:26px', A);
     /** When sign is changed and was in `recalculate`, reset it to `+` */
     if (aIsFilled) {
       
