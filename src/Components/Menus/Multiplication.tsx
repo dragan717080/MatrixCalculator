@@ -51,20 +51,6 @@ const Multiplication: FC = () => {
     setTime(time)
   }
 
-  /** Format text of given step index and explanation index with the `subindex` span class. */
-  const getExplanationText = (index: number, explanationIndex: number) => {
-    /*     const [indices, equation] = getIndicesFromEquation(steps, index, explanationIndex)
-        console.log('indices:', indices)
-        console.log('equation:', equation); */
-
-    return steps[index].explanation[explanationIndex]
-  }
-
-  /** For UX, initially hide `div` holding description and input, and unhide on page load. */
-  const unhideDescriptionAndInputRef = () => {
-    descriptionAndInputRef.current!.classList.remove('hidden')
-  }
-
   useEffect(() => {
     console.log('recalculating function')
     if (A && B) {
@@ -87,10 +73,6 @@ const Multiplication: FC = () => {
       setDidUpdateExplanations(true)
     }
   }, [steps, isOpen])
-
-  useEffect(() => {
-    unhideDescriptionAndInputRef()
-  }, [])
 
   return (
     <div className='col-h'>

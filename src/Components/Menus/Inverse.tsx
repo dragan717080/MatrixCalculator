@@ -5,7 +5,7 @@ import ScrollWithSVGs from '../Atoms/ScrollWithSVGs'
 import useRecalculate from '../../hooks/useRecalculate'
 import useResetParams from '../../hooks/useResetParams'
 import useToggleShowSolution from '../../hooks/useToggleShowSolution'
-import getDeterminant from '../../lib/getDeterminant'
+import getInverse from '../../lib/getInverse'
 import { getCalcTime, getStrValuesOfMainDiagonal } from '../../lib/utils'
 import { useMatrixStore, useModalStore } from '../../store/zustandStore'
 import { Step } from '../../interfaces/Determinant'
@@ -27,7 +27,6 @@ const Inverse: FC = () => {
   const [time, setTime] = useState<number>(-1)
   const [steps, setSteps] = useState<Step[]>([])
   const [toShowSolution, setToShowSolution] = useState<boolean>(false)
-  const [actualCounts, setActualCounts] = useState<number[]>([])
 
   const { recalculate } = useRecalculate({ setTime, setShow: setToShowSolution })
 
@@ -42,6 +41,8 @@ const Inverse: FC = () => {
     }
 
     console.log('A in calculate:', A)
+    const { time, funcResult: result } = getCalcTime(() => getInverse(A))
+    console.log('Result:', result);
   }
 
   useEffect(() => {
@@ -58,10 +59,6 @@ const Inverse: FC = () => {
   useEffect(() => {
     resetParams()
   }, [])
-
-  useEffect(() => {
-    console.log('%cnew actual counts:', 'color:green', actualCounts);
-  }, [actualCounts.length])
 
   useEffect(() => {
     console.log('new steps:', steps);

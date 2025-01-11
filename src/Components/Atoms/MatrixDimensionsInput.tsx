@@ -18,7 +18,6 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
     sign, setSign,
   } = useMatrixStore()
   const { isOpen, setIsOpen } = useModalStore()
-  // console.log('%cRERENDER', 'color:red;font-size:16px');
 
   const aRows = useRef<HTMLInputElement | null>(null)
   const aCols = useRef<HTMLInputElement | null>(null)
@@ -42,7 +41,6 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
   ) => {
     // console.log('in validate range, last char:', e.target.value[e.target.value.length - 1]);
     if (!Number.isInteger(parseInt(e.target.value[e.target.value.length - 1]))) {
-      // console.log('wrote non int');
       e.target.value = e.target.value.slice(0, -1)
     }
 
@@ -72,7 +70,8 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
     const multiplicationIsOk = isMultiplication
       ? aCols.current!.value.length && aCols.current!.value === bRows.current!.value
       : true
-    const newAllIsFilled = Boolean(aIsFilled && bIsFilled && powerIsFilled && multiplicationIsOk)
+    
+      const newAllIsFilled = Boolean(aIsFilled && bIsFilled && powerIsFilled && multiplicationIsOk)
 /*     console.log('a is filled:', aIsFilled, 'b is filled:', bIsFilled, 'power is filled:', powerIsFilled,
       'multiplication is ok:', multiplicationIsOk
     );
@@ -147,7 +146,6 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
   )
 
   useEffect(() => {
-    // console.log('new A dim in input:', aDim)
     if (aDim[0] === 0 && aRows.current) {
       aRows.current.value = ''
     }
@@ -187,14 +185,6 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
   useEffect(() => {
     setIsFirstLoaded(true)
   }, [])
-
-  useEffect(() => {
-    // console.log('%cNEW A:', 'color:red;font-size:26px', A);
-    /** When sign is changed and was in `recalculate`, reset it to `+` */
-    if (aIsFilled) {
-      
-    }
-  }, [A, aIsFilled])
 
   return (
     <div className='row pt-7'>

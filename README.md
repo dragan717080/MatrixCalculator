@@ -15,18 +15,23 @@
 ## Technologies Used
 
 - **React.js**
+
 React.js is a JavaScript library for building user interfaces, developed by Facebook. It uses a component-based architecture to create reusable UI components. React's virtual DOM improves performance by efficiently updating and rendering only the necessary components.
 
-- **TypeScript**  
+- **TypeScript**
+
 TypeScript is a superset of JavaScript that adds static typing to the language. It helps catch errors at compile-time, leading to more robust and maintainable code. It has enhanced tooling support, clear type definitions, and seamless integration with popular frameworks like React.
 
 - **Tailwind CSS**
+
 Tailwind CSS is a utility-first CSS framework that enables rapid UI development. Its utility classes make it easy to create responsive and custom-designed user interfaces without writing custom CSS.
 
 - **Headless UI**
+
 Headless UI is a set of completely unstyled, accessible UI components designed to integrate seamlessly with Tailwind CSS. It simplifies building complex elements like modals, dropdowns, and accordions.
 
-- **Vite**  
+- **Vite**
+
 Vite is a modern build tool and development server designed for speed and efficiency. It leverages native ES modules in the browser, resulting in instant server starts and fast hot module replacement (HMR). It outperforms traditional JavaScript-based bundlers (e.g. Webpack or Rollup) by orders of magnitude. Vite supports frameworks like React, Vue, and Svelte.
 
 The goal of using these technologies is to create a high-performing, modern and scalable application.
