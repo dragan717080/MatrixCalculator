@@ -42,7 +42,6 @@ const Determinant: FC = () => {
       return
     }
 
-    console.log('has only numbers:', A.flat().every(x => typeof (x) !== 'string'));
     console.log('A in calculate:', A)
     const { time, funcResult } = getCalcTime(() => getDeterminant(A))
     const { steps, result } = funcResult
@@ -96,6 +95,7 @@ const Determinant: FC = () => {
     // e.g. if first 5 elements are 'swap, no swap, no swap, no swap, swap',
     // it should return '{ 1 -> 0, 2 -> 1, 3 -> 2 }
     const d = {} as { [key: string]: number }
+
     for (let i = 0; i < steps.length; i++) {
       if (typeof (steps[i]).swapRow !== 'undefined') {
         continue;
