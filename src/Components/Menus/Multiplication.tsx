@@ -55,11 +55,11 @@ const Multiplication: FC = () => {
     console.log('recalculating function')
     if (A && B) {
       setCalculate(calculateResult)
-      if (aIsFilled && bIsFilled) {
+      if (aIsFilled && bIsFilled && !isOpen && time === -1) {
         calculateResult()
       }
     }
-  }, [A, B, aIsFilled, bIsFilled])
+  }, [A, B, aIsFilled, bIsFilled, isOpen, time])
 
   useEffect(() => {
     resetParams()
@@ -81,9 +81,9 @@ const Multiplication: FC = () => {
           {toShowSolution && (
             <>
               {steps.length > 0 && (
-                <h3 className='bold leading-4 mb-3'>Original matrices</h3>
+                <h3 className='mb-2 text-center bold leading-4'>Original matrices</h3>
               )}
-              <div className='mb-7'>
+              <div className='solution-items-container mb-7'>
                 <div id='step-1' className='row-v pb-2 px-3 border-b-darkgray'>
                   <ScrollWithSVGs aCols={aDim[1]} isFirst areBoth />
                   <div className='row flex-col md:flex-row space-y-6 md:space-y-0 md:space-x-6 pb-6 md:pb-0'>
@@ -115,7 +115,7 @@ const Multiplication: FC = () => {
                           nRows={step.A.length}
                           nCols={step.A[0].length}
                           A={step.A}
-                          toHighlight={(row: number, col: number, index: number | undefined) => row === index}
+                          highlightFunc={(row: number, col: number, index: number | undefined) => row === index}
                           index={index}
                           letter='C'
                         />

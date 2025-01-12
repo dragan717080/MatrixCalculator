@@ -16,9 +16,12 @@ import Matrix from '../interfaces/Matrix'
  * 
  *    6    7    2    3
  *
+ * 
+ * Transform matrix into `row echelon form (REF)`.
+ * 
  * The pivot element is the first element of the first row: 1
  * To eliminate the elements below 1 1 in the first column (i.e., 4, 5, 6),
- * we subtract multiples of the first row from the other rows:
+ * we subtract multiples of the first row from the other rows.
  * 
  * - Subtract rows R2 -> R2 - 4R1
  *   - R2 = [4 - 4, 2 - 12, 5 - 28, 4 - 32] = [0, -10, -23, -28]
@@ -63,6 +66,7 @@ import Matrix from '../interfaces/Matrix'
  *   - R4 = [0, 0, 0, -14.2 - 0.821*(-14.4)] = [0, 0, 0, -2.38]
  * 
  * Resulting matrix after step 3:
+ * 
  *    1    3    7      8
  * 
  *    0    -10  -23    -28
@@ -92,7 +96,7 @@ const getDeterminant = (A: Matrix): DeterminantSolution => {
         A: [...B.map(row => [...row])],
         swapRow: swapResult.swapRow,
         sign: swapResult.sign,
-        stepsExplanations: [`Swapping rows ${swapResult.swapRow[0] + 1} and ${swapResult.swapRow[1] + 1}, changing the sign to ${swapResult.sign}`]
+        explanations: [`Swapping rows ${swapResult.swapRow[0] + 1} and ${swapResult.swapRow[1] + 1}, changing the sign to ${swapResult.sign}`]
       });
 
       sign = swapResult.sign;
@@ -100,12 +104,13 @@ const getDeterminant = (A: Matrix): DeterminantSolution => {
 
     // Handle row elimination
     const eliminationResult = eliminateValues(B, i);
-    console.log('Got result:', eliminationResult);
+    // console.log('Result of eliminating row', i, ':', eliminationResult);
+
     steps.push({
       A: [...B.map(row => [...row])],
       swapRow: undefined,
       sign,
-      stepsExplanations: eliminationResult.stepsExplanations
+      explanations: eliminationResult.explanations
     });
 
     if (eliminationResult.toReturnEarly) {
@@ -155,30 +160,30 @@ const swapRows = (
 const eliminateValues = (
   A: Matrix,
   col: number
-): { A: Matrix; toReturnEarly: boolean, stepsExplanations: string[] } => {
+): { A: Matrix; toReturnEarly: boolean, explanations: string[] } => {
   const pivot = A[col][col] as number;
   if (pivot === 0) {
-    return { A, toReturnEarly: true, stepsExplanations: [`R${col} early return because A[${col + 1}][${col + 1}] is 0`] };
+    return { A, toReturnEarly: true, explanations: [`R${col} early return because A[${col + 1}][${col + 1}] is 0`] };
   }
 
-  const stepsExplanations = []
+  const explanations = []
 
   for (let i = col + 1; i < A.length; i++) {
     if (A[i][col] === 0) {
-      stepsExplanations.push(`R${i + 1} at column ${col + 1} is already 0, so this step is skipped.`)
+      explanations.push(`R${i + 1} at column ${col + 1} is already 0, so this step is skipped.`)
       continue
     };
 
     const coef = (A[i][col] as number) / pivot!;
 
-    stepsExplanations.push(`R${i + 1} = R${i + 1} ${coef < 0 ? '+' : '-'} ${![-1, 1].includes(coef) ? Math.abs(Number.isInteger(coef) ? coef : parseFloat(coef?.toFixed(3).replace(/(\.\d*?[1-9])0+$|\.0+$/, '$1'))) : ''}R${col + 1}`)
+    explanations.push(`R${i + 1} = R${i + 1} ${coef < 0 ? '+' : '-'} ${![-1, 1].includes(coef) ? Math.abs(Number.isInteger(coef) ? coef : parseFloat(coef?.toFixed(3).replace(/(\.\d*?[1-9])0+$|\.0+$/, '$1'))) : ''}R${col + 1}`)
 
     for (let j = col; j < A.length; j++) {
       (A[i][j] as number) -= (A[col][j] as number) * coef;
     }
   }
 
-  return { A, toReturnEarly: false, stepsExplanations };
+  return { A, toReturnEarly: false, explanations };
 };
 
 export default getDeterminant

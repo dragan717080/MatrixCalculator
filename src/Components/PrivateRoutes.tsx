@@ -10,7 +10,7 @@ export default function PrivateRoutes() {
       <div id="navbar-portal-root" className='mt-[-6px]'></div>
       <div id="__next"></div>
     </div>
-    <main className='flex-1 max-w-7xl mx-auto py-7 px-4 lg:px-8'>
+    <main className='flex-1 max-w-screen md:max-w-5xl lg:max-w-7xl mx-auto py-7 px-4 lg:px-8'>
       <Outlet />
       <MatrixModal />
     </main>

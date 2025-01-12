@@ -54,11 +54,11 @@ const AdditionSubstraction: FC = () => {
     console.log(B);
     if (A && B) {
       setCalculate(calculateResult)
-      if (aIsFilled && bIsFilled) {
+      if (aIsFilled && bIsFilled && !isOpen && time === -1) {
         calculateResult()
       }
     }
-  }, [A, B, aIsFilled, bIsFilled])
+  }, [A, B, aIsFilled, bIsFilled, isOpen, time])
 
   useEffect(() => {
     resetParams()
@@ -70,8 +70,8 @@ const AdditionSubstraction: FC = () => {
         <div ref={solutionStepsRef}>
           {toShowSolution && (
             <>
-              <h3 className='bold leading-4'>Original matrices</h3>
-              <div className='mb-7'>
+              <h3 className='mb-8 text-center bold leading-4'>Original matrices</h3>
+              <div className='solution-items-container mb-7'>
                 <div id='step-1' className='row-v px-3 border-b-darkgray'>
                   <div className='row flex-col md:flex-row space-y-6 md:space-y-0 md:space-x-6 pb-6 md:pb-0'>
                     <MatrixTable nRows={aDim[0]} nCols={aDim[1]} A={A} />

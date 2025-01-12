@@ -26,7 +26,7 @@ const useResetParams = ({
     }
 
     if (descriptionAndInputRef) {
-      console.log('%creceived descriptionAndInputRef:', 'color:red;font-size:26px', descriptionAndInputRef);
+      // console.log('%creceived descriptionAndInputRef:', 'color:red;font-size:26px', descriptionAndInputRef);
       
       descriptionAndInputRef.current!.classList.remove('hidden')
     }

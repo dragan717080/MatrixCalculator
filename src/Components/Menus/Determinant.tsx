@@ -6,7 +6,7 @@ import useRecalculate from '../../hooks/useRecalculate'
 import useResetParams from '../../hooks/useResetParams'
 import useToggleShowSolution from '../../hooks/useToggleShowSolution'
 import getDeterminant from '../../lib/getDeterminant'
-import { getCalcTime, getStrValuesOfMainDiagonal } from '../../lib/utils'
+import { getCalcTime, getOrderNumberToStr, getStrValuesOfMainDiagonal } from '../../lib/utils'
 import { useMatrixStore, useModalStore } from '../../store/zustandStore'
 import { Step } from '../../interfaces/Determinant'
 
@@ -30,7 +30,7 @@ const Determinant: FC = () => {
   const [actualCounts, setActualCounts] = useState<number[]>([])
   const [stepsSwapsIndices, setStepsSwapsIndices] = useState<{ [key: string]: number }>({} as { [key: string]: number })
 
-  const { recalculate } = useRecalculate({ setTime, setShow: setToShowSolution })
+  const { recalculate } = useRecalculate({ setTime, setShow: setToShowSolution, setSteps })
 
   const { resetParams } = useResetParams({ descriptionAndInputRef })
 
@@ -53,10 +53,6 @@ const Determinant: FC = () => {
     setTime(time)
   }
 
-  /** 1-based indexing. */
-  const getOrderNumberToStr = (index: number) =>
-    index === 1 ? 'st' : index === 2 ? 'nd' : index === 3 ? 'rd' : 'th'
-
   /** After completing all steps, get the equation for multiplying elements on upper (main) diagonal. */
   const getMultiplyEquation = () => {
     const strValues = getStrValuesOfMainDiagonal(steps, true)
@@ -72,8 +68,8 @@ const Determinant: FC = () => {
           ? `Swapping rows ${step.swapRow[0] + 1} and ${step.swapRow[1] + 1}, changing the sign to ${step.sign}`
           // Text will have 1-based indexing so need `+1`
           : `Eliminate elements in the ${stepsSwapsIndices[index] + 1}${getOrderNumberToStr(
-            stepsSwapsIndices[index] + 1)} column under the ${stepsSwapsIndices[index] + 1}${getOrderNumberToStr(
-              stepsSwapsIndices[index] + 1)} element`;
+            stepsSwapsIndices[index])} column under the ${stepsSwapsIndices[index] + 1}${getOrderNumberToStr(
+              stepsSwapsIndices[index])} element`;
       },
     [steps.length, actualCounts.length, Object.keys(stepsSwapsIndices).length])
 
@@ -114,11 +110,11 @@ const Determinant: FC = () => {
     if (A) {
       console.log('received A:', A);
       setCalculate(calculateResult)
-      if (aIsFilled) {
+      if (aIsFilled && !isOpen && time === -1) {
         calculateResult()
       }
     }
-  }, [A, aIsFilled]);
+  }, [A, aIsFilled, isOpen, time]);
 
   useEffect(() => {
     resetParams()
@@ -141,7 +137,7 @@ const Determinant: FC = () => {
       {aIsFilled && !isOpen && (
         <div ref={solutionStepsRef}>
           {toShowSolution && (
-            <div className='mb-7'>
+            <div className='solution-items-container mb-7'>
               {A.length === 1 && (
                 <div className="w-full row">
                   <span>
@@ -158,7 +154,7 @@ const Determinant: FC = () => {
                   nRows={aDim[0]}
                   nCols={aDim[1]}
                   A={A}
-                  toHighlight={
+                  highlightFunc={
                     A.length === 1 || A[0].length === 1
                       ? (row, col) => row === 0 && col === 0
                       : undefined
@@ -170,7 +166,7 @@ const Determinant: FC = () => {
                   <p>{getStepText(step, index)}</p>
                   {!steps[index].swapRow && (
                     <div className='mt-3'>
-                      {step.stepsExplanations.map((explanation, index) => (
+                      {step.explanations.map((explanation, index) => (
                         <p key={index}>{explanation}</p>
                       ))}
                     </div>
@@ -182,7 +178,7 @@ const Determinant: FC = () => {
                       nRows={step.A.length}
                       nCols={step.A[0].length}
                       A={step.A}
-                      toHighlight={(row = index, col = 0) => getHighlight(step, index, row, col)}
+                      highlightFunc={(row = index, col = 0) => getHighlight(step, index, row, col)}
                     />
                   </div>
                 </div>
@@ -193,7 +189,7 @@ const Determinant: FC = () => {
                   <p>Sign: {steps[steps.length - 1].sign}</p>
                   <div className='row-v px-3'>
                     <ScrollWithSVGs aCols={aDim[1]} isLast />
-                    <MatrixTable nRows={aDim[0]} nCols={aDim[1]} A={steps[steps.length - 1].A} toHighlight={(row, col) => row === col} />
+                    <MatrixTable nRows={aDim[0]} nCols={aDim[1]} A={steps[steps.length - 1].A} highlightFunc={(row, col) => row === col} />
                   </div>
                   <p>Δ = {steps[steps.length - 1].sign === '-' && '-'}{getMultiplyEquation()}</p>
                 </div>
@@ -241,7 +237,7 @@ const Determinant: FC = () => {
               )}
               <div className='w-full flex'>
                 <span className='ml-auto pt-2'>
-                  Computation time: <span>{time !== - 1 ? time : '0.000'}</span>sec.
+                  Computation time: <span>{time !== - 1 ? time : '0.001'}</span>sec.
                 </span>
               </div>
             </section>

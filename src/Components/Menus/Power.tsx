@@ -33,13 +33,17 @@ const Power: FC = () => {
   const { toggleShowSolution } = useToggleShowSolution({ solutionStepsRef, toShowSolution, setToShowSolution })
 
   const calculateResult = () => {
-    const aIsFilled = !A.length || !A.flat().every(x => typeof (x) !== 'string')
+    const aIsFilled = A.length && A.flat().every(x => typeof (x) !== 'string')
     if (!aIsFilled) {
       return
     }
 
+    console.log('Power before calculate', power);
+    console.log('A before calculate', A);
+
     const { time, funcResult: result } = getCalcTime(() => getPower(A, power))
 
+    console.log('STEPS:', result);
     setSteps(result)
     setTime(time)
   }
@@ -50,11 +54,11 @@ const Power: FC = () => {
     if (A) {
       console.log('shall set calculate');
       setCalculate(calculateResult)
-      if (aIsFilled) {
+      if (aIsFilled && !isOpen && time === -1) {
         calculateResult()
       }
     }
-  }, [A, aIsFilled]);
+  }, [A, aIsFilled, isOpen, time]);
 
   useEffect(() => {
     resetParams()
@@ -71,9 +75,9 @@ const Power: FC = () => {
           {toShowSolution && (
             <>
               {steps.length > 0 && (
-                <h3 className='bold leading-4'>Original matrix</h3>
+                <h3 className='mb-1 text-center bold leading-4'>Original matrix</h3>
               )}
-              <div className='mb-7'>
+              <div className='solution-items-container mb-7'>
                 <div id='step-1' className='row-v px-3 border-b-darkgray'>
                   <ScrollWithSVGs aCols={aDim[1]} isFirst />
                   <MatrixTable nRows={aDim[0]} nCols={aDim[1]} A={A} />

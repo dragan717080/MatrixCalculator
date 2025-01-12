@@ -178,6 +178,10 @@ body {
     @apply font-bold;
 }
 
+.max-w-screen {
+    max-width: 100vw;
+}
+
 .t-primary {
     @apply text-primary;
 }
@@ -297,6 +301,22 @@ ol {
 
 .btn:disabled {
     opacity: 0.3;
+}
+
+/* Solution steps container */
+.solution-items-container > div {
+    max-width: 100vw;
+    overflow-x: scroll;
+}
+
+@media screen and (min-width: 560px) {
+    .solution-items-container > div {
+        overflow-x: auto;
+    }
+}
+
+.solution-items-container p {
+    padding-inline: 1.5rem;
 }
 
 /* Table */

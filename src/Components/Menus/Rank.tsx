@@ -72,11 +72,11 @@ const Rank: FC = () => {
     if (A) {
       // console.log('shall set calculate');
       setCalculate(calculateResult)
-      if (aIsFilled) {
+      if (aIsFilled && !isOpen && time === -1) {
         calculateResult()
       }
     }
-  }, [A, aIsFilled]);
+  }, [A, aIsFilled, isOpen, time]);
 
   useEffect(() => {
     resetParams()
@@ -89,9 +89,9 @@ const Rank: FC = () => {
           {toShowSolution && (
             <>
               {steps.length > 0 && (
-                <h3 className='bold leading-4 mb-3'>Original matrix</h3>
+                <h3 className='mb-6 text-center bold leading-4'>Original matrix</h3>
               )}
-              <div className='mb-7'>
+              <div className='solution-items-container mb-7'>
                 {A.length === 1 && (
                   <div className="w-full row">
                     <span>
@@ -120,7 +120,7 @@ const Rank: FC = () => {
                     nRows={aDim[0]}
                     nCols={aDim[1]}
                     A={A}
-                    toHighlight={A.length === 1 || A[0].length === 1
+                    highlightFunc={A.length === 1 || A[0].length === 1
                       ? (row, col) => row === 0 && col === 0
                       : undefined
                     }
@@ -140,7 +140,7 @@ const Rank: FC = () => {
                           nRows={step.A.length}
                           nCols={step.A[0].length}
                           A={step.A}
-                          toHighlight={(row: number, col: number, index: number | undefined) => row === index}
+                          highlightFunc={(row: number, col: number, index: number | undefined) => row === index}
                           index={index}
                         />
                       </div>
@@ -152,7 +152,7 @@ const Rank: FC = () => {
                     <p>Count non zero main diagonal elements</p>
                     <div className='row-v px-3'>
                       <ScrollWithSVGs aCols={aDim[1]} isLast />
-                      <MatrixTable nRows={aDim[0]} nCols={aDim[1]} A={steps[steps.length - 1].A} toHighlight={(row, col) => row === col && steps[steps.length - 1].A[row][col] != 0} />
+                      <MatrixTable nRows={aDim[0]} nCols={aDim[1]} A={steps[steps.length - 1].A} highlightFunc={(row, col) => row === col && steps[steps.length - 1].A[row][col] != 0} />
                     </div>
                     <p>Rank = <span className='code-block'> {getRankEquation()}</span></p>
                   </div>

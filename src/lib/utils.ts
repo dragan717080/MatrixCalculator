@@ -37,7 +37,7 @@ export const isStringNumeric = (s: string) => {
  * Get string values of main diagonal elements.
  *
  * @param {DeterminantStep[]|Step[]} steps
- * @param {boolean} [toPutInBrackets] - Optional parameter.
+ * @param {boolean} [toPutInBrackets] - (Optional) -
  * Whether to put number in brackets for better formatting,
  * e.g. for `determinant` -3 will become (-3).
  * Defaults to false.
@@ -80,4 +80,11 @@ export const getIndicesFromEquation = (
   }
 
   return [indices, equation]
+}
+
+/** 1-based indexing. */
+export const getOrderNumberToStr = (index: number) => {
+  index += 1
+
+  return index === 1 ? 'st' : index === 2 ? 'nd' : index === 3 ? 'rd' : 'th'
 }

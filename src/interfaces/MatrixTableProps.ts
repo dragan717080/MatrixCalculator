@@ -1,14 +1,14 @@
-import Matrix from "./Matrix"
+import Matrix from './Matrix'
 
-type HighlightCells = {
-  (row: number, col: number, index?: number): boolean
+export type HighlightCells = {
+  (row: number, col: number, index?: number, A?: Matrix): boolean
 };
 
 export default interface MatrixTableProps {
   nRows: number
   nCols: number
   A: Matrix,
-  toHighlight? : HighlightCells
+  highlightFunc? : HighlightCells
   className?: string
   index?: number
   letter?: string

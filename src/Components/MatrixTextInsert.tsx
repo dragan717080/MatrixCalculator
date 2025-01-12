@@ -70,7 +70,7 @@ const MatrixTextInsert: FC<MatrixTextInsertProps> = ({
 
         // console.log('Words in row:', wordsInRow);
         for (const word of wordsInRow) {
-          console.log('Row:', rowIndex, 'word:', word);
+          // console.log('Row:', rowIndex, 'word:', word);
 
           if (!isStringNumeric(word)) {
             // console.log('word is not numeric');

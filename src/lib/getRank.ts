@@ -114,7 +114,7 @@ const getRank = (A: Matrix): SolutionWithNumericResult => {
     console.log('Got result:', eliminationResult);
     steps.push({
       A: [...B.map(row => [...row])],
-      explanation: eliminationResult.stepsExplanations
+      explanation: eliminationResult.explanations
     });
 
     if (eliminationResult.toReturnEarly) {
@@ -160,18 +160,18 @@ const swapRows = (
 const eliminateValues = (
   A: Matrix,
   col: number
-): { A: Matrix; toReturnEarly: boolean, stepsExplanations: string[] } => {
+): { A: Matrix; toReturnEarly: boolean, explanations: string[] } => {
   const pivot = A[col][col] as number;
 
   if (pivot === 0) {
-    return { A, toReturnEarly: true, stepsExplanations: [`R${col} early return because A[${col + 1}][${col + 1}] is 0`] };
+    return { A, toReturnEarly: true, explanations: [`R${col} early return because A[${col + 1}][${col + 1}] is 0`] };
   }
 
-  const stepsExplanations = []
+  const explanations = []
 
   for (let i = col + 1; i < A.length; i++) {
     if (A[i][col] === 0) {
-      stepsExplanations.push(`R${i + 1} at column ${col + 1} is already 0, so this step is skipped.`)
+      explanations.push(`R${i + 1} at column ${col + 1} is already 0, so this step is skipped.`)
       break
     };
 
@@ -181,7 +181,7 @@ const eliminateValues = (
     }
     
 
-    stepsExplanations.push(`R${i + 1} = R${i + 1} ${coef < 0 ? '+' : '-'} ${![-1, 1].includes(coef) ? Math.abs(Number.isInteger(coef) ? coef : parseFloat(coef?.toFixed(3).replace(/(\.\d*?[1-9])0+$|\.0+$/, '$1'))) : ''}R${col + 1}`)
+    explanations.push(`R${i + 1} = R${i + 1} ${coef < 0 ? '+' : '-'} ${![-1, 1].includes(coef) ? Math.abs(Number.isInteger(coef) ? coef : parseFloat(coef?.toFixed(3).replace(/(\.\d*?[1-9])0+$|\.0+$/, '$1'))) : ''}R${col + 1}`)
 
     for (let j = col; j < A.length; j++) {
       if (j >= A[0].length) {
@@ -192,7 +192,7 @@ const eliminateValues = (
     }
   }
 
-  return { A, toReturnEarly: false, stepsExplanations };
+  return { A, toReturnEarly: false, explanations };
 };
 
 export default getRank

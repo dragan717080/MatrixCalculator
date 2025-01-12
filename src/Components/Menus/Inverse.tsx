@@ -8,7 +8,7 @@ import useToggleShowSolution from '../../hooks/useToggleShowSolution'
 import getInverse from '../../lib/getInverse'
 import { getCalcTime, getStrValuesOfMainDiagonal } from '../../lib/utils'
 import { useMatrixStore, useModalStore } from '../../store/zustandStore'
-import { Step } from '../../interfaces/Determinant'
+import Matrix, { Step } from '../../interfaces/Matrix'
 
 const Inverse: FC = () => {
   const {
@@ -27,13 +27,20 @@ const Inverse: FC = () => {
   const [time, setTime] = useState<number>(-1)
   const [steps, setSteps] = useState<Step[]>([])
   const [toShowSolution, setToShowSolution] = useState<boolean>(false)
+  const [C, setC] = useState<Matrix>([])
 
-  const { recalculate } = useRecalculate({ setTime, setShow: setToShowSolution })
+  const { recalculate } = useRecalculate({ setTime, setShow: setToShowSolution, setSteps })
 
   const { resetParams } = useResetParams({ descriptionAndInputRef })
 
   const { toggleShowSolution } = useToggleShowSolution({ solutionStepsRef, toShowSolution, setToShowSolution })
 
+  const tableRef = useRef<HTMLTableElement | null>(null)
+
+  useEffect(() => {
+    console.log(steps.length);
+    console.log(tableRef.current);
+  }, [steps.length])
   const calculateResult = () => {
     // It will go to this function again when `A` changes with `updateValuesForMatrix`
     if (!A.length || !A.flat().every(x => typeof (x) !== 'string')) {
@@ -43,6 +50,16 @@ const Inverse: FC = () => {
     console.log('A in calculate:', A)
     const { time, funcResult: result } = getCalcTime(() => getInverse(A))
     console.log('Result:', result);
+    const { A: newC, steps, determinant: newDeterminant } = result
+
+    if (newC !== null) {
+      setC(newC)
+      console.log(`Setting C to ${newC?.length} X ${newC[0]?.length}`);
+    }
+
+    setSteps(steps)
+    setDeterminant(newDeterminant)
+    setTime(time)
   }
 
   useEffect(() => {
@@ -50,11 +67,11 @@ const Inverse: FC = () => {
     if (A) {
       console.log('received A:', A);
       setCalculate(calculateResult)
-      if (aIsFilled) {
+      if (aIsFilled && !isOpen && time === -1) {
         calculateResult()
       }
     }
-  }, [A, aIsFilled]);
+  }, [A, aIsFilled, isOpen, time]);
 
   useEffect(() => {
     resetParams()
@@ -65,7 +82,7 @@ const Inverse: FC = () => {
   }, [steps.length])
 
   useEffect(() => {
-    console.log('A changed in determinant:', A)
+    console.log('A changed:', A)
   }, [A])
 
   return (
@@ -73,9 +90,58 @@ const Inverse: FC = () => {
       {aIsFilled && !isOpen && (
         <div ref={solutionStepsRef}>
           {toShowSolution && (
-            <>
-              1
-            </>
+            <div className='solution-items-container mb-7'>
+              {steps.length > 0 && (
+                <h3 className='mb-4 text-center bold leading-4'>Original matrix</h3>
+              )}
+              {A.length === 1 && (
+                <div className="w-full row">
+                  <span>
+                    A has only one row so Δ =
+                    A<span className="subindex">1</span><span className="subindex">1</span> = {A[0][0]}
+                  </span>
+                </div>
+              )}
+              <div id='step-1' className='row-v px-3 border-b-darkgray'>
+                {steps.length > 1 && (
+                  <ScrollWithSVGs aCols={aDim[1]} isFirst />
+                )}
+                <MatrixTable
+                  nRows={aDim[0]}
+                  nCols={aDim[1]}
+                  A={A}
+                  highlightFunc={
+                    A.length === 1 || A[0].length === 1
+                      ? (row, col) => row === 0 && col === 0
+                      : undefined
+                  }
+                />
+              </div>
+              {steps.map((step, index) => (
+                <div id={`step-${index + 2}`} className='pt-2 pb-3 border-b-darkgray' key={index}>
+                  {/* <p>{getStepText(step, index)}</p> */}
+                  {!steps[index].swapRow && (
+                    <div className="flex flex-col space-y-1.5 pt-2 pb-2.5">
+                      {Array.isArray(step.explanation)
+                        ? step.explanation.map((explanation, index) => (
+                          <p key={index}>{explanation}</p>))
+                        : <p>{step.explanation}</p>
+                      }
+                    </div>
+                  )}
+                  <p className={`${steps[index].swapRow && 'hidden'}`}></p>
+                  <div className='row-v px-3'>
+                    <ScrollWithSVGs aCols={aDim[1]} />
+                    <MatrixTable
+                      nRows={step.A.length}
+                      nCols={step.A[0].length}
+                      A={step.A}
+                      highlightFunc={step.highlightFunc}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
         </div>
       )}
@@ -94,12 +160,12 @@ const Inverse: FC = () => {
         {aIsFilled && !isOpen && (
           <>
             <div className={`
-                  ${toShowSolution
-                ? 'mt-6 md:mt-4 mb-7 md:mb-8'
-                : 'mt-3 mb-1'
+              ${toShowSolution
+                ? 'mt-1 md:mt-2 mb-4 md:mb-6'
+                : 'mb-8 md:mb-12'
               }
-                    row text-white space-x-5
-                  `}>
+              row text-white space-x-5
+            `}>
               <button
                 onClick={() => toggleShowSolution()}
                 className='btn btn-brighter'
@@ -114,15 +180,25 @@ const Inverse: FC = () => {
               </button>
             </div>
             <section className={!toShowSolution ? 'pt-6' : 'pt-2'}>
-              {typeof (determinant) !== 'undefined' && (
-                <>
-                  <h3 className='bold mb-2'>Result</h3>
-                  <p>Δ = {determinant}</p>
-                </>
-              )}
+              {steps.length
+                ? (
+                  <>
+                    <h3 className='bold mb-2'>Result</h3>
+                    <MatrixTable
+                      nRows={C.length}
+                      nCols={C[0].length}
+                      A={C}
+                      ref={tableRef}
+                    />
+                  </>)
+                : (
+                  <div>
+                    Determinant is 0, so this matrix has no inverse.
+                  </div>
+                )}
               <div className='w-full flex'>
                 <span className='ml-auto pt-2'>
-                  Computation time: <span>{time !== - 1 ? time : '0.000'}</span>sec.
+                  Computation time: <span>{time !== - 1 ? time : '0.001'}</span>sec.
                 </span>
               </div>
             </section>

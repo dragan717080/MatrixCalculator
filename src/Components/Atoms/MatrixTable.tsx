@@ -2,7 +2,7 @@ import React, { FC, forwardRef } from 'react'
 import MatrixTableProps from '../../interfaces/MatrixTableProps'
 
 const MatrixTable = forwardRef<HTMLTableElement, MatrixTableProps>(
-  ({ nRows, nCols, A, toHighlight, className, index, letter }, ref) => {
+  ({ nRows, nCols, A, highlightFunc, className, index, letter }, ref) => {
     const getTableCellValue = (row: number, col: number, value: number) => {
       if (typeof(value) === 'string') {
         value = parseFloat(value)
@@ -31,7 +31,7 @@ const MatrixTable = forwardRef<HTMLTableElement, MatrixTableProps>(
               <td className='!text-gray-350'>{row + 1}</td>
               {Array.from({ length: nCols }).map((_, col) => (
                 <td
-                  className={`${toHighlight && toHighlight(row, col, index) ? 'bg-gray-450 text-neutral-150' : ''} min-h-[2.3125rem] min-w-[2.3125rem] whitespace-nowrap`}
+                  className={`${highlightFunc && highlightFunc(row, col, index, A) ? 'bg-gray-450 text-neutral-150' : ''} min-h-[2.3125rem] min-w-[2.3125rem] whitespace-nowrap`}
                   key={col}
                 >
                   {getTableCellValue(row, col, A[row][col] as number)}

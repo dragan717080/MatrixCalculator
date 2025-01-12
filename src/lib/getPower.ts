@@ -2,7 +2,7 @@ import getMultiplication from './getMultiplication'
 import Matrix, { Step } from '../interfaces/Matrix'
 
 /** Identity matrix has only `1` on main diagonal, and `0` elsewhere. */
-const getIdentityMatrix = (n: number): Matrix =>
+export const getIdentityMatrix = (n: number): Matrix =>
   Array.from(
     { length: n },
     (_, row) => Array.from({ length: n }, (_, col) => row === col ? 1 : 0)
@@ -21,6 +21,8 @@ const getPower = (A: Matrix, power: number): Step[] => {
   const n = A.length
 
   if (power === 0) {
+    console.log('A will be:', getIdentityMatrix(n));
+    console.log('will return I');
     return [{
       A: getIdentityMatrix(n),
       explanation: 'A raised to the power of 0 gives an identity matrix'
