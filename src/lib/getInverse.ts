@@ -1,6 +1,7 @@
 import Matrix, { InverseSolution, Step, TwoNumbers } from '../interfaces/Matrix'
 import getDeterminant from './getDeterminant'
 import { getIdentityMatrix } from './getPower'
+import { swapRows } from './matrixUtils'
 import { getOrderNumberToStr } from './utils'
 
 /**
@@ -155,8 +156,7 @@ const getInverse = (A: Matrix): InverseSolution => {
 
     steps.push({
       A: [...B.map(row => [...row])],
-      explanation: eliminationResult.explanations,
-      highlightFunc: (row, col, A ) => row === col
+      explanation: eliminationResult.explanations
     });
 
     if (eliminationResult.toReturnEarly) {
@@ -180,33 +180,20 @@ const getInverse = (A: Matrix): InverseSolution => {
 
   console.log(`Shall return matrix ${B.length} X ${B[0].length}`);
 
-  return {
-    A: [...B.map(row => [...row])],
-    steps,
-    determinant
-  }
-}
-
-/** Handles swapping rows if needed */
-const swapRows = (
-  A: Matrix,
-  col: number,
-): { A: Matrix; swapRow: number[] | undefined } => {
-  const pivot = A[col][col];
-  let swapRow;
-
-  if (pivot === 0) {
-    for (let i = col + 1; i < A.length; i++) {
-      if (A[i][col]! !== 0) {
-        [A[col], A[i]] = [A[i], A[col]];
-        swapRow = [col, i];
-        break;
-      }
+  if (n === 1) {
+    return {
+      A: [...B.map(row => [...row])],
+      steps: steps.slice(-1),
+      determinant,
     }
   }
 
-  return { A, swapRow };
-};
+  return {
+    A: [...B.map(row => [...row])],
+    steps,
+    determinant,
+  }
+}
 
 // In Gauss-Jordan elimination, pivot is divided to be 1, and elements in the same row are also divided by that value
 const updateValuesInPivotRow = (A: Matrix, row: number) => {
@@ -223,7 +210,6 @@ const updateValuesInPivotRow = (A: Matrix, row: number) => {
   for (let j = 0; j < A[0].length; j++) {
     A[row][j] = Math.round((A[row][j] as number / pivot as number) * 1000) / 1000
   }
-
 
   const explanation = `
     Make the pivot in the ${row + 1}${getOrderNumberToStr(row)}
@@ -246,7 +232,7 @@ const eliminateValues = (
 ): { A: Matrix; toReturnEarly: boolean, explanations: string[] } => {
   const pivot = A[col][col] as number;
   if (pivot === 0) {
-    return { A, toReturnEarly: true, explanations: [`R${col} early return because A[${col + 1}][${col + 1}] is 0`] };
+    return { A, toReturnEarly: true, explanations: [`R${col + 1} early return because A[${col + 1}][${col + 1}] is 0`] };
   }
 
   const explanations = []

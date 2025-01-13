@@ -1,5 +1,6 @@
 import { DeterminantSolution, Sign, Step } from '../interfaces/Determinant';
 import Matrix from '../interfaces/Matrix'
+import { swapRows } from './matrixUtils';
 
 /**
  * Gaussian elimination to get upper triangular form.
@@ -95,11 +96,11 @@ const getDeterminant = (A: Matrix): DeterminantSolution => {
       steps.push({
         A: [...B.map(row => [...row])],
         swapRow: swapResult.swapRow,
-        sign: swapResult.sign,
+        sign: swapResult.sign!,
         explanations: [`Swapping rows ${swapResult.swapRow[0] + 1} and ${swapResult.swapRow[1] + 1}, changing the sign to ${swapResult.sign}`]
       });
 
-      sign = swapResult.sign;
+      sign = swapResult.sign!;
     }
 
     // Handle row elimination
@@ -131,30 +132,7 @@ const getDeterminant = (A: Matrix): DeterminantSolution => {
   }
 
   return { steps, result };
-};
-
-/** Handles swapping rows if needed */
-const swapRows = (
-  A: Matrix,
-  col: number,
-  sign: Sign
-): { A: Matrix; swapRow: number[] | undefined; sign: Sign } => {
-  const pivot = A[col][col];
-  let swapRow;
-
-  if (pivot === 0) {
-    for (let i = col + 1; i < A.length; i++) {
-      if (A[i][col]! !== 0) {
-        [A[col], A[i]] = [A[i], A[col]];
-        swapRow = [col, i];
-        sign = sign === '+' ? '-' : '+';
-        break;
-      }
-    }
-  }
-
-  return { A, swapRow, sign };
-};
+}
 
 /** Handles value changes to eliminate values below the pivot */
 const eliminateValues = (
@@ -163,7 +141,7 @@ const eliminateValues = (
 ): { A: Matrix; toReturnEarly: boolean, explanations: string[] } => {
   const pivot = A[col][col] as number;
   if (pivot === 0) {
-    return { A, toReturnEarly: true, explanations: [`R${col} early return because A[${col + 1}][${col + 1}] is 0`] };
+    return { A, toReturnEarly: true, explanations: [`R${col + 1} early return because A[${col + 1}][${col + 1}] is 0`] };
   }
 
   const explanations = []

@@ -42,10 +42,10 @@ export default function DashNavbar() {
 
     if (!submenuVisible[index]) {
       slideContainer.classList.remove('slide-exit-active')
-      console.log('to add enter');
+      // console.log('to add enter');
       slideContainer.classList.add('slide-enter-active')
     } else {
-      console.log('to remove enter');
+      // console.log('to remove enter');
       slideContainer.classList.remove('slide-enter-active')
       slideContainer.classList.add('slide-exit-active')
     }

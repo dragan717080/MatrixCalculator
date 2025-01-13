@@ -38,3 +38,8 @@ export interface MatrixStore {
   sign: Sign;
   setSign: (value: Sign) => void;
 }
+
+export interface LinearEquationStore {
+  equationCoefs: (string|number)[];
+  setEquationCoefs: (equationCoefs: (string|number)[]) => void;
+}

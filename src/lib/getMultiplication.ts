@@ -94,7 +94,7 @@ const getMultiplication = (A: Matrix, B: Matrix): Step[] => {
   let C = Array.from({ length: A.length }, () =>
     Array((B[0].length)))
 
-  console.log('Start C:', C);
+  console.log('Start C:', JSON.parse(JSON.stringify(C)));
 
   for (let i = 0; i < A.length; i++) {
     let explanationRow = []
@@ -108,9 +108,9 @@ const getMultiplication = (A: Matrix, B: Matrix): Step[] => {
       indicesRow.push(indices)
     }
 
-    console.log('New C:', JSON.parse(JSON.stringify(A)));
+    console.log('New C:', JSON.parse(JSON.stringify(C)));
     // Log the row before pushing it to the solution array
-    console.log('Updated row', i, ':', C[i]);
+    console.log('Updated row', i, ':', JSON.parse(JSON.stringify(C))[i]);
     // console.log('%cWill push to solution:', 'color:red;font-size:22px;', JSON.parse(JSON.stringify(C)));
 
     solution.push({
@@ -148,7 +148,7 @@ const getDotProduct = (
     explanation += `${A[i][k]!} * ${B[k][j]!}`
 
     if (k !== A[i].length - 1) {
-      console.log('adding plus to explanation');
+      // console.log('adding plus to explanation');
       explanation += ' + '
     }
   }

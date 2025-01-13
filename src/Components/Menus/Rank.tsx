@@ -93,7 +93,7 @@ const Rank: FC = () => {
               )}
               <div className='solution-items-container mb-7'>
                 {A.length === 1 && (
-                  <div className="w-full row">
+                  <div className="w-full row overflow-hidden">
                     <span>
                       A has only one row so since A
                       <span className="subindex">1</span><span className="subindex">1</span> is {
@@ -103,7 +103,7 @@ const Rank: FC = () => {
                   </div>
                 )}
                 {A.length !== 1 && A[0].length === 1 && (
-                  <div className="w-full row">
+                  <div className="w-full row overflow-hidden">
                     <span>
                       A has only one column so since A
                       <span className="subindex">1</span><span className="subindex">1</span> is {

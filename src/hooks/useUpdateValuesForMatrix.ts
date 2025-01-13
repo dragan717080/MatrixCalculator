@@ -1,8 +1,33 @@
 import { useMatrixStore } from '../store/zustandStore'
-import Matrix from '../interfaces/Matrix'
+import Matrix, { MatrixElement } from '../interfaces/Matrix'
 
 const useUpdateValuesForMatrix = () => {
   const { A, B } = useMatrixStore()
+
+  const updateValuesForArr = (arr: (string|number)[]) => {
+    // Make a deep copy of the previous array
+    const newArr = [...arr]
+
+    for (const row in arr) {
+      if (typeof arr[row] === 'undefined' || arr[row] === null) {
+        console.log('%cMET UNDEFINED', 'color:red;font-size:40px', arr[row]);
+        newArr[row] = 0
+        continue
+      }
+
+      if ((newArr[row] as string)[(newArr[row] as string).length - 1] === '.') {
+        newArr[row] = newArr[row] + '0'
+      }
+
+      if ((newArr[row] as string)[(newArr[row] as string).length - 1] === '-') {
+        newArr[row] = '0'
+      }
+
+      newArr[row] = parseFloat(newArr[row] as unknown as string)
+    }
+
+    return newArr
+  }
 
   /**
    * Turn string matrix values to numeric.
@@ -50,7 +75,7 @@ const useUpdateValuesForMatrix = () => {
     return newMatrix
   }
 
-  return { updateValuesForMatrix }
+  return { updateValuesForArr, updateValuesForMatrix }
 }
 
 export default useUpdateValuesForMatrix

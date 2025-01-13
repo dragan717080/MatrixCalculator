@@ -2,18 +2,21 @@ import { FC, ChangeEvent, MouseEvent, memo, useCallback, useEffect, useMemo, use
 import { addError, clearErrors, errorsReducer, removeError } from '../lib/matrixTextInsertReducer';
 import useUpdateValuesForMatrix from '../hooks/useUpdateValuesForMatrix';
 import { isStringNumeric } from '../lib/utils';
-import { useMatrixStore, useModalStore } from '../store/zustandStore';
+import { useLinearEquationsStore, useMatrixStore, useModalStore } from '../store/zustandStore';
 import MatrixTextInsertProps from '../interfaces/MatrixTextInsertProps';
 import Matrix from '../interfaces/Matrix';
 
 const MatrixTextInsert: FC<MatrixTextInsertProps> = ({
   setIsInserting,
-  isA = true
+  isA = true,
+  isEquation,
 }) => {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null)
 
-  const { updateValuesForMatrix } = useUpdateValuesForMatrix()
   const { aDim, A, setA, setAIsFilled, bDim, B, setB, setBIsFilled } = useMatrixStore()
+  const { equationCoefs, setEquationCoefs } = useLinearEquationsStore()
+
+  const { updateValuesForArr, updateValuesForMatrix } = useUpdateValuesForMatrix()
 
   const [errors, dispatch] = useReducer(errorsReducer, {});
 
@@ -21,13 +24,16 @@ const MatrixTextInsert: FC<MatrixTextInsertProps> = ({
   const [wrongColsCountError, setWrongColsCountError] = useState<string>('')
   // console.log('%cIN INSERT', 'font-size:40px');
   // console.log('isA:', isA);
-  
-
-  const nRows = isA ? aDim[0] : bDim[0]
-  const nCols = isA ? aDim[1] : bDim[1]
 
   const handleContinue = useCallback(
     async (e: MouseEvent<HTMLButtonElement>) => {
+      let nRows = isA ? aDim[0] : bDim[0]
+      let nCols = isA ? aDim[1] : bDim[1]
+
+      if (isEquation) {
+        nCols += 1
+      }
+
       e.preventDefault()
       // console.log('expected rows:', nRows, 'expected cols:', nCols);
       clearErrors(dispatch)
@@ -54,11 +60,13 @@ const MatrixTextInsert: FC<MatrixTextInsertProps> = ({
       }
 
       let newMatrix: Matrix = []
+      let newEquationCoefs = []
 
       for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
         const row = rows[rowIndex];
         // console.log('Text row:', row, 'index:', rowIndex);
         const wordsInRow = row.split(/\s+/)
+        console.log(wordsInRow, 'len:', wordsInRow.length);
 
         if (wordsInRow.length !== nCols) {
           // console.log(`Matrix ${isA ? 'A' : 'B'} has ${nCols} columns but your input has ${wordsInRow.length}`)
@@ -69,7 +77,7 @@ const MatrixTextInsert: FC<MatrixTextInsertProps> = ({
         newMatrix.push([])
 
         // console.log('Words in row:', wordsInRow);
-        for (const word of wordsInRow) {
+        for (const [index, word] of Object.entries(wordsInRow)) {
           // console.log('Row:', rowIndex, 'word:', word);
 
           if (!isStringNumeric(word)) {
@@ -80,7 +88,20 @@ const MatrixTextInsert: FC<MatrixTextInsertProps> = ({
             // console.log('new errors:', errors);
             hasWrongNumbers = true
           } else {
-            newMatrix[rowIndex].push(word)
+            if (!isEquation) {
+              newMatrix[rowIndex].push(word)
+              continue
+            }
+
+            const isLastWord = Number(index) + 1 === wordsInRow.length
+            console.log('index:', index, 'word:', word, isLastWord);
+            console.log(isEquation);
+            if (isLastWord) {
+              console.log('pushing', word, 'to equation coefs');
+            }
+            !isLastWord
+              ? newMatrix[rowIndex].push(word)
+              : newEquationCoefs.push(word)
           }
         }
       }
@@ -92,12 +113,15 @@ const MatrixTextInsert: FC<MatrixTextInsertProps> = ({
         // console.log('errors:', errors);
         
         newMatrix = updateValuesForMatrix(isA, newMatrix)
+        newEquationCoefs = updateValuesForArr(newEquationCoefs)
+        console.log('new equation coefs:', newEquationCoefs);
         // console.log('new matrix:', newMatrix);
         const fillFunc = isA ? setAIsFilled : setBIsFilled
 
         const setMatrixFunc = isA ? setA : setB
         // console.log('is a:', isA);
         setMatrixFunc(newMatrix)
+        setEquationCoefs(newEquationCoefs)
         fillFunc(true)
         setIsInserting(false)
       }

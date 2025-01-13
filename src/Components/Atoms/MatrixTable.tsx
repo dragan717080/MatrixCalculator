@@ -1,10 +1,14 @@
-import React, { FC, forwardRef } from 'react'
+import React, { FC, forwardRef, useEffect } from 'react'
 import MatrixTableProps from '../../interfaces/MatrixTableProps'
+import { LinearEquationStore } from '../../interfaces/Zustand'
+import { useLinearEquationsStore } from '../../store/zustandStore'
 
 const MatrixTable = forwardRef<HTMLTableElement, MatrixTableProps>(
-  ({ nRows, nCols, A, highlightFunc, className, index, letter }, ref) => {
+  ({ nRows, nCols, A, highlightFunc, className, index, letter, isWithCoefs }, ref) => {
+    const { equationCoefs } = useLinearEquationsStore()
+
     const getTableCellValue = (row: number, col: number, value: number) => {
-      if (typeof(value) === 'string') {
+      if (typeof (value) === 'string') {
         value = parseFloat(value)
       }
 
@@ -21,8 +25,11 @@ const MatrixTable = forwardRef<HTMLTableElement, MatrixTableProps>(
             {/* First element is empty */}
             <th>&nbsp;</th>
             {Array.from({ length: nCols }).map((_, col) => (
-              <th key={col}>{letter || 'A' }<span className='subindex'>{col + 1}</span></th>
+              <th key={col}>{letter || 'A'}<span className='subindex'>{col + 1}</span></th>
             ))}
+            {isWithCoefs && (
+              <th className='border-l-orange'>b</th>
+            )}
           </tr>
         </thead>
         <tbody>
@@ -37,6 +44,9 @@ const MatrixTable = forwardRef<HTMLTableElement, MatrixTableProps>(
                   {getTableCellValue(row, col, A[row][col] as number)}
                 </td>
               ))}
+              {isWithCoefs && (
+                <td className='border-l-orange'>{equationCoefs.length > row ? equationCoefs[row] : ''}</td>
+              )}
             </tr>
           ))
           }

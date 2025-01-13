@@ -106,9 +106,7 @@ const Determinant: FC = () => {
   }, [steps.length]);
 
   useEffect(() => {
-    console.log('recalculating function');
     if (A) {
-      console.log('received A:', A);
       setCalculate(calculateResult)
       if (aIsFilled && !isOpen && time === -1) {
         calculateResult()
@@ -139,7 +137,7 @@ const Determinant: FC = () => {
           {toShowSolution && (
             <div className='solution-items-container mb-7'>
               {A.length === 1 && (
-                <div className="w-full row">
+                <div className="w-full row overflow-hidden">
                   <span>
                     A has only one row so Δ =
                     A<span className="subindex">1</span><span className="subindex">1</span> = {A[0][0]}

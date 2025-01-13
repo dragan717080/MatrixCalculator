@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import {
+  LinearEquationStore,
   MatrixStore,
   ModalStore,
   NavbarPortalStore
@@ -41,4 +42,9 @@ export const useMatrixStore = create<MatrixStore>((set) => ({
   setIsMultiplication: (value) => set((state) => ({ isMultiplication: value })),
   sign: '+',
   setSign: (value) => set((state) => ({ sign: value })),
+}))
+
+export const useLinearEquationsStore = create<LinearEquationStore>((set) => ({
+  equationCoefs: [],
+  setEquationCoefs: (value) => set((state) => ({ equationCoefs: value })),
 }))

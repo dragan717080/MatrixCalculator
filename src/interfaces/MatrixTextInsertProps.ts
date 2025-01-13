@@ -8,6 +8,7 @@ export type ErrorsAction =
 interface MatrixTextInsertProps {
   setIsInserting: (value: boolean) => void
   isA?: boolean
+  isEquation?: boolean
 }
 
 export default MatrixTextInsertProps

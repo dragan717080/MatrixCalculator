@@ -28,16 +28,12 @@ export default Matrix
  * @property {TwoNumbers[]} [indices] - (Optional) - In case current
  * element is processed and need its indices in explanation. It is only for
  * visual effect to render in component with `subindex` class.
- * 
- * @property {HighlightCells} [highlightFunc] - (Optional) - Control how to highlight tables
- * based on whether condition in function is met.
  */
 export interface Step {
   A: Matrix,
   swapRow?: TwoNumbers
   explanation: string|string[]|(string|string[])[]
   indices?: TwoNumbers[]
-  highlightFunc?: HighlightCells
 }
 
 /**
@@ -46,7 +42,7 @@ export interface Step {
  * @type {SolutionWithNumericResult}
  * 
  * @property {number|undefined} result
- * @property {Step[]} step
+ * @property {Step[]}
  */
 export interface SolutionWithNumericResult {
   result: number|undefined,
@@ -54,14 +50,35 @@ export interface SolutionWithNumericResult {
 }
 
 /**
+ * Solution of inverse matrix.
+ *
  * @type {InverseSolution}
  * 
- * @property {Matrix|null} result - Can also be null.
- * @property {Step[]} steps - Each step also has 
- * @property {number} determinant - If it is 0, inverse will be null.
+ * @property {Matrix|null} A - Result matrix. Can also be null.
+ * @property {Step[]} steps - Steps for the solution.
+ * @property {number} determinant - If it is 0, inverse matrix will be null.
  */
 export interface InverseSolution {
   A: Matrix|null
   steps: Step[]
   determinant: number
+}
+
+/**
+ * Solution of simultaneous linear equations using Inverse Matrix Method.
+ *
+ * @type {InverseMethodSolution}
+ *
+ * @property {Step[]} steps - Steps for the solution.
+ * @property {number} determinant - If it is 0, inverse matrix will be null.
+ * It means that the system of linear equations
+ * is either inconsistent or has infinitely many solutions.
+ * @property {number[]|null} solution - Vector of solution e.g. `X1, X2, X3`.
+ * It will be null if determinant is null. Will be converted to `Matrix` type
+ * with only 1 row to display in `MatrixTable` component.
+ */
+export interface InverseMethodSolution {
+  steps: Step[]
+  determinant: number
+  solution: Matrix|null
 }

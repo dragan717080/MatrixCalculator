@@ -1,5 +1,5 @@
 import { UseRecalculateProps } from '../interfaces/Hooks';
-import { useMatrixStore } from '../store/zustandStore';
+import { useLinearEquationsStore, useMatrixStore } from '../store/zustandStore';
 import { useModalStore } from '../store/zustandStore';
 
 /**
@@ -15,6 +15,7 @@ const useRecalculate = ({
   isPower,
   isSign,
 }: UseRecalculateProps) => {
+  const { setEquationCoefs } = useLinearEquationsStore()
   const { 
     isOnlyA, setIsOnlyA,
     setCalculate,
@@ -32,6 +33,7 @@ const useRecalculate = ({
     setA([])
     setAIsFilled(false)
     setIsOpen(false)
+    setEquationCoefs([])
 
     if (setC) {
       setC([])
