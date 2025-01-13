@@ -86,7 +86,7 @@ const getDeterminant = (A: Matrix): DeterminantSolution => {
   let sign: Sign = '+';
 
   // Make a copy of `A` to avoid directly mutating state
-  const B = A.map(row => [...row]);
+  const B = JSON.parse(JSON.stringify(A));
 
   // Gaussian elimination steps
   for (let i = 0; i < n - 1; i++) {
@@ -94,7 +94,7 @@ const getDeterminant = (A: Matrix): DeterminantSolution => {
     const swapResult = swapRows(B, i, sign);
     if (swapResult.swapRow) {
       steps.push({
-        A: [...B.map(row => [...row])],
+        A: JSON.parse(JSON.stringify(B)),
         swapRow: swapResult.swapRow,
         sign: swapResult.sign!,
         explanations: [`Swapping rows ${swapResult.swapRow[0] + 1} and ${swapResult.swapRow[1] + 1}, changing the sign to ${swapResult.sign}`]
@@ -108,7 +108,7 @@ const getDeterminant = (A: Matrix): DeterminantSolution => {
     // console.log('Result of eliminating row', i, ':', eliminationResult);
 
     steps.push({
-      A: [...B.map(row => [...row])],
+      A: JSON.parse(JSON.stringify(B)),
       swapRow: undefined,
       sign,
       explanations: eliminationResult.explanations

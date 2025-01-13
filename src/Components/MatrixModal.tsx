@@ -194,8 +194,8 @@ const MatrixModal: FC = () => {
 
   /** Update the `equationCoefs` state with one value immutably. */
   const updateEquationCoefValue = (row: number, value: number) => {
-    console.log('row in update coef:', row);
-    console.log('value:', value);
+    // console.log('row in update coef:', row);
+    // console.log('value:', value);
     const newCoefs = [...equationCoefs]
     newCoefs[row] = value
     setEquationCoefs(newCoefs)
@@ -237,9 +237,9 @@ const MatrixModal: FC = () => {
     const areCoefsFilled = isEquation ? inputCellsEqCoefs.every(x => x.value) : true
     const isFilled = matrixIsFilled && areCoefsFilled;
     fillFunc(isFilled);
-    console.log('is equation:', isEquation);
-    console.log('coefs cells:', inputCellsEqCoefs);
-    console.log('Matrix is filled:', isFilled);
+    // console.log('is equation:', isEquation);
+    // console.log('coefs cells:', inputCellsEqCoefs);
+    // console.log('Matrix is filled:', isFilled);
     setCoefsInputsAreFilled(areCoefsFilled)
 
     return isFilled;
@@ -467,14 +467,16 @@ const MatrixModal: FC = () => {
 
   useEffect(() => {
     const loc = window.location.href.split('/').slice(-1)[0]
-    setIsEquation(loc === 'inverse-method')
+    const equationRoutes = ['gauss-jordan-elimination', 'inverse-method']
+
+    setIsEquation(equationRoutes.includes(loc))
   }, [])
 
   useEffect(() => {
-    console.log('%cequation coefs changed:', 'color:red;font-size:18px;', equationCoefs);
-    console.log('input coefs values:', Array.from(inputCellsEqCoefs).map(x => x.value));
+    // console.log('%cequation coefs changed:', 'color:red;font-size:18px;', equationCoefs);
+    // console.log('input coefs values:', Array.from(inputCellsEqCoefs).map(x => x.value));
     if (inputCellsEqCoefs.length) {
-      console.log(inputCellsEqCoefs[0].getBoundingClientRect().width);
+      // console.log(inputCellsEqCoefs[0].getBoundingClientRect().width);
     }
   }, [equationCoefs])
 

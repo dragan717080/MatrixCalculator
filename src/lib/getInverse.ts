@@ -83,10 +83,6 @@ import { getOrderNumberToStr } from './utils'
  * @returns {InverseSolution}
  */
 const getInverse = (A: Matrix): InverseSolution => {
-  const n = A.length
-
-  let B = A.map(row => [...row]);
-
   const { result: determinant } = getDeterminant(A)
 
   const steps: Step[] = []
@@ -99,30 +95,34 @@ const getInverse = (A: Matrix): InverseSolution => {
     }
   }
 
+  const m = A.length
+
+  let B = JSON.parse(JSON.stringify(A)) as Matrix;
+
   console.log('DETERMINANT:', determinant);
 
-  const I = getIdentityMatrix(n)
+  const I = getIdentityMatrix(m)
 
   // Append identity matrix to the right of the existing one
-  for (let i = 0; i < n; i++) {
-    for (let j = n; j < 2 * n; j++) {
-      B[i][j] = I[i][j - n]
+  for (let i = 0; i < m; i++) {
+    for (let j = m; j < 2 * m; j++) {
+      B[i][j] = I[i][j - m]
     }
   }
 
   console.log('Matrix after identity append:', JSON.parse(JSON.stringify(B)));
   steps.push({
-    A: [...B.map(row => [...row])],
+    A: JSON.parse(JSON.stringify(B)),
     explanation: 'Write the augmented matrix by appending identity matrix on right',
   })
 
   // Gauss-Jordan elimination steps
-  for (let i = 0; i < n; i++) {
+  for (let i = 0; i < m; i++) {
     // Handle row swapping
     const swapResult = swapRows(B, i);
     if (swapResult.swapRow) {
       steps.push({
-        A: [...B.map(row => [...row])],
+        A: JSON.parse(JSON.stringify(B)),
         swapRow: swapResult.swapRow as TwoNumbers,
         explanation: [`Swapping rows ${swapResult.swapRow[0] + 1} and ${swapResult.swapRow[1] + 1}`]
       });
@@ -135,7 +135,7 @@ const getInverse = (A: Matrix): InverseSolution => {
     const explanation = updateRowResult.explanation
 
     steps.push({
-      A: [...B.map(row => [...row])],
+      A: JSON.parse(JSON.stringify(B)),
       explanation
     });
 
@@ -147,7 +147,8 @@ const getInverse = (A: Matrix): InverseSolution => {
     // Handle row elimination
     const eliminationResult = eliminateValues(B, i);
     B = eliminationResult.A
-    const newB = structuredClone(B)
+    const newB = JSON.parse(JSON.stringify(B))
+
     for (let i = 0; i < B.length; i++) {
       for (let j = 0; j < B[0].length; j++) {
         newB[i][j] = Math.round((newB[i][j] as number) * 1000) / 1000
@@ -155,7 +156,7 @@ const getInverse = (A: Matrix): InverseSolution => {
     }
 
     steps.push({
-      A: [...B.map(row => [...row])],
+      A: JSON.parse(JSON.stringify(B)),
       explanation: eliminationResult.explanations
     });
 
@@ -171,31 +172,31 @@ const getInverse = (A: Matrix): InverseSolution => {
   ]
 
   steps.push({
-    A: [...B.map(row => [...row])],
+    A: JSON.parse(JSON.stringify(B)),
     explanation
   })
 
   // There will be inverse matrix on the right (on indices where identity matrix was initially appended)
-  B = B.map(row => [...row.slice(n, 2 * n)])
+  B = B.map(row => [...row.slice(m, 2 * m)])
 
   console.log(`Shall return matrix ${B.length} X ${B[0].length}`);
 
-  if (n === 1) {
+  if (m === 1) {
     return {
-      A: [...B.map(row => [...row])],
+      A: JSON.parse(JSON.stringify(B)),
       steps: steps.slice(-1),
       determinant,
     }
   }
 
   return {
-    A: [...B.map(row => [...row])],
+    A: JSON.parse(JSON.stringify(B)),
     steps,
     determinant,
   }
 }
 
-// In Gauss-Jordan elimination, pivot is divided to be 1, and elements in the same row are also divided by that value
+/** In Gauss-Jordan elimination, pivot is divided to be 1, and elements in the same row are also divided by that value. */
 const updateValuesInPivotRow = (A: Matrix, row: number) => {
   const pivot = A[row][row] as number
 

@@ -1,11 +1,10 @@
-import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
+import React, { FC, useEffect, useRef, useState } from 'react'
 import MatrixDimensionsInput from '../Atoms/MatrixDimensionsInput'
 import MatrixTable from '../Atoms/MatrixTable'
 import ScrollWithSVGs from '../Atoms/ScrollWithSVGs'
 import useRecalculate from '../../hooks/useRecalculate'
 import useResetParams from '../../hooks/useResetParams'
 import useToggleShowSolution from '../../hooks/useToggleShowSolution'
-import getInverse from '../../lib/getInverse'
 import getInverseMethod from '../../lib/getInverseMethod'
 import { getCalcTime } from '../../lib/utils'
 import { useLinearEquationsStore, useMatrixStore, useModalStore } from '../../store/zustandStore'
@@ -180,6 +179,7 @@ const InverseMethod: FC = () => {
                   nCols={aDim[1]}
                   A={A}
                   isWithCoefs={true}
+                  letter='X'
                   highlightFunc={
                     A.length === 1 || A[0].length === 1
                       ? (row, col) => row === 0 && col === 0
@@ -213,6 +213,7 @@ const InverseMethod: FC = () => {
                       nRows={step.A.length}
                       nCols={step.A[0].length}
                       A={step.A}
+                      letter='X'
                       highlightFunc={getHighlightFunc(index)}
                     />
                   </div>

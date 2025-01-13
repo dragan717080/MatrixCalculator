@@ -65,11 +65,11 @@ export interface InverseSolution {
 }
 
 /**
- * Solution of simultaneous linear equations using Inverse Matrix Method.
+ * Represents the solution of simultaneous linear equations using Inverse Matrix Method.
  *
  * @type {InverseMethodSolution}
  *
- * @property {Step[]} steps - Steps for the solution.
+ * @property {Step[]} steps - Solution steps.
  * @property {number} determinant - If it is 0, inverse matrix will be null.
  * It means that the system of linear equations
  * is either inconsistent or has infinitely many solutions.
@@ -81,4 +81,19 @@ export interface InverseMethodSolution {
   steps: Step[]
   determinant: number
   solution: Matrix|null
+}
+
+/**
+ * Represents the solution of simultaneous linear equations using Gauss-Jordan elimination.
+ * 
+ * @type {GaussJordanEliminationSolution}
+ * 
+ * @property {Step[]} steps - Solution steps.
+ * @property {string[]|null} solution - If system is consistent, each entry will represent variable 
+ * relation with other variables e.g. `X2 = 2.833 - 0.528 * X3`
+ */
+export interface GaussJordanEliminationSolution {
+  steps: Step[]
+  determinant: number
+  solution: string[]|null
 }

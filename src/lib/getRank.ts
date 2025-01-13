@@ -100,7 +100,7 @@ const getRank = (A: Matrix): SolutionWithNumericResult => {
     const swapResult = swapRows(B, i);
     if (swapResult.swapRow) {
       steps.push({
-        A: [...B.map(row => [...row])],
+        A: JSON.parse(JSON.stringify(B)),
         swapRow: swapResult.swapRow as TwoNumbers,
         explanation: [`Swapping rows ${swapResult.swapRow[0] + 1} and ${swapResult.swapRow[1] + 1}`]
       });
@@ -114,7 +114,7 @@ const getRank = (A: Matrix): SolutionWithNumericResult => {
     const eliminationResult = eliminateValues(B, i);
     console.log('Got result:', eliminationResult);
     steps.push({
-      A: [...B.map(row => [...row])],
+      A: JSON.parse(JSON.stringify(B)),
       explanation: eliminationResult.explanations
     });
 
@@ -123,12 +123,12 @@ const getRank = (A: Matrix): SolutionWithNumericResult => {
     }
   }
 
-  // Count amount of non zero elements on maindiagonal
-
+  // If has only one row, return 1 if not zero, else 0.
   if (m === 1) {
     return { result: Number(A[0][0] !== 0), steps }
   }
 
+  /** Count the amount of non zero elements on the main diagonal. */
   const upperDiagonalValues = steps[steps.length - 1].A.flatMap((row, i) => row.filter((_, j) => i === j))
   console.log('Upper diag values:', upperDiagonalValues);
   const result = upperDiagonalValues.reduce((acc, x) => Number(acc) + Number(x !== 0), 0)
