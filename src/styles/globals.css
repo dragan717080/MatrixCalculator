@@ -410,6 +410,10 @@ table {
     border-bottom-color: #D3D3D3;
 }
 
+.border-l-orange {
+    border-left: 2px solid #D37E0C !important;
+}
+
 input {
     transition: background-color 0.8s ease;
 }
