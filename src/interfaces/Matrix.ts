@@ -73,8 +73,8 @@ export interface InverseSolution {
  * @property {number} determinant - If it is 0, inverse matrix will be null.
  * It means that the system of linear equations
  * is either inconsistent or has infinitely many solutions.
- * @property {number[]|null} solution - Vector of solution e.g. `X1, X2, X3`.
- * It will be null if determinant is null. Will be converted to `Matrix` type
+ * @property {Matrix|null} solution - Vector of solution e.g. `X1, X2, X3`.
+ * It will be null if determinant is null. It is converted to `Matrix` type
  * with only 1 row to display in `MatrixTable` component.
  */
 export interface InverseMethodSolution {

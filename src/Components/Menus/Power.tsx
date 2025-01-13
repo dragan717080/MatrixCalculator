@@ -113,11 +113,11 @@ const Power: FC = () => {
       <div ref={descriptionAndInputRef} className='hidden'>
         <div className={`${isOpen || aIsFilled ? 'hidden' : 'block'}`}>
           <h3 className='mb-4 text-lg bold'>Power</h3>
-          <p className='flex flex-col space-y-2'>
-            <span className='leading-5'>Here you can raise a matrix to a power with complex numbers online for free. You can examine multiplication apart that was used to get the current power on every step.</span>
-            <span className='leading-5'>Matrix to the power of 0 gives an identity matrix.</span>
-            <span className='leading-5'>Matrix raised to the power 'n' is matrix multiplied by itself 'n' times, same as in algebra.</span>
-          </p>
+          <ol>
+            <li>The matrix must be square in order to raise it to a power.</li>
+            <li>Matrix to the power of 0 gives an identity matrix.</li>
+            <li>Matrix raised to the power 'n' is matrix multiplied by itself 'n' times, same as in algebra.</li>
+          </ol>
           <MatrixDimensionsInput minValue={1} isSquare={true} isPower={true} />
         </div>
         {aIsFilled && !isOpen && (

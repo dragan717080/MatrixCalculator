@@ -72,7 +72,9 @@ import { Sign } from '../interfaces/Determinant'
  * Solution set:
  * 
  * - X1 = 1.333 - 0.444 * X3
+ *
  * - X2 = 2.833 - 0.528 * X3
+ *
  * - X3, X4 - Free
  */
 const getGaussJordanElimination = (A: Matrix, coefs: number[]): GaussJordanEliminationSolution => {
@@ -159,16 +161,14 @@ const getGaussJordanElimination = (A: Matrix, coefs: number[]): GaussJordanElimi
     const newEquation = [...(equation as number[])].map(x => Math.round(x * 1000) / 1000)
     console.log('equation', newEquation);
     const rightSide = newEquation[newEquation.length - 1] as number
-    let variableStr = `X${index + 1} = ${rightSide}`
-
-    let sign: Sign = '-'
+    let variableStr = `X<span class='subindex'>${index + 1}</span> = ${rightSide}`
 
     console.log('Will iterate to:', newEquation.slice(0, -1));
 
     // First variable is substracted 
     // Loop through other coefficients to find its relation with current variable
     for (let i = 0; i < newEquation.slice(0, -1).length; i++) {
-      const curr = newEquation[i]
+      const coef = newEquation[i]
 
       // Skip the current one
       if (i === index) {
@@ -178,15 +178,15 @@ const getGaussJordanElimination = (A: Matrix, coefs: number[]): GaussJordanElimi
       const xStr = `X${i + 1}`
 
       if (i < m) {
-        console.log(`Variable X${i + 1} = ${curr}`);
+        console.log(`Variable X${i + 1} = ${coef}`);
       } else {
-        console.log(`Variable X${i + 1} with value ${curr} is free`);
-        /** Textual representation of var. If it is negative,
-         * it will go inside of brackets e.g. `(-3)`.
-         */
-        const varStr = curr < 0 ? `(${curr})` : curr
-        variableStr += ` - ${varStr}${xStr}`
-        // Since it is substracted from solution it will have `-` sign
+        console.log(`Variable X${i + 1} with value ${coef} is free`);
+
+        if (coef) {
+          /** Since it is substracted from solution it will have `-` sign. */
+          const sign: Sign = coef < 0 ? '+' : '-'
+          variableStr += ` ${sign} ${coef}${xStr}`
+        }
       }
     }
 
@@ -198,6 +198,8 @@ const getGaussJordanElimination = (A: Matrix, coefs: number[]): GaussJordanElimi
   console.log('Actual length:', leftSideLength);
   console.log('Free variables count:', leftSideLength - m);
 
+  console.log(A.length);
+  console.log(leftSideLength);
   let freeVariablesStr = ''
 
   for (let i = A.length; i < leftSideLength; i++) {
@@ -211,7 +213,9 @@ const getGaussJordanElimination = (A: Matrix, coefs: number[]): GaussJordanElimi
   freeVariablesStr += ' - Free'
 
   console.log('Free variables string:', freeVariablesStr);
-  solution.push(freeVariablesStr)
+  if (A.length < leftSideLength) {
+    solution.push(freeVariablesStr)
+  }
 
   console.log('%cResult:', 'color:red;font-size:22px;', {
     steps,

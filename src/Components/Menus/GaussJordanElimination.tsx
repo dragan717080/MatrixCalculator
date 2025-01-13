@@ -114,21 +114,21 @@ const GaussJordanElimination: FC = () => {
     const tableElements = Array.from(document.getElementsByTagName('table'))
 
     for (const table of tableElements) {
-      // On the original table display differently
-      const stepId = (table.parentNode as HTMLElement).id
-      console.log(stepId);
-      const headers = Array.from(table.getElementsByTagName('th'))
-      // Get table elements where header count is larger than `aDim[1]`
-      // First `th` is empty so `+1`
-      if (headers.length === aDim[1] + 1) {
-        continue
-      }
+      const headers = table.getElementsByTagName('th')
 
-      headers.slice(Math.floor(headers.length / 2) + 1).forEach((th, index) => {
-        th.innerHTML = `B<span class='subindex'>${index + 1}</span>`
-      })
+      headers[headers.length - 1].innerHTML = 'b'
+      headers[headers.length - 1].classList.add('border-l-orange')
+
+      const tableRows = Array.from(table.getElementsByTagName('tbody')[0].getElementsByTagName('tr'))
+      for (const row of tableRows) {
+        const cells = row.getElementsByTagName('td')
+        console.log('Cells:', cells);
+        const lastCell = cells[cells.length - 1]
+        console.log('last cell:', lastCell);
+        lastCell.classList.add('border-l-orange')
+      }
     }
-  }, [steps.length, aDim, solutionStepsRef.current?.getElementsByTagName('table').length])
+  }, [steps.length, aDim, solutionStepsRef.current?.getElementsByTagName('table').length, toShowSolution])
 
   useEffect(() => {
     const originalMatrixHeaders = document.getElementById('step-1')?.getElementsByTagName('th')
@@ -161,15 +161,26 @@ const GaussJordanElimination: FC = () => {
     console.log('A changed:', A)
   }, [A])
 
+  useEffect(() => {
+    const solutionExplanations = Array.from(document.getElementsByClassName('solution-explanation'))
+
+    console.log(equationSolution);
+    const lastElements = equationSolution
+
+    console.log(lastElements);
+    solutionExplanations.forEach((explanation, index) => {
+      explanation.innerHTML = equationSolution![index]
+    })
+  }, [steps.length, equationSolution])
+  
+
   return (
     <div className='col-h'>
       {aIsFilled && !isOpen && (
         <div ref={solutionStepsRef}>
           {toShowSolution && (
             <div className='solution-items-container mb-7'>
-              {steps.length > 0 && (
-                <h3 className='mb-4 text-center bold leading-4'>Original matrix</h3>
-              )}
+              <h3 className='mb-4 text-center bold leading-4'>Original matrix</h3>
               {A.length === 1 && (
                 <div className='w-full row overflow-hidden'>
                   <span>
@@ -200,7 +211,7 @@ const GaussJordanElimination: FC = () => {
                   <ScrollWithSVGs aCols={aDim[1]} />
                   <div className='col-v space-y-1'>
                     <p>Δ = {determinant}</p>
-                    <p>Determinant is not zero, therefore inverse matrix exists</p>
+                    <p>Determinant is not zero, therefore system is consistent</p>
                   </div>
                 </div>
               )}
@@ -233,12 +244,16 @@ const GaussJordanElimination: FC = () => {
       )}
       <div ref={descriptionAndInputRef} className='hidden'>
         <div className={`${isOpen || aIsFilled ? 'hidden' : 'block'}`}>
-          <h3 className='mb-4 text-lg bold'>Inverse</h3>
+          <h3 className='mb-4 text-lg bold'>Gauss-Jordan Elimination</h3>
           <ol>
-            <li>If a determinant of the matrix (which must be square) is zero, inverse doesn't exist</li>
-            <li>Matrix has the identity matrix of the same dimension appended to it.</li>
-            <li>Reduce the <span className='bold'>left</span> matrix to row echelon form using elementary row operations for the whole matrix (including the right one).</li>
-            <li>As a result you will get the inverse calculated on the right.</li>
+            <li>Change the matrix to reduced row echelon form (RREF).</li>
+            <li>It is matrix with all zeros below the main diagonal, and all ones at the main diagonal.</li>
+            <li>Pick the 1st element in the 1st column (pivot), if it is 0, swap it with the first non zero column under it.</li>
+            <li>Divide that row by value of pivot so that pivot is 1.</li>
+            <li>Eliminate all elements that both below and above the current one.</li>
+            <li>This is different from the row echelon form (REF) where you would only eliminate the elements below.</li>
+            <li>Pick the 2nd element in the 2nd column and do the same operations up to the end.</li>
+            <li>Solution matrix will describe the corelation between the variables.</li>
           </ol>
           <span>To understand inverse calculation better input any example and examine the solution.</span>
           <MatrixDimensionsInput minValue={1} />
@@ -272,7 +287,7 @@ const GaussJordanElimination: FC = () => {
                     <h3 className='bold mb-2'>Result</h3>
                     <div className='flex flex-col'>
                       {equationSolution!.map((variableSolution, index) => (
-                        <p key={index}>{variableSolution}</p>
+                        <p className='solution-explanation' key={index}>{variableSolution}</p>
                       ))}
                     </div>
                   </>)

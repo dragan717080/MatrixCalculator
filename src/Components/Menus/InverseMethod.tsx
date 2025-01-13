@@ -120,6 +120,13 @@ const InverseMethod: FC = () => {
 
     for (const table of tableElements) {
       const headers = Array.from(table.getElementsByTagName('th'))
+
+      // On the original table display differently
+      const stepId = (table.parentNode as HTMLElement).id
+      if (stepId === 'step-1') {
+        continue
+      }
+
       // Get table elements where header count is larger than `aDim[1]`
       // First `th` is empty so `+1`
       if (headers.length === aDim[1] + 1) {
@@ -130,7 +137,7 @@ const InverseMethod: FC = () => {
         th.innerHTML = `B<span class='subindex'>${index + 1}</span>`
       })
     }
-  }, [steps.length, aDim, solutionStepsRef.current?.getElementsByTagName('table').length])
+  }, [steps.length, aDim, solutionStepsRef.current?.getElementsByTagName('table').length, toShowSolution])
 
   useEffect(() => {
     if (A) {
@@ -159,9 +166,7 @@ const InverseMethod: FC = () => {
         <div ref={solutionStepsRef}>
           {toShowSolution && (
             <div className='solution-items-container mb-7'>
-              {steps.length > 0 && (
-                <h3 className='mb-4 text-center bold leading-4'>Original matrix</h3>
-              )}
+              <h3 className='mb-4 text-center bold leading-4'>Original matrix</h3>
               {A.length === 1 && (
                 <div className="w-full row overflow-hidden">
                   <span>
@@ -187,7 +192,7 @@ const InverseMethod: FC = () => {
                   }
                 />
               </div>
-              {typeof(determinant) !== 'undefined' && determinant !== 0 && (
+              {typeof (determinant) !== 'undefined' && determinant !== 0 && (
                 <div id='step-2' className='row-v py-4 px-3 border-b-darkgray'>
                   <ScrollWithSVGs aCols={aDim[1]} />
                   <div className='col-v space-y-1'>
@@ -199,13 +204,13 @@ const InverseMethod: FC = () => {
               {steps.map((step, index) => (
                 <div id={`step-${index + 3}`} className='pt-2 pb-3 border-b-darkgray' key={index}>
                   {/* <p>{getStepText(step, index)}</p> */}
-                    <div className="flex flex-col space-y-1.5 pt-2 pb-2.5">
-                      {Array.isArray(step.explanation)
-                        ? step.explanation.map((explanation, index) => (
-                          <p key={index}>{explanation}</p>))
-                        : <p>{step.explanation}</p>
-                      }
-                    </div>
+                  <div className="flex flex-col space-y-1.5 pt-2 pb-2.5">
+                    {Array.isArray(step.explanation)
+                      ? step.explanation.map((explanation, index) => (
+                        <p key={index}>{explanation}</p>))
+                      : <p>{step.explanation}</p>
+                    }
+                  </div>
                   <p className={`${steps[index].swapRow && 'hidden'}`}></p>
                   <div className='row-v px-3'>
                     <ScrollWithSVGs aCols={aDim[1]} />
@@ -229,10 +234,12 @@ const InverseMethod: FC = () => {
           <ol>
             <li>If a determinant of the matrix (which must be square) is zero, inverse doesn't exist</li>
             <li>Matrix has the identity matrix of the same dimension appended to it.</li>
-            <li>Reduce the <span className='bold'>left</span> matrix to row echelon form using elementary row operations for the whole matrix (including the right one).</li>
+            <li>Reduce the left matrix to row echelon form using elementary row operations for the whole matrix (including the right one).</li>
             <li>As a result you will get the inverse calculated on the right.</li>
+            <li>Multiply the inverse matrix by the solution vector.</li>
+            <li>The result vector is a solution of the matrix equation.</li>
           </ol>
-          <span>To understand inverse calculation better input any example and examine the solution.</span>
+          <span>To understand inverse matrix method better input any example and examine the solution.</span>
           <MatrixDimensionsInput minValue={1} isSquare={true} />
         </div>
         {aIsFilled && !isOpen && (

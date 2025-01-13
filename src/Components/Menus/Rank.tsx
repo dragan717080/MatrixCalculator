@@ -166,12 +166,14 @@ const Rank: FC = () => {
         <div className={`${isOpen || aIsFilled ? 'hidden' : 'block'}`}>
           <h3 className='mb-4 text-lg bold'>Rank</h3>
           <ol>
-            <li>The main condition of matrix multiplication is that the number of columns of the 1st matrix must equal to the number of rows of the 2nd one.</li>
-            <li className='text-red-500'>A cols = B rows</li>
-            <li>As a result of multiplication you will get a new matrix that has the same quantity of rows as the 1st one has and the same quantity of columns as the 2nd one.</li>
-            <li>For example if you multiply a matrix of 'n' x 'k' by 'k' x 'm' size you'll get a new one of 'n' x 'm' dimension.</li>
+            <li>Change the matrix to row echelon form (REF).</li>
+            <li>It is matrix with all zeros below the main diagonal.</li>
+            <li>Pick the 1st element in the 1st column (pivot) and eliminate all elements that are below the current one.</li>
+            <li>If pivot is 0, swap it with the first non zero column under it.</li>
+            <li>Pick the 2nd element in the 2nd column and do the same operations up to the end.</li>
+            <li>Rank is equal to the number of non zero elements on the main diagonal.</li>
           </ol>
-          To understand matrix multiplication better input any example and examine the solution.
+          To understand rank better input any example and examine the solution.
           <MatrixDimensionsInput minValue={1} />
         </div>
         {aIsFilled && !isOpen && (

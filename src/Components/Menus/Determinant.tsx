@@ -199,9 +199,14 @@ const Determinant: FC = () => {
       <div ref={descriptionAndInputRef} className='hidden'>
         <div className={`${isOpen || aIsFilled ? 'hidden' : 'block'}`}>
           <h3 className='mb-4 text-lg bold'>Determinant</h3>
-          <p>
-            Here you can calculate a determinant of a matrix with complex numbers online for free with a very detailed solution. Determinant is calculated by reducing a matrix to row echelon form and multiplying its main diagonal elements.
-          </p>
+          <ol>
+            <li>Change the matrix to row echelon form (REF).</li>
+            <li>It is matrix with all zeros below the main diagonal.</li>
+            <li>Pick the 1st element in the 1st column (pivot) and eliminate all elements that are below the current one.</li>
+            <li>If pivot is 0, swap it with the first non zero column under it.</li>
+            <li>Pick the 2nd element in the 2nd column and do the same operations up to the end.</li>
+            <li>Multiply the main diagonal elements of the matrix.</li>
+          </ol>
           <MatrixDimensionsInput minValue={1} isSquare={true} />
         </div>
         {aIsFilled && !isOpen && (

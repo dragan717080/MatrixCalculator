@@ -467,7 +467,7 @@ const MatrixModal: FC = () => {
 
   useEffect(() => {
     const loc = window.location.href.split('/').slice(-1)[0]
-    const equationRoutes = ['gauss-jordan-elimination', 'inverse-method']
+    const equationRoutes = ['cramer-rule', 'gauss-jordan-elimination', 'inverse-method']
 
     setIsEquation(equationRoutes.includes(loc))
   }, [])
@@ -654,4 +654,4 @@ const MatrixModal: FC = () => {
   )
 }
 
-export { MatrixModal };
+export default MatrixModal

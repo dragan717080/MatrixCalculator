@@ -229,7 +229,7 @@ const Inverse: FC = () => {
         <div className={`${isOpen || aIsFilled ? 'hidden' : 'block'}`}>
           <h3 className='mb-4 text-lg bold'>Inverse</h3>
           <ol>
-            <li>If a determinant of the matrix (which must be square) is zero, inverse doesn't exist</li>
+            <li>If a determinant of the matrix (which must be square) is zero, inverse doesn't exist.</li>
             <li>Matrix has the identity matrix of the same dimension appended to it.</li>
             <li>Reduce the <span className='bold'>left</span> matrix to row echelon form using elementary row operations for the whole matrix (including the right one).</li>
             <li>As a result you will get the inverse calculated on the right.</li>
