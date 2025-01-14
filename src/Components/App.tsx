@@ -29,28 +29,28 @@ function App() {
   /** Close submenu portals. */
   useEffect(() => {
     document.addEventListener('mouseover', (e) => {
-    const toolbarElements = Array.from(document.getElementsByClassName('parent-container'))
-    const target = (e.target as unknown as HTMLDivElement)
-    const hoveredToolbar = toolbarElements.some(x => x.contains(target))
-    const navbarPortalContents = Array.from(document.getElementsByClassName('navbar-portal-content'))
-    const hoveredPortalContent = navbarPortalContents.some(x => x.contains(target))
+      const toolbarElements = Array.from(document.getElementsByClassName('parent-container'))
+      const target = (e.target as unknown as HTMLDivElement)
+      const hoveredToolbar = toolbarElements.some(x => x.contains(target))
+      const navbarPortalContents = Array.from(document.getElementsByClassName('navbar-portal-content'))
+      const hoveredPortalContent = navbarPortalContents.some(x => x.contains(target))
 
-    /** If hovered directly under toolbar, don't close portal. */
-    const navbarItemContainers = Array.from(document.getElementsByClassName('navbar-item-container'))
+      /** If hovered directly under toolbar, don't close portal. */
+      const navbarItemContainers = Array.from(document.getElementsByClassName('navbar-item-container'))
 
-    // Check if any of the 'navbar-item-container' elements are contained within the target element
-    let hoveredParentNode = false
-    navbarItemContainers.forEach((navItem, index) => {
-      if (navItem.contains(target)) {
-        setActiveIndex(index)
-        hoveredParentNode = true
+      // Check if any of the 'navbar-item-container' elements are contained within the target element
+      let hoveredParentNode = false
+      navbarItemContainers.forEach((navItem, index) => {
+        if (navItem.contains(target)) {
+          setActiveIndex(index)
+          hoveredParentNode = true
+        }
+      })
+
+      if (!hoveredToolbar && !hoveredPortalContent && !hoveredParentNode) {
+        setIsNavbarPortalOpen(false)
       }
     })
-
-    if (!hoveredToolbar && !hoveredPortalContent && !hoveredParentNode) {
-      setIsNavbarPortalOpen(false)
-    }
-  })
   }, [])
 
   return (

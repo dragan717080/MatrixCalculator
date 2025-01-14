@@ -77,4 +77,4 @@ Please refer to the respective documentation of each technology for more in-dept
 
 ## App hosted on Vercel
 
-https://matrixpert-bqo6j61s7-dragan717s-projects.vercel.app
+https://matrixpert-fkbwi0r2u-dragan717s-projects.vercel.app/
