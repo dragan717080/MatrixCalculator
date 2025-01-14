@@ -17,7 +17,6 @@ const useResetParams = ({
   } = useMatrixStore()
 
   const resetParams = () => {
-    console.log('IN RESET');
     setIsOnlyA(onlyHasA)
     setAIsFilled(false)
     setBIsFilled(false)
@@ -28,9 +27,7 @@ const useResetParams = ({
       setSign('+')
     }
 
-    if (descriptionAndInputRef) {
-      // console.log('%creceived descriptionAndInputRef:', 'color:red;font-size:26px', descriptionAndInputRef);
-      
+    if (descriptionAndInputRef) {      
       descriptionAndInputRef.current!.classList.remove('hidden')
     }
   }

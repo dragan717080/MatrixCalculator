@@ -21,19 +21,22 @@ const getPower = (A: Matrix, power: number): Step[] => {
   const n = A.length
 
   if (power === 0) {
-    console.log('A will be:', getIdentityMatrix(n));
-    console.log('will return I');
-    return [{
-      A: getIdentityMatrix(n),
-      explanation: 'A raised to the power of 0 gives an identity matrix'
-    }]
+
+    return [
+      {
+        A: getIdentityMatrix(n),
+        explanation: 'A raised to the power of 0 gives an identity matrix'
+      }
+    ]
   }
 
   if (power === 1) {
-    return [{
-      A,
-      explanation: 'A raised to the power of 1 gives the same matrix'
-    }]
+    return [
+      {
+        A,
+        explanation: 'A raised to the power of 1 gives the same matrix'
+      }
+    ]
   }
 
   let result = JSON.parse(JSON.stringify(A))
@@ -45,10 +48,9 @@ const getPower = (A: Matrix, power: number): Step[] => {
     const multSteps = getMultiplication(result, A)
     const { A: newResult } = multSteps[multSteps.length - 1]
     result = JSON.parse(JSON.stringify(newResult))
-    console.log(`%cResult of power after step ${currentExponent}: ${result}`, 'color:red;font-size:32px');
+
     const explanation = `Result of multiplying A${currentExponent} and A`
     steps.push({ A: newResult, explanation })
-    // console.log('should multiply result with A to get new result');
   }
 
   return steps

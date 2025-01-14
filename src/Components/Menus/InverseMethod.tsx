@@ -50,14 +50,11 @@ const InverseMethod: FC = () => {
       return
     }
 
-    console.log('A in calculate:', A)
     const { time, funcResult: result } = getCalcTime(() => getInverseMethod(A, equationCoefs as number[]))
-    console.log('Result:', result);
     const { solution: newC, steps, determinant: newDeterminant } = result
 
     if (newC !== null) {
       setC(newC)
-      console.log(`Setting C to ${newC?.length} X ${newC[0]?.length}`);
     }
 
     setSteps(steps)
@@ -109,16 +106,10 @@ const InverseMethod: FC = () => {
   }, [])
 
   useEffect(() => {
-    console.log('New steps:', steps);
-
     if (steps.length) {
       updateExplanations()
     }
   }, [steps.length, toShowSolution])
-
-  useEffect(() => {
-    console.log('A changed:', A)
-  }, [A])
 
   return (
     <div className='col-h'>

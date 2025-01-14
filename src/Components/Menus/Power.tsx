@@ -38,21 +38,14 @@ const Power: FC = () => {
       return
     }
 
-    console.log('Power before calculate', power);
-    console.log('A before calculate', A);
-
     const { time, funcResult: result } = getCalcTime(() => getPower(A, power))
 
-    console.log('STEPS:', result);
     setSteps(result)
     setTime(time)
   }
 
   useEffect(() => {
-    console.log('recalculating function');
-    console.log('A:', A);
     if (A) {
-      console.log('shall set calculate');
       setCalculate(calculateResult)
       if (aIsFilled && !isOpen && time === -1) {
         calculateResult()
@@ -63,10 +56,6 @@ const Power: FC = () => {
   useEffect(() => {
     resetParams()
   }, [])
-
-  useEffect(() => {
-    console.log('new power value:', power);
-  }, [power])
 
   return (
     <div className='col-h'>

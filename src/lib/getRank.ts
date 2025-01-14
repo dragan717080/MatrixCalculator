@@ -112,7 +112,7 @@ const getRank = (A: Matrix): SolutionWithNumericResult => {
     }
 
     const eliminationResult = eliminateRowsBelow(B, i);
-    console.log('Got result:', eliminationResult);
+
     steps.push({
       A: JSON.parse(JSON.stringify(B)),
       explanation: eliminationResult.explanations
@@ -130,7 +130,7 @@ const getRank = (A: Matrix): SolutionWithNumericResult => {
 
   /** Count the amount of non zero elements on the main diagonal. */
   const upperDiagonalValues = steps[steps.length - 1].A.flatMap((row, i) => row.filter((_, j) => i === j))
-  console.log('Upper diag values:', upperDiagonalValues);
+
   const result = upperDiagonalValues.reduce((acc, x) => Number(acc) + Number(x !== 0), 0)
 
   return { result: result as number, steps };

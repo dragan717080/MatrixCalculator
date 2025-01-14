@@ -37,20 +37,14 @@ const AdditionSubstraction: FC = () => {
     if (!A.length || !A.flat().every(x => typeof (x) !== 'string') || !B.length || !B.flat().every(x => typeof (x) !== 'string')) {
       return
     }
-    console.log('A:', A)
-    console.log('B:', B);
-    console.log('sign:', sign);
+
     const { time, funcResult: result } = getCalcTime(() => getAS(A, B, sign))
-    console.log(`Result of ${sign === '+' ? 'addition' : 'substraction'}`)
-    console.log(result)
+
     setC(result)
     setTime(time)
   }
 
   useEffect(() => {
-    console.log('recalculating function');
-    console.log(A);
-    console.log(B);
     if (A && B) {
       setCalculate(calculateResult)
       if (aIsFilled && bIsFilled && !isOpen && time === -1) {

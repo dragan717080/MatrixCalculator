@@ -27,17 +27,13 @@ const Transpose: FC = () => {
   const { toggleShowSolution: toggleShowOriginalMatrix } = useToggleShowSolution({ solutionStepsRef: showOriginalRef, toShowSolution: showOriginalMatrix, setToShowSolution: setShowOriginalMatrix })
 
   const calculateResult = () => {
-    console.log('A in calculate', A);
     const { time, funcResult: transposed } = getCalcTime(() => transpose(A))
     setTime(time)
     setC(transposed)
   }
 
   useEffect(() => {
-    console.log('new A:', A);
-    console.log('new A is filled:', aIsFilled);
     if (A && aIsFilled) {
-      console.log('recalculating function');
       setC(A.length ? transpose(A) : [])
       setCalculate(calculateResult)
     }

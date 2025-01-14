@@ -100,8 +100,6 @@ const getInverse = (A: Matrix): InverseSolution => {
 
   let B = JSON.parse(JSON.stringify(A)) as Matrix;
 
-  console.log('DETERMINANT:', determinant);
-
   const I = getIdentityMatrix(m)
 
   // Append identity matrix to the right of the existing one
@@ -111,7 +109,6 @@ const getInverse = (A: Matrix): InverseSolution => {
     }
   }
 
-  console.log('Matrix after identity append:', JSON.parse(JSON.stringify(B)));
   steps.push({
     A: JSON.parse(JSON.stringify(B)),
     explanation: 'Write the augmented matrix by appending identity matrix on right',
@@ -179,8 +176,6 @@ const getInverse = (A: Matrix): InverseSolution => {
 
   // There will be inverse matrix on the right (on indices where identity matrix was initially appended)
   B = B.map(row => [...row.slice(m, 2 * m)])
-
-  console.log(`Shall return matrix ${B.length} X ${B[0].length}`);
 
   if (m === 1) {
     return {

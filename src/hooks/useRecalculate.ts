@@ -27,7 +27,6 @@ const useRecalculate = ({
   const { setIsOpen } = useModalStore()
 
   const recalculate = () => {
-    console.log('setting again');
     setTime(-1)
     setADim([0, 0])
     setA([])
@@ -56,7 +55,6 @@ const useRecalculate = ({
       setB([])
       setBIsFilled(false)
     }
-    console.log('is power in recalculate:', isPower);
 
     if (isPower) {
       setPower(-1)

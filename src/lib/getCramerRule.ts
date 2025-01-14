@@ -118,7 +118,7 @@ const getCramerRule = (A: Matrix, equationCoefs: number[]): InverseMethodSolutio
   for (let col = 0; col < A[0].length; col++) {
     // Deep copy
     const newB = JSON.parse(JSON.stringify(B))
-    console.log('matrix before col swap:', newB);
+
     swapColumnsOfMatrix(newB, col, equationCoefs)
     const { result: newRowDeterminant } = getDeterminant(newB)
 
@@ -126,8 +126,7 @@ const getCramerRule = (A: Matrix, equationCoefs: number[]): InverseMethodSolutio
     colSolution = Math.round(colSolution * 1000) / 1000
 
     solution[0].push(colSolution)
-    console.log('after calculate determinant, restore row');
-    console.log('shall push col:', col + 1);
+
     steps.push({
       A: newB,
       explanation: [`

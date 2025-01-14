@@ -39,16 +39,14 @@ const Multiplication: FC = () => {
     if (!A.length || !A.flat().every(x => typeof (x) !== 'string') || !B.length || !B.flat().every(x => typeof (x) !== 'string')) {
       return
     }
-    console.log('A:', A)
-    console.log('B:', B);
+
     const { time, funcResult: result } = getCalcTime(() => getMultiplication(A, B))
-    console.log('FINAL STEP:', result[result.length - 1].A);
+
     setSteps(result)
     setTime(time)
   }
 
   useEffect(() => {
-    console.log('recalculating function')
     if (A && B) {
       setCalculate(calculateResult)
       if (aIsFilled && bIsFilled && !isOpen && time === -1) {

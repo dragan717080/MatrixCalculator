@@ -47,14 +47,11 @@ const CramerRule: FC = () => {
       return
     }
 
-    console.log('A in calculate:', A)
     const { time, funcResult: result } = getCalcTime(() => getCramerRule(A, equationCoefs as number[]))
-    console.log('Result:', result);
     const { solution: newC, steps, determinant: newDeterminant } = result
 
     if (newC !== null) {
       setC(newC)
-      console.log(`Setting C to ${newC?.length} X ${newC[0]?.length}`);
     }
 
     setSteps(steps)
@@ -91,12 +88,6 @@ const CramerRule: FC = () => {
   }, [])
 
   useEffect(() => {
-    console.log('A changed:', A)
-  }, [A])
-
-  useEffect(() => {
-    console.log('New steps:', steps);
-
     if (steps.length) {
       updateExplanations()
     }

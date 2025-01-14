@@ -48,14 +48,11 @@ const Inverse: FC = () => {
       return
     }
 
-    console.log('A in calculate:', A)
     const { time, funcResult: result } = getCalcTime(() => getInverse(A))
-    console.log('Result:', result);
     const { A: newC, steps, determinant: newDeterminant } = result
 
     if (newC !== null) {
       setC(newC)
-      console.log(`Setting C to ${newC?.length} X ${newC[0]?.length}`);
     }
 
     setSteps(steps)
@@ -87,16 +84,6 @@ const Inverse: FC = () => {
   }, [steps.length, toShowSolution, aDim, solutionStepsRef.current?.getElementsByTagName('table').length])
 
   useEffect(() => {
-    const originalMatrixHeaders = document.getElementById('step-1')?.getElementsByTagName('th')
-    if (!originalMatrixHeaders?.length) {
-      return
-    }
-
-    console.log('original headers:', originalMatrixHeaders);
-    //originalMatrixHeaders[originalMatrixHeaders.length - 1].innerHTML = 'b'
-  }, [])
-
-  useEffect(() => {
     if (A) {
       setCalculate(calculateResult)
       if (aIsFilled && !isOpen && time === -1) {
@@ -110,16 +97,10 @@ const Inverse: FC = () => {
   }, [])
 
   useEffect(() => {
-    console.log('New steps:', steps);
-
     if (steps.length) {
       updateExplanations()
     }
   }, [steps.length, toShowSolution])
-
-  useEffect(() => {
-    console.log('A changed:', A)
-  }, [A])
 
   return (
     <div className='col-h'>

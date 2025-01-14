@@ -41,15 +41,9 @@ const Rank: FC = () => {
       return
     }
 
-    console.log('A:', A);
-
     const { time, funcResult } = getCalcTime(() => getRank(A))
 
     const { steps, result } = funcResult
-
-    console.log(funcResult);
-
-    console.log('%cRank result:', 'font-size:22px;color:red;', result);
 
     setRank(result)
     setSteps(steps)
@@ -58,10 +52,8 @@ const Rank: FC = () => {
 
   /** After completing all steps, get the equation for multiplying elements on upper (main) diagonal. */
   const getRankEquation = () => {
-    console.log('FINAL STEP:', JSON.parse(JSON.stringify(steps))[JSON.parse(JSON.stringify(steps)).length - 1].A);
     const strValues = getStrValuesOfMainDiagonal(steps)
     const nonZeroElements = strValues.filter(s => parseFloat(s) !== 0)
-    console.log(nonZeroElements.length);
 
     return nonZeroElements.length === 0
       ? '0, since all main diagonal elements are 0'
@@ -69,10 +61,7 @@ const Rank: FC = () => {
   }
 
   useEffect(() => {
-    // console.log('recalculating function');
-    // console.log('A:', A);
     if (A) {
-      // console.log('shall set calculate');
       setCalculate(calculateResult)
       if (aIsFilled && !isOpen && time === -1) {
         calculateResult()

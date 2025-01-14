@@ -81,7 +81,6 @@ import { eliminateRowsBelow, swapRows } from './matrixUtils';
  */
 const getDeterminant = (A: Matrix): DeterminantSolution => {
   const n = A.length;
-  console.log('Received A in get determinant:', A);
   const steps: Step[] = [];
   let sign: Sign = '+';
 
@@ -105,7 +104,6 @@ const getDeterminant = (A: Matrix): DeterminantSolution => {
 
     // Handle row elimination
     const eliminationResult = eliminateRowsBelow(B, i);
-    // console.log('Result of eliminating row', i, ':', eliminationResult);
 
     steps.push({
       A: JSON.parse(JSON.stringify(B)),

@@ -106,8 +106,6 @@ const getGaussJordanElimination = (A: Matrix, coefs: number[]): GaussJordanElimi
 
   const m = B.length
 
-  console.log('DETERMINANT:', determinant);
-
   const solution: string[] = []
 
   // Gauss-Jordan elimination steps
@@ -164,16 +162,11 @@ const getGaussJordanElimination = (A: Matrix, coefs: number[]): GaussJordanElimi
    */
   const resultMatrix = JSON.parse(JSON.stringify(steps[steps.length - 1].A)) as Matrix
 
-  console.log('Result matrix:', resultMatrix);
-
   resultMatrix.forEach((equation, index) => {
     // Since will round to 3 decimals, don't modify the original
     const newEquation = [...(equation as number[])].map(x => Math.round(x * 1000) / 1000)
-    console.log('equation', newEquation);
     const rightSide = newEquation[newEquation.length - 1] as number
     let variableStr = `X<span class='subindex'>${index + 1}</span> = ${rightSide}`
-
-    console.log('Will iterate to:', newEquation.slice(0, -1));
 
     // First variable is substracted 
     // Loop through other coefficients to find its relation with current variable
@@ -187,16 +180,9 @@ const getGaussJordanElimination = (A: Matrix, coefs: number[]): GaussJordanElimi
 
       const xStr = `X<span class='subindex'>${i + 1}</span>`
 
-      if (i < m) {
-        console.log(`Variable X${i + 1} = ${coef}`);
-      } else {
-        console.log(`Variable X${i + 1} with value ${coef} is free`);
-
-        if (coef) {
-          /** Since it is substracted from solution it will have `-` sign. */
-          const sign: Sign = coef < 0 ? '+' : '-'
-          variableStr += ` ${sign} ${coef}${xStr}`
-        }
+      if (i >= m && coef) {
+        const sign: Sign = coef < 0 ? '+' : '-'
+        variableStr += ` ${sign} ${coef}${xStr}`
       }
     }
 
@@ -204,12 +190,6 @@ const getGaussJordanElimination = (A: Matrix, coefs: number[]): GaussJordanElimi
   })
 
   const leftSideLength = resultMatrix[resultMatrix.length - 1].length - 1
-  console.log('Start length:', m);
-  console.log('Actual length:', leftSideLength);
-  console.log('Free variables count:', leftSideLength - m);
-
-  console.log(A.length);
-  console.log(leftSideLength);
   let freeVariablesStr = ''
 
   for (let i = A.length; i < leftSideLength; i++) {
@@ -222,16 +202,9 @@ const getGaussJordanElimination = (A: Matrix, coefs: number[]): GaussJordanElimi
 
   freeVariablesStr += ' - Free'
 
-  console.log('Free variables string:', freeVariablesStr);
   if (A.length < leftSideLength) {
     solution.push(freeVariablesStr)
   }
-
-  console.log('%cResult:', 'color:red;font-size:22px;', {
-    steps,
-    determinant,
-    solution
-  });
 
   return {
     steps,

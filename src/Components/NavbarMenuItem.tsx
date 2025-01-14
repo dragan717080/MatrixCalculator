@@ -46,9 +46,6 @@ const NavbarMenuItem: FC<NavbarMenuItemProps> = ({ ComponentToRender, index }) =
     if (!toolbarRef.current) {
       return
     }
-
-    // If mouse leave is directly within X axis of toolbar but under, don't close navbar
-    console.log('Toolbar ref rect:', toolbarRef.current!.getBoundingClientRect());
   }
 
   return (

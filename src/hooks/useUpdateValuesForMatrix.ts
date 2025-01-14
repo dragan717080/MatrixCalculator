@@ -10,7 +10,6 @@ const useUpdateValuesForMatrix = () => {
 
     for (const row in arr) {
       if (typeof arr[row] === 'undefined' || arr[row] === null) {
-        console.log('%cMET UNDEFINED', 'color:red;font-size:40px', arr[row]);
         newArr[row] = 0
         continue
       }
@@ -48,12 +47,10 @@ const useUpdateValuesForMatrix = () => {
     const newMatrix: (string | undefined | number)[][] = matrix.map(row =>
       row.map(element => (element !== undefined ? String(element) : element))
     )
-    // console.log('updating values');
 
     for (const row in newMatrix) {
       for (const col in newMatrix[0]) {
         if (typeof matrix[row][col] === 'undefined' || matrix[row][col] === null) {
-          console.log('%cMET UNDEFINED', 'color:red;font-size:40px', matrix[row][col]);
           newMatrix[row][col] = 0
           continue
         }
@@ -67,11 +64,9 @@ const useUpdateValuesForMatrix = () => {
         }
 
         newMatrix[row][col] = parseFloat(newMatrix[row][col] as unknown as string)
-        // console.log('shall push value:', parseFloat(newMatrix[row][col] as unknown as string));
       }
     }
 
-    console.log('Shall return updated matrix:', newMatrix);
     return newMatrix
   }
 

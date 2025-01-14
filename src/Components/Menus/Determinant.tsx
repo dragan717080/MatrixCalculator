@@ -43,14 +43,11 @@ const Determinant: FC = () => {
       return
     }
 
-    console.log('A in calculate:', A)
     const { time, funcResult } = getCalcTime(() => getDeterminant(A))
     const { steps, result } = funcResult
 
     setDeterminant(result)
-    console.log('%cDETERMINANT:', 'color:red;font-size:40', result);
     setSteps(steps)
-    console.log('%cSteps:', 'color:red;font-size:22px', steps);
     setTime(time)
   }
 
@@ -102,7 +99,7 @@ const Determinant: FC = () => {
 
       d[i as unknown as string] = stepsWithoutSwaps.indexOf(step)
     }
-    console.log('%cStep indices to indices without swaps:', 'color:red;font-size:30px;', d);
+
     setStepsSwapsIndices(d);
   }, [steps.length]);
 
@@ -120,11 +117,6 @@ const Determinant: FC = () => {
   }, [])
 
   useEffect(() => {
-    console.log('A changed in determinant:', A)
-  }, [A])
-
-  useEffect(() => {
-    console.log('New steps:', steps);
     if (steps.length) {
       updateExplanations()
     }

@@ -44,7 +44,6 @@ export const updateValuesInPivotRow = (A: Matrix, row: number) => {
 
   // If pivot is 0, the system is inconsistent
   if (pivot === 0) {
-    console.log('%cThe system is incosistent', 'color:red;font-size:22px;');
     return {
       A,
       explanation: `Attempting to divide ${row + 1}${getOrderNumberToStr(row)} row by 0, therefore, the system is inconsistent`,
@@ -125,8 +124,7 @@ export const eliminateRowsGaussJordan = (
   col: number,
 ): EliminateValues => {
   const pivot = A[col][col] as number;
-  console.log('received matrix:', JSON.parse(JSON.stringify(A)));
-  console.log('col:', col, 'pivot:', pivot);
+
   if (pivot === 0) {
     return {
       A,
@@ -166,8 +164,6 @@ export const eliminateRowsGaussJordan = (
       (A[i][j] as number) -= (A[col][j] as number) * coef;
     }
   }
-
-  console.log('Shall return after eliminate values:', JSON.parse(JSON.stringify(A)));
 
   return { A, toReturnEarly: false, explanations };
 }

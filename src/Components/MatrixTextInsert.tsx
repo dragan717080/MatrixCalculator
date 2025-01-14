@@ -22,8 +22,6 @@ const MatrixTextInsert: FC<MatrixTextInsertProps> = ({
 
   const [wrongRowsCountError, setWrongRowsCountError] = useState<string>('')
   const [wrongColsCountError, setWrongColsCountError] = useState<string>('')
-  // console.log('%cIN INSERT', 'font-size:40px');
-  // console.log('isA:', isA);
 
   const handleContinue = useCallback(
     async (e: MouseEvent<HTMLButtonElement>) => {
@@ -35,12 +33,10 @@ const MatrixTextInsert: FC<MatrixTextInsertProps> = ({
       }
 
       e.preventDefault()
-      // console.log('expected rows:', nRows, 'expected cols:', nCols);
       clearErrors(dispatch)
 
       // Trim each row
       const rows = textareaRef.current!.value.split('\n').map(row => row.trim())
-      // console.log('rows:', rows)
       let hasWrongNumbers = false
 
       // If the last row is empty, delete it
@@ -56,10 +52,9 @@ const MatrixTextInsert: FC<MatrixTextInsertProps> = ({
       setWrongColsCountError('')
 
       if (rows.length !== nRows) {
-        // console.log(`Matrix ${isA ? 'A' : 'B'} has ${nRows} rows but your input has ${rows.length}`);
         newWrongRowsCountError = `Matrix ${isA ? 'A' : 'B'} has ${nRows} rows but your input has ${rows.length}`
-        console.log('setting new rows err');
         setWrongRowsCountError(`Matrix ${isA ? 'A' : 'B'} has ${nRows} rows but your input has ${rows.length}`)
+
         return
       } else {
         setWrongRowsCountError('')
@@ -70,28 +65,18 @@ const MatrixTextInsert: FC<MatrixTextInsertProps> = ({
 
       for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
         const row = rows[rowIndex];
-        // console.log('Text row:', row, 'index:', rowIndex);
         const wordsInRow = row.split(/\s+/)
-        console.log(wordsInRow, 'len:', wordsInRow.length);
 
         if (wordsInRow.length !== nCols) {
-          // console.log(`Matrix ${isA ? 'A' : 'B'} has ${nCols} columns but your input has ${wordsInRow.length}`)
           setWrongColsCountError(`Matrix ${isA ? 'A' : 'B'} has ${nCols} columns but your row ${rowIndex + 1} has ${wordsInRow.length}`)
           return
         }
 
         newMatrix.push([])
 
-        // console.log('Words in row:', wordsInRow);
         for (const [index, word] of Object.entries(wordsInRow)) {
-          // console.log('Row:', rowIndex, 'word:', word);
-
           if (!isStringNumeric(word)) {
-            // console.log('word is not numeric');
-            // console.log(rowIndex in errors);
-            // console.log(errors);
             addError(dispatch, rowIndex, word)
-            // console.log('new errors:', errors);
             hasWrongNumbers = true
           } else {
             if (!isEquation) {
@@ -100,11 +85,7 @@ const MatrixTextInsert: FC<MatrixTextInsertProps> = ({
             }
 
             const isLastWord = Number(index) + 1 === wordsInRow.length
-            console.log('index:', index, 'word:', word, isLastWord);
-            console.log(isEquation);
-            if (isLastWord) {
-              console.log('pushing', word, 'to equation coefs');
-            }
+
             !isLastWord
               ? newMatrix[rowIndex].push(word)
               : newEquationCoefs.push(word)
@@ -114,29 +95,18 @@ const MatrixTextInsert: FC<MatrixTextInsertProps> = ({
 
       newWrongColsCountError = ''
       setWrongColsCountError('')
-      // console.log('NEW ERRORS:', errors);
       if (!newWrongRowsCountError && !newWrongColsCountError && !hasWrongNumbers) {
-        console.log('ALL IS OK!');
-        // console.log('errors:', errors);
-        
         newMatrix = updateValuesForMatrix(isA, newMatrix)
         newEquationCoefs = updateValuesForArr(newEquationCoefs)
-        console.log('new equation coefs:', newEquationCoefs);
-        // console.log('new matrix:', newMatrix);
         const fillFunc = isA ? setAIsFilled : setBIsFilled
 
         const setMatrixFunc = isA ? setA : setB
-        // console.log('is a:', isA);
         setMatrixFunc(newMatrix)
         setEquationCoefs(newEquationCoefs)
         fillFunc(true)
         setIsInserting(false)
       }
     }, [aDim, bDim, errors])
-
-  useEffect(() => {
-    // console.log('new errors:', errors);
-  }, [Object.keys(errors).length])
 
   return (
     <div className='px-3'>

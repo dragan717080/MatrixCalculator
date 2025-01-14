@@ -86,39 +86,27 @@ import DotProduct from '../interfaces/Multiplication'
 const getMultiplication = (A: Matrix, B: Matrix): Step[] => {
   /** Captures the state of the matrix after each dot product. */
   const solution = [];
-  // console.log('start A:', JSON.parse(JSON.stringify(A)));
-  console.log('%cstart A:', 'color:red;font-size:22px', JSON.parse(JSON.stringify(A)));
-  console.log('start B:', JSON.parse(JSON.stringify(B)));
 
   // Create a deep copy of A to avoid mutating the original matrix
   let C = Array.from({ length: A.length }, () =>
     Array((B[0].length)))
-
-  console.log('Start C:', JSON.parse(JSON.stringify(C)));
 
   for (let i = 0; i < A.length; i++) {
     let explanationRow = []
     let indicesRow: TwoNumbers[] = []
 
     for (let j = 0; j < B[0].length; j++) {
-      console.log(`A[${i}][${j}] will be product of ${i}th row of A and ${j}th col of B`);
       const { value, explanation, indices } = getDotProduct(A, B, i, j)  // Calculate the dot product
       C[i][j] = value
       explanationRow.push(explanation)
       indicesRow.push(indices)
     }
 
-    console.log('New C:', JSON.parse(JSON.stringify(C)));
-    // Log the row before pushing it to the solution array
-    console.log('Updated row', i, ':', JSON.parse(JSON.stringify(C))[i]);
-    // console.log('%cWill push to solution:', 'color:red;font-size:22px;', JSON.parse(JSON.stringify(C)));
-
     solution.push({
       A: JSON.parse(JSON.stringify(C)),
       explanation: explanationRow,
       indices: indicesRow
     });
-    console.log('New solution:', solution)
   }
 
   return solution
@@ -141,22 +129,18 @@ const getDotProduct = (
   //let explanation = `A[${i}][${j}] = `
 
   for (let k = 0; k < A[i].length; k++) {
-    console.log('k:', k)
     const value = (A[i][k] as number) * (B[k][j]! as number)
-    console.log('A value:', A[i][k], 'B value:', B[k][j], 'value:', (A[i][k] as number) * (B[k][j]! as number));
+
     sum += value;
     explanation += `${A[i][k]!} * ${B[k][j]!}`
 
     if (k !== A[i].length - 1) {
-      // console.log('adding plus to explanation');
       explanation += ' + '
     }
   }
 
   explanation += ` = ${Math.round(sum * 1000) / 1000}`
 
-  console.log('\nvalue of element at row', i, 'col', j, ':', sum, '\n')
-  console.log(`Explanation for ${i} ${j}: ${explanation}`);
   return {
     value: Math.round(sum * 1000) / 1000,
     explanation,

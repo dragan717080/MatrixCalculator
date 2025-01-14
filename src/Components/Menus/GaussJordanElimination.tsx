@@ -50,9 +50,8 @@ const GaussJordanElimination: FC = () => {
       return
     }
 
-    console.log('A in calculate:', A)
     const { time, funcResult: result } = getCalcTime(() => getGaussJordanElimination(A, equationCoefs as number[]))
-    console.log('Result:', result);
+
     const { solution: newSolution, steps, determinant: newDeterminant } = result
 
     setSteps(steps)
@@ -90,9 +89,6 @@ const GaussJordanElimination: FC = () => {
     if (!originalMatrixHeaders?.length) {
       return
     }
-
-    console.log('original headers:', originalMatrixHeaders);
-    //originalMatrixHeaders[originalMatrixHeaders.length - 1].innerHTML = 'b'
   }, [])
 
   useEffect(() => {
@@ -109,28 +105,16 @@ const GaussJordanElimination: FC = () => {
   }, [])
 
   useEffect(() => {
-    console.log('new steps:', steps);
-  }, [steps.length])
-
-  useEffect(() => {
-    console.log('A changed:', A)
-  }, [A])
-
-  useEffect(() => {
     const solutionExplanations = Array.from(document.getElementsByClassName('solution-explanation'))
 
-    console.log(equationSolution);
     const lastElements = equationSolution
 
-    console.log(lastElements);
     solutionExplanations.forEach((explanation, index) => {
       explanation.innerHTML = equationSolution![index]
     })
   }, [steps.length, equationSolution])
 
   useEffect(() => {
-    console.log('New steps:', steps);
-
     if (steps.length) {
       updateExplanations()
     }

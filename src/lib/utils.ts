@@ -15,7 +15,7 @@ export const getCalcTime =
     const result = func()
 
     const endTime = performance.now()
-    console.log('calc time:', endTime - startTime)
+
     let calcTime = (endTime - startTime) / 1000
     calcTime = Number.isInteger(calcTime) ? calcTime : parseFloat(calcTime.toFixed(3)) as unknown as number
 
