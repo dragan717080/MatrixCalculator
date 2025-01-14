@@ -1,12 +1,12 @@
 import React, { FC, useEffect, useRef, useState } from 'react'
 import MatrixDimensionsInput from '../Atoms/MatrixDimensionsInput'
-import MatrixTable from '../Atoms/MatrixTable';
-import useRecalculate from '../../hooks/useRecalculate';
-import useToggleShowSolution from '../../hooks/useToggleShowSolution';
-import { getCalcTime, transpose, wait } from '../../lib/utils';
+import MatrixTable from '../Atoms/MatrixTable'
+import useRecalculate from '../../hooks/useRecalculate'
+import useToggleShowSolution from '../../hooks/useToggleShowSolution'
+import { getCalcTime, transpose, wait } from '../../lib/utils'
 import { useMatrixStore, useModalStore } from '../../store/zustandStore'
-import Matrix from '../../interfaces/Matrix';
-import useResetParams from '../../hooks/useResetParams';
+import Matrix from '../../interfaces/Matrix'
+import useResetParams from '../../hooks/useResetParams'
 
 const Transpose: FC = () => {
   const { setCalculate, aDim, setADim, A, setA, aIsFilled, setAIsFilled, setBIsFilled } = useMatrixStore()

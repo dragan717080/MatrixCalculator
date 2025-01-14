@@ -1,5 +1,5 @@
 import Matrix from './Matrix'
-import { Sign } from './Determinant';
+import { Sign } from './Determinant'
 
 /**
  * Describes `swapRows` function which checks for elements same column

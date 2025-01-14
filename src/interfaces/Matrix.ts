@@ -1,6 +1,6 @@
-import { HighlightCells } from './MatrixTableProps';
+import { HighlightCells } from './MatrixTableProps'
 
-export type TwoNumbers = [number, number];
+export type TwoNumbers = [number, number]
 
 /** Also allows strings, for input values. */
 export type MatrixElement = string|number|undefined

@@ -13,4 +13,4 @@ const ArrowIcon = () => {
   )
 }
 
-export default ArrowIcon;
+export default ArrowIcon

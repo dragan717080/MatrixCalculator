@@ -67,7 +67,7 @@ const Determinant: FC = () => {
           // Text will have 1-based indexing so need `+1`
           : `Eliminate elements in the ${stepsSwapsIndices[index] + 1}${getOrderNumberToStr(
             stepsSwapsIndices[index])} column under the ${stepsSwapsIndices[index] + 1}${getOrderNumberToStr(
-              stepsSwapsIndices[index])} element`;
+              stepsSwapsIndices[index])} element`
       },
     [steps.length, actualCounts.length, Object.keys(stepsSwapsIndices).length])
 
@@ -79,8 +79,8 @@ const Determinant: FC = () => {
   // Memoized function to calculate actual counts based on `steps.length`
   useMemo(() => {
     if (steps.length === 0) {
-      setActualCounts([]);
-      return;
+      setActualCounts([])
+      return
     }
 
     const stepsWithoutSwaps = steps.filter(x => typeof (x.swapRow) === 'undefined')
@@ -92,7 +92,7 @@ const Determinant: FC = () => {
 
     for (let i = 0; i < steps.length; i++) {
       if (typeof (steps[i]).swapRow !== 'undefined') {
-        continue;
+        continue
       }
 
       const step = steps[i]
@@ -100,8 +100,8 @@ const Determinant: FC = () => {
       d[i as unknown as string] = stepsWithoutSwaps.indexOf(step)
     }
 
-    setStepsSwapsIndices(d);
-  }, [steps.length]);
+    setStepsSwapsIndices(d)
+  }, [steps.length])
 
   useEffect(() => {
     if (A) {
@@ -110,7 +110,7 @@ const Determinant: FC = () => {
         calculateResult()
       }
     }
-  }, [A, aIsFilled, isOpen, time]);
+  }, [A, aIsFilled, isOpen, time])
 
   useEffect(() => {
     resetParams()

@@ -12,6 +12,6 @@ const InversionsToolbar: FC = () => {
   )
 }
 
-InversionsToolbar.displayName = 'InversionsToolbar';
+InversionsToolbar.displayName = 'InversionsToolbar'
 
-export default InversionsToolbar;
+export default InversionsToolbar

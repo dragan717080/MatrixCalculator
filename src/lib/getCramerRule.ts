@@ -150,4 +150,4 @@ const swapColumnsOfMatrix = (A: Matrix, col: number, equationCoefs: number[]) =>
   }
 }
 
-export default getCramerRule;
+export default getCramerRule

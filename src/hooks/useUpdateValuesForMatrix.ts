@@ -41,7 +41,7 @@ const useUpdateValuesForMatrix = () => {
     isA = true,
     newA?: Matrix
   ): Matrix => {
-    const matrix = newA ? newA : isA ? A : B!;
+    const matrix = newA ? newA : isA ? A : B!
 
     // Make a deep copy of the previous matrix
     const newMatrix: (string | undefined | number)[][] = matrix.map(row =>

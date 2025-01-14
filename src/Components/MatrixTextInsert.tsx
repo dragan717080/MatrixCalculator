@@ -1,10 +1,10 @@
-import { FC, ChangeEvent, MouseEvent, memo, useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
-import { addError, clearErrors, errorsReducer, removeError } from '../lib/matrixTextInsertReducer';
-import useUpdateValuesForMatrix from '../hooks/useUpdateValuesForMatrix';
-import { isStringNumeric } from '../lib/utils';
-import { useLinearEquationsStore, useMatrixStore, useModalStore } from '../store/zustandStore';
-import MatrixTextInsertProps from '../interfaces/MatrixTextInsertProps';
-import Matrix from '../interfaces/Matrix';
+import { FC, ChangeEvent, MouseEvent, memo, useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react'
+import { addError, clearErrors, errorsReducer, removeError } from '../lib/matrixTextInsertReducer'
+import useUpdateValuesForMatrix from '../hooks/useUpdateValuesForMatrix'
+import { isStringNumeric } from '../lib/utils'
+import { useLinearEquationsStore, useMatrixStore, useModalStore } from '../store/zustandStore'
+import MatrixTextInsertProps from '../interfaces/MatrixTextInsertProps'
+import Matrix from '../interfaces/Matrix'
 
 const MatrixTextInsert: FC<MatrixTextInsertProps> = ({
   setIsInserting,
@@ -18,7 +18,7 @@ const MatrixTextInsert: FC<MatrixTextInsertProps> = ({
 
   const { updateValuesForArr, updateValuesForMatrix } = useUpdateValuesForMatrix()
 
-  const [errors, dispatch] = useReducer(errorsReducer, {});
+  const [errors, dispatch] = useReducer(errorsReducer, {})
 
   const [wrongRowsCountError, setWrongRowsCountError] = useState<string>('')
   const [wrongColsCountError, setWrongColsCountError] = useState<string>('')
@@ -64,7 +64,7 @@ const MatrixTextInsert: FC<MatrixTextInsertProps> = ({
       let newEquationCoefs = []
 
       for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
-        const row = rows[rowIndex];
+        const row = rows[rowIndex]
         const wordsInRow = row.split(/\s+/)
 
         if (wordsInRow.length !== nCols) {

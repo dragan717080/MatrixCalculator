@@ -1,5 +1,5 @@
-import Matrix, { SolutionWithNumericResult, Step, TwoNumbers } from '../interfaces/Matrix';
-import { eliminateRowsBelow, swapRows } from './matrixUtils';
+import Matrix, { SolutionWithNumericResult, Step, TwoNumbers } from '../interfaces/Matrix'
+import { eliminateRowsBelow, swapRows } from './matrixUtils'
 
 /**
  * Gaussian elimination to get upper triangular form.
@@ -82,7 +82,7 @@ import { eliminateRowsBelow, swapRows } from './matrixUtils';
  */
 const getRank = (A: Matrix): SolutionWithNumericResult => {
   const [m, n] = [A.length, A[0].length]
-  const steps: Step[] = [];
+  const steps: Step[] = []
 
   // Make a copy of `A` to avoid directly mutating state
   const B: Matrix = JSON.parse(JSON.stringify(A))
@@ -97,13 +97,13 @@ const getRank = (A: Matrix): SolutionWithNumericResult => {
   // Gaussian elimination steps
   for (let i = 0; i < m - 1; i++) {
     // Handle row swapping
-    const swapResult = swapRows(B, i);
+    const swapResult = swapRows(B, i)
     if (swapResult.swapRow) {
       steps.push({
         A: JSON.parse(JSON.stringify(B)),
         swapRow: swapResult.swapRow as TwoNumbers,
         explanation: [`Swapping rows ${swapResult.swapRow[0] + 1} and ${swapResult.swapRow[1] + 1}`]
-      });
+      })
     }
 
     // Handle row elimination
@@ -111,15 +111,15 @@ const getRank = (A: Matrix): SolutionWithNumericResult => {
       break
     }
 
-    const eliminationResult = eliminateRowsBelow(B, i);
+    const eliminationResult = eliminateRowsBelow(B, i)
 
     steps.push({
       A: JSON.parse(JSON.stringify(B)),
       explanation: eliminationResult.explanations
-    });
+    })
 
     if (eliminationResult.toReturnEarly) {
-      continue;
+      continue
     }
   }
 
@@ -133,7 +133,7 @@ const getRank = (A: Matrix): SolutionWithNumericResult => {
 
   const result = upperDiagonalValues.reduce((acc, x) => Number(acc) + Number(x !== 0), 0)
 
-  return { result: result as number, steps };
+  return { result: result as number, steps }
 }
 
 export default getRank

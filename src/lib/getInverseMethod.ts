@@ -69,4 +69,4 @@ const getInverseMethod = (A: Matrix, equationCoefs: number[]): InverseMethodSolu
   }
 }
 
-export default getInverseMethod;
+export default getInverseMethod

@@ -9,12 +9,12 @@ const NavbarPortal: FC<RenderProps> = ({ children }) => {
 
   useEffect(() => {
     ref.current = document.getElementById('navbar-portal-root')
-    setMounted(true);
-  }, []);
+    setMounted(true)
+  }, [])
 
   return (mounted && ref.current)
     ? createPortal(<div className='rounded-lg bg-white text-red-50 z-50'>{children}</div>, ref.current)
     : null
-};
+}
 
 export default NavbarPortal

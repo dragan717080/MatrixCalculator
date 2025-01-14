@@ -1,6 +1,6 @@
-import { UseRecalculateProps } from '../interfaces/Hooks';
-import { useLinearEquationsStore, useMatrixStore } from '../store/zustandStore';
-import { useModalStore } from '../store/zustandStore';
+import { UseRecalculateProps } from '../interfaces/Hooks'
+import { useLinearEquationsStore, useMatrixStore } from '../store/zustandStore'
+import { useModalStore } from '../store/zustandStore'
 
 /**
  * When recalculate operation and again opet input,

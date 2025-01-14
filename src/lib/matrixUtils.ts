@@ -1,7 +1,7 @@
-import { getOrderNumberToStr } from './utils';
-import { Sign } from '../interfaces/Determinant';
+import { getOrderNumberToStr } from './utils'
+import { Sign } from '../interfaces/Determinant'
 import Matrix from '../interfaces/Matrix'
-import { EliminateValues, SwapRows } from '../interfaces/MatrixUtils';
+import { EliminateValues, SwapRows } from '../interfaces/MatrixUtils'
 
 /**
  * Handles swapping rows if needed.
@@ -30,13 +30,13 @@ export const swapRows = (
           sign = sign === '+' ? '-' : '+'
         }
 
-        break;
+        break
       }
     }
   }
 
   return { A, swapRow, sign }
-};
+}
 
 /** In Gauss-Jordan elimination, pivot is divided to be 1, and elements in the same row are also divided by that value. */
 export const updateValuesInPivotRow = (A: Matrix, row: number) => {
@@ -76,7 +76,7 @@ export const eliminateRowsBelow = (
   A: Matrix,
   col: number
 ): { A: Matrix; toReturnEarly: boolean, explanations: string[] } => {
-  const pivot = A[col][col] as number;
+  const pivot = A[col][col] as number
   if (pivot === 0) {
     return {
       A,
@@ -84,7 +84,7 @@ export const eliminateRowsBelow = (
       explanations: [
         `R<span class='subindex'>${col + 1}</span> early return because A<span class='subindex'>${col + 1}</span><span class='subindex'>${col + 1}</span> is 0`
       ]
-    };
+    }
   }
 
   const explanations = []
@@ -95,11 +95,11 @@ export const eliminateRowsBelow = (
         `R<span class='subindex'>${i + 1}</span> at column ${col + 1} is already 0, so this step is skipped.`
       )
       continue
-    };
+    }
 
-    const coef = (A[i][col] as number) / pivot!;
+    const coef = (A[i][col] as number) / pivot!
     if (Number.isNaN(coef)) {
-      continue;
+      continue
     }
 
     explanations.push(
@@ -107,12 +107,12 @@ export const eliminateRowsBelow = (
     )
 
     for (let j = col; j < A.length; j++) {
-      (A[i][j] as number) -= (A[col][j] as number) * coef;
+      (A[i][j] as number) -= (A[col][j] as number) * coef
     }
   }
 
-  return { A, toReturnEarly: false, explanations };
-};
+  return { A, toReturnEarly: false, explanations }
+}
 
 /**
  * Handles value changes to eliminate values both above and below the pivot.
@@ -123,7 +123,7 @@ export const eliminateRowsGaussJordan = (
   A: Matrix,
   col: number,
 ): EliminateValues => {
-  const pivot = A[col][col] as number;
+  const pivot = A[col][col] as number
 
   if (pivot === 0) {
     return {
@@ -132,7 +132,7 @@ export const eliminateRowsGaussJordan = (
       explanations: [
         `R<span class='subindex'>${col + 1}</span> early return because A<span class='subindex'>${col + 1}</span><span class='subindex'>${col + 1}</span> is 0`
       ]
-    };
+    }
   }
 
   const explanations = []
@@ -140,7 +140,7 @@ export const eliminateRowsGaussJordan = (
   for (let i = 0; i < A.length; i++) {
     // Only skip the current row
     if (i === col) {
-      continue;
+      continue
     }
 
     if (A[i][col] === 0) {
@@ -149,11 +149,11 @@ export const eliminateRowsGaussJordan = (
       )
 
       continue
-    };
+    }
 
-    const coef = (A[i][col] as number) / pivot!;
+    const coef = (A[i][col] as number) / pivot!
     if (Number.isNaN(coef)) {
-      continue;
+      continue
     }
 
     explanations.push(
@@ -161,9 +161,9 @@ export const eliminateRowsGaussJordan = (
     )
 
     for (let j = col; j < A[0].length; j++) {
-      (A[i][j] as number) -= (A[col][j] as number) * coef;
+      (A[i][j] as number) -= (A[col][j] as number) * coef
     }
   }
 
-  return { A, toReturnEarly: false, explanations };
+  return { A, toReturnEarly: false, explanations }
 }

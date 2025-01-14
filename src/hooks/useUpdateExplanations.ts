@@ -1,7 +1,7 @@
-import { getIndicesFromEquation } from '../lib/utils';
-import { UseUpdateExplanationsProps } from '../interfaces/Hooks';
-import { Step as DeterminantStep } from '../interfaces/Determinant';
-import { Step } from '../interfaces/Matrix';
+import { getIndicesFromEquation } from '../lib/utils'
+import { UseUpdateExplanationsProps } from '../interfaces/Hooks'
+import { Step as DeterminantStep } from '../interfaces/Determinant'
+import { Step } from '../interfaces/Matrix'
 
 /**
  * For components that need to update explanations (e.g. `Multiplication`),
@@ -16,7 +16,7 @@ const useUpdateExplanations = ({
     const explanationParagraphs = Array.from(document.getElementsByClassName('step-explanation'))
 
     if (!steps.length || !explanationParagraphs.length) {
-      return;
+      return
     }
 
     const allExplanations = steps.flatMap(x => x.explanation)
@@ -33,4 +33,4 @@ const useUpdateExplanations = ({
   return { updateExplanations }
 }
 
-export default useUpdateExplanations;
+export default useUpdateExplanations

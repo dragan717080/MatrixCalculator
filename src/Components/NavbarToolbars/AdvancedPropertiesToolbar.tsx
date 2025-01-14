@@ -13,6 +13,6 @@ const AdvancedPropertiesToolbar: FC = () => {
   )
 }
 
-AdvancedPropertiesToolbar.displayName = 'AdvancedPropertiesToolbar';
+AdvancedPropertiesToolbar.displayName = 'AdvancedPropertiesToolbar'
 
-export default AdvancedPropertiesToolbar;
+export default AdvancedPropertiesToolbar

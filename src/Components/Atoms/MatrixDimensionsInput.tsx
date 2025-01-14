@@ -41,11 +41,11 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
       e.target.value = e.target.value.slice(0, -1)
     }
 
-    let value = Number(e.target.value); // Directly parse as number
+    let value = Number(e.target.value) // Directly parse as number
     if (value < parseFloat(min as unknown as string)) {
-      e.target.value = min as unknown as string;
+      e.target.value = min as unknown as string
     } else if (value > max) {
-      e.target.value = max as unknown as string;
+      e.target.value = max as unknown as string
     }
 
     const aIsFilled = isSquare
@@ -99,12 +99,12 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
 
   const handleSubmit = useCallback(
     (e: MouseEvent<HTMLButtonElement>) => {
-      e.preventDefault();
-      const newAValue = getNumericDimValue();
+      e.preventDefault()
+      const newAValue = getNumericDimValue()
 
       // Only open modal if all dimensions are set
-      const aIsSet = newAValue[0] !== 0 && newAValue[1] !== 0;
-      setADim(newAValue);
+      const aIsSet = newAValue[0] !== 0 && newAValue[1] !== 0
+      setADim(newAValue)
 
       const powerIsSet = isPower ? powerRef.current!.value.length : true
 
@@ -119,16 +119,16 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
           bIsSet = aIsSet
           setBDim([parseInt(aRows.current!.value), parseInt(aCols.current!.value)])
         } else {
-          const newBValue = getNumericDimValue(false);
-          setBDim(newBValue);
+          const newBValue = getNumericDimValue(false)
+          setBDim(newBValue)
           bIsSet = newBValue[0] !== 0 && newBValue[1] !== 0
         }
 
         if (aIsSet && bIsSet) {
-          setIsOpen(true);
+          setIsOpen(true)
         }
       } else if (aIsSet) {
-        setIsOpen(true);
+        setIsOpen(true)
       }
     },
     [getNumericDimValue, isOnlyA, setADim, setBDim, setIsOpen] // Dependencies

@@ -1,6 +1,6 @@
-import { DeterminantSolution, Sign, Step } from '../interfaces/Determinant';
+import { DeterminantSolution, Sign, Step } from '../interfaces/Determinant'
 import Matrix from '../interfaces/Matrix'
-import { eliminateRowsBelow, swapRows } from './matrixUtils';
+import { eliminateRowsBelow, swapRows } from './matrixUtils'
 
 /**
  * Gaussian elimination to get upper triangular form.
@@ -80,56 +80,56 @@ import { eliminateRowsBelow, swapRows } from './matrixUtils';
  * Δ = 1 * (-10) * (-17.9) * (-2.38) = -425
  */
 const getDeterminant = (A: Matrix): DeterminantSolution => {
-  const n = A.length;
-  const steps: Step[] = [];
-  let sign: Sign = '+';
+  const n = A.length
+  const steps: Step[] = []
+  let sign: Sign = '+'
 
   // Make a copy of `A` to avoid directly mutating state
-  const B = JSON.parse(JSON.stringify(A));
+  const B = JSON.parse(JSON.stringify(A))
 
   // Gaussian elimination steps
   for (let i = 0; i < n - 1; i++) {
     // Handle row swapping
-    const swapResult = swapRows(B, i, sign);
+    const swapResult = swapRows(B, i, sign)
     if (swapResult.swapRow) {
       steps.push({
         A: JSON.parse(JSON.stringify(B)),
         swapRow: swapResult.swapRow,
         sign: swapResult.sign!,
         explanation: [`Swapping rows ${swapResult.swapRow[0] + 1} and ${swapResult.swapRow[1] + 1}, changing the sign to ${swapResult.sign}`]
-      });
+      })
 
-      sign = swapResult.sign!;
+      sign = swapResult.sign!
     }
 
     // Handle row elimination
-    const eliminationResult = eliminateRowsBelow(B, i);
+    const eliminationResult = eliminateRowsBelow(B, i)
 
     steps.push({
       A: JSON.parse(JSON.stringify(B)),
       swapRow: undefined,
       sign,
       explanation: eliminationResult.explanations
-    });
+    })
 
     if (eliminationResult.toReturnEarly) {
-      break;
+      break
     }
   }
 
   // Multiply diagonal elements
-  let D = 1;
+  let D = 1
   for (let i = 0; i < n; i++) {
-    D *= B[i][i] as number;
+    D *= B[i][i] as number
   }
 
   // Adjust sign
-  let result = Number.isInteger(D) ? D : parseFloat(D.toFixed(3));
+  let result = Number.isInteger(D) ? D : parseFloat(D.toFixed(3))
   if (sign !== '+') {
-    result = -result;
+    result = -result
   }
 
-  return { steps, result };
+  return { steps, result }
 }
 
 export default getDeterminant

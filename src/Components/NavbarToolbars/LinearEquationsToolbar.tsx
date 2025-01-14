@@ -12,6 +12,6 @@ const LinearEquationsToolbar: FC = () => {
   )
 }
 
-LinearEquationsToolbar.displayName = 'LinearEquationsToolbar';
+LinearEquationsToolbar.displayName = 'LinearEquationsToolbar'
 
-export default LinearEquationsToolbar;
+export default LinearEquationsToolbar

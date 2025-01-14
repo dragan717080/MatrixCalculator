@@ -98,7 +98,7 @@ const getInverse = (A: Matrix): InverseSolution => {
 
   const m = A.length
 
-  let B = JSON.parse(JSON.stringify(A)) as Matrix;
+  let B = JSON.parse(JSON.stringify(A)) as Matrix
 
   const I = getIdentityMatrix(m)
 
@@ -117,17 +117,17 @@ const getInverse = (A: Matrix): InverseSolution => {
   // Gauss-Jordan elimination steps
   for (let i = 0; i < m; i++) {
     // Handle row swapping
-    const swapResult = swapRows(B, i);
+    const swapResult = swapRows(B, i)
     if (swapResult.swapRow) {
       steps.push({
         A: JSON.parse(JSON.stringify(B)),
         swapRow: swapResult.swapRow as TwoNumbers,
         explanation: [`Swapping rows ${swapResult.swapRow[0] + 1} and ${swapResult.swapRow[1] + 1}`]
-      });
+      })
     }
 
     // Make values in pivot row to be 1
-    const updateRowResult = updateValuesInPivotRow(B, i);
+    const updateRowResult = updateValuesInPivotRow(B, i)
 
     B = updateRowResult.A
     const explanation = updateRowResult.explanation
@@ -135,15 +135,15 @@ const getInverse = (A: Matrix): InverseSolution => {
     steps.push({
       A: JSON.parse(JSON.stringify(B)),
       explanation
-    });
+    })
 
     // If pivot is already 1, no need to eliminate column
     if (updateRowResult.toReturnEarly) {
-      continue;
+      continue
     }
 
     // Handle row elimination
-    const eliminationResult = eliminateRowsGaussJordan(B, i);
+    const eliminationResult = eliminateRowsGaussJordan(B, i)
     B = eliminationResult.A
     const newB = JSON.parse(JSON.stringify(B))
 
@@ -156,10 +156,10 @@ const getInverse = (A: Matrix): InverseSolution => {
     steps.push({
       A: JSON.parse(JSON.stringify(B)),
       explanation: eliminationResult.explanations
-    });
+    })
 
     if (eliminationResult.toReturnEarly) {
-      continue;
+      continue
     }
   }
 
@@ -192,4 +192,4 @@ const getInverse = (A: Matrix): InverseSolution => {
   }
 }
 
-export default getInverse;
+export default getInverse

@@ -49,7 +49,7 @@ export default function DashNavbar() {
     setSubmenuVisible((prevState) => ({
       ...prevState,
       [index]: !prevState[index], // Toggle visibility for the current index
-    }));
+    }))
   }
 
   return (

@@ -1,5 +1,5 @@
-import { Step as DeterminantStep } from "./Determinant";
-import Matrix, { Step, TwoNumbers } from "./Matrix";
+import { Step as DeterminantStep } from "./Determinant"
+import Matrix, { Step, TwoNumbers } from "./Matrix"
 
 /**
  * @type {OriginalMatrixProps}

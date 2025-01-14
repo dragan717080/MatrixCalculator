@@ -1,7 +1,8 @@
 export type ErrorsState = { [rowIndex: number]: string[] }
 
 export type ErrorsAction =
-| { type: 'addError'; rowIndex: number; word: string }
+| { type: 'addError'
+ rowIndex: number; word: string }
 | { type: 'removeError'; rowIndex: number }
 | { type: 'clearErrors' }
 

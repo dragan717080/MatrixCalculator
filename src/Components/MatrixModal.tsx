@@ -1,9 +1,9 @@
-import { FC, ChangeEvent, useEffect, useMemo, useState, useCallback, useLayoutEffect } from 'react';
-import { useLocation } from "react-router-dom";
-import MatrixTextInsert from './MatrixTextInsert';
-import useUpdateValuesForMatrix from '../hooks/useUpdateValuesForMatrix';
-import { isStringNumeric } from '../lib/utils';
-import { useLinearEquationsStore, useMatrixStore, useModalStore } from '../store/zustandStore';
+import { FC, ChangeEvent, useEffect, useMemo, useState, useCallback, useLayoutEffect } from 'react'
+import { useLocation } from "react-router-dom"
+import MatrixTextInsert from './MatrixTextInsert'
+import useUpdateValuesForMatrix from '../hooks/useUpdateValuesForMatrix'
+import { isStringNumeric } from '../lib/utils'
+import { useLinearEquationsStore, useMatrixStore, useModalStore } from '../store/zustandStore'
 
 const MatrixModal: FC = () => {
   const {
@@ -39,12 +39,12 @@ const MatrixModal: FC = () => {
       ? isEquation
         ? aIsFilled && coefsInputsAreFilled
         : aIsFilled
-      : aIsFilled && bIsFilled;
-  }, [isOnlyA, aIsFilled, bIsFilled, coefsInputsAreFilled]);
+      : aIsFilled && bIsFilled
+  }, [isOnlyA, aIsFilled, bIsFilled, coefsInputsAreFilled])
 
   /** Need separate functions since this will be triggered multiple times. */
   const initialFillA = () => {
-    const newA = Array.from({ length: aRows }, () => Array.from({ length: aCols }).fill(undefined));
+    const newA = Array.from({ length: aRows }, () => Array.from({ length: aCols }).fill(undefined))
     // @ts-ignore:next-line
     setA(newA)
     const newCoefs = Array.from({ length: aRows }).fill(undefined) as number[]
@@ -52,16 +52,16 @@ const MatrixModal: FC = () => {
   }
 
   const initialFillB = () => {
-    const newB = Array.from({ length: bRows }, () => Array.from({ length: bCols }).fill(undefined));
+    const newB = Array.from({ length: bRows }, () => Array.from({ length: bCols }).fill(undefined))
     // @ts-ignore:next-line
     setB(newB)
   }
 
   const fillInputCells = (isA = true) => {
-    const matrix = isA ? A : B;
-    const nCols = isA ? aCols : bCols;
+    const matrix = isA ? A : B
+    const nCols = isA ? aCols : bCols
 
-    let inputCells = isA ? inputCellsA! : inputCellsB!;
+    let inputCells = isA ? inputCellsA! : inputCellsB!
 
     if (!inputCells.length && !hasOpenedBefore) {
       return
@@ -82,8 +82,8 @@ const MatrixModal: FC = () => {
     if (cellWidth === 0) {
       const newAInputCells = Array.from(document.getElementsByClassName('cell-a') as HTMLCollectionOf<HTMLInputElement>)
       const newBInputCells = Array.from(document.getElementsByClassName('cell-b') as HTMLCollectionOf<HTMLInputElement>)
-      setInputCellsA(newAInputCells);
-      setInputCellsB(newBInputCells);
+      setInputCellsA(newAInputCells)
+      setInputCellsB(newBInputCells)
       inputCells = isA ? newAInputCells : newBInputCells
       setInputCellsEqCoefs(newInputCellsEqCoefs)
     }
@@ -92,8 +92,8 @@ const MatrixModal: FC = () => {
     for (let index = 0; index < inputCells.length; index++) {
       const inputCell = inputCells[index]
 
-      const row = Math.floor(index / nCols);
-      const col = index - row * nCols;
+      const row = Math.floor(index / nCols)
+      const col = index - row * nCols
 
       // Also fill `equationCoefs` input cells
       const coefCell = newInputCellsEqCoefs[row]
@@ -107,7 +107,7 @@ const MatrixModal: FC = () => {
         // If was in `Cancel` previously, dimensions will mismatch
         if (matrix.length !== expectedDim[0] || matrix[0].length !== expectedDim[1]) {
           const newAInputCells = Array.from(document.getElementsByClassName('cell-a') as HTMLCollectionOf<HTMLInputElement>)
-          setInputCellsA(newAInputCells);
+          setInputCellsA(newAInputCells)
           const newInputCellsEqCoefs = Array.from(document.getElementsByClassName('cell-eq-coef') as HTMLCollectionOf<HTMLInputElement>)
           setInputCellsEqCoefs(newInputCellsEqCoefs)
 
@@ -129,7 +129,7 @@ const MatrixModal: FC = () => {
             setB([])
           }
 
-          return;
+          return
         }
 
         inputCell.value = matrix[row][col] as unknown as string ?? ''
@@ -145,12 +145,12 @@ const MatrixModal: FC = () => {
 
   /** Initially fill matrices with `rows` * undefined */
   const initialFillMatrices = () => {
-    initialFillA();
-    fillInputCells();
+    initialFillA()
+    fillInputCells()
 
     if (!isOnlyA) {
-      initialFillB();
-      fillInputCells(false);
+      initialFillB()
+      fillInputCells(false)
     }
   }
 
@@ -163,43 +163,43 @@ const MatrixModal: FC = () => {
 
   /** Update the state with one new value immutably. */
   const updateValue = (row: number, col: number, value: number, isA = true) => {
-    const matrix = isA ? A : B;
+    const matrix = isA ? A : B
 
     // Make a shallow copy of the previous matrix
-    const newMatrix = [...matrix];
-    const func = isA ? setA : setB;
+    const newMatrix = [...matrix]
+    const func = isA ? setA : setB
 
     if (typeof (newMatrix[row]) === 'undefined') {
       newMatrix.push([])
     }
 
     if (!Array.isArray(newMatrix[row])) {
-      return;
+      return
     }
 
     // Make a copy of the row that we want to modify
-    const updatedRow = [...newMatrix[row]];
+    const updatedRow = [...newMatrix[row]]
 
-    updatedRow[col] = value;
+    updatedRow[col] = value
 
     // Replace the old row with the updated row in the matrix
-    newMatrix[row] = updatedRow;
+    newMatrix[row] = updatedRow
 
-    func(newMatrix);
-  };
+    func(newMatrix)
+  }
 
   const checkIfIsMatrixFilled = (
     fillFunc: (value: boolean) => void,
     isA = true
   ) => {
-    const inputCells = isA ? inputCellsA : inputCellsB;
-    const matrixIsFilled = inputCells.every(x => x.value);
+    const inputCells = isA ? inputCellsA : inputCellsB
+    const matrixIsFilled = inputCells.every(x => x.value)
     const areCoefsFilled = isEquation ? inputCellsEqCoefs.every(x => x.value) : true
-    const isFilled = matrixIsFilled && areCoefsFilled;
-    fillFunc(isFilled);
+    const isFilled = matrixIsFilled && areCoefsFilled
+    fillFunc(isFilled)
     setCoefsInputsAreFilled(areCoefsFilled)
 
-    return isFilled;
+    return isFilled
   }
 
   const handleCellValueChange = (
@@ -211,10 +211,10 @@ const MatrixModal: FC = () => {
   ) => {
 
     // Only allow one dot
-    let dotsCount = [...e.target.value].filter(x => x === '.').length;
+    let dotsCount = [...e.target.value].filter(x => x === '.').length
 
     // @ts-ignore:next-line
-    const newChar = e.nativeEvent.data;
+    const newChar = e.nativeEvent.data
 
     const disableFunc = isA ? setIsADisabled : setIsBDisabled
     const fillFunc = isA ? setAIsFilled : setBIsFilled
@@ -225,16 +225,16 @@ const MatrixModal: FC = () => {
       : inputCellsB
 
     if (newChar === '.') {
-      dotsCount--;
+      dotsCount--
 
       if (e.target.value.length === 1 || dotsCount > 0) {
         e.target.value = ''
 
-        return;
+        return
       }
     }
 
-    const isNum = isStringNumeric(e.target.value);
+    const isNum = isStringNumeric(e.target.value)
 
     const isNegativeInput = newChar === '-'
     const firstCharIsNegative = e.target.value.length === 1 && isNegativeInput
@@ -267,7 +267,7 @@ const MatrixModal: FC = () => {
       }
     } else {
       // Prevent the input from updating if it's invalid
-      e.target.value = e.target.value.slice(0, -1);
+      e.target.value = e.target.value.slice(0, -1)
       if (e.target.value.length === 0) {
         fillFunc(false)
       }
@@ -291,30 +291,30 @@ const MatrixModal: FC = () => {
 
   const fillWithZeros = useMemo(() => {
     return (isA = true) => {
-      const func = isA ? setA : setB;
-      const fillFunc = isA ? setAIsFilled : setBIsFilled;
-      const newMatrix = isA ? [...A] : [...B];
+      const func = isA ? setA : setB
+      const fillFunc = isA ? setAIsFilled : setBIsFilled
+      const newMatrix = isA ? [...A] : [...B]
 
       for (let row = 0; row < newMatrix.length; row++) {
         for (let col = 0; col < newMatrix[0].length; col++) {
           if (!newMatrix[row][col]) {
-            newMatrix[row][col] = 0;
+            newMatrix[row][col] = 0
           }
         }
       }
 
-      func!(newMatrix);
-      fillFunc(true);
+      func!(newMatrix)
+      fillFunc(true)
 
-      const inputCells = isA ? inputCellsA : inputCellsB;
+      const inputCells = isA ? inputCellsA : inputCellsB
 
       for (const inputCell of inputCells!) {
         if (!inputCell.value) {
-          inputCell.value = '0';
+          inputCell.value = '0'
         }
       }
-    };
-  }, [A, B, inputCellsA, inputCellsB, setA, setB, setAIsFilled, setBIsFilled]);
+    }
+  }, [A, B, inputCellsA, inputCellsB, setA, setB, setAIsFilled, setBIsFilled])
 
   const clearMatrix = (isA = true) => {
     const inputCells = isA ? inputCellsA : inputCellsB
@@ -339,13 +339,13 @@ const MatrixModal: FC = () => {
 
     setInputCellsA(
       Array.from(document.getElementsByClassName('cell-a') as HTMLCollectionOf<HTMLInputElement>)
-    );
+    )
     setInputCellsB(
       Array.from(document.getElementsByClassName('cell-b') as HTMLCollectionOf<HTMLInputElement>)
-    );
+    )
     setInputCellsEqCoefs(
       Array.from(document.getElementsByClassName('cell-eq-coef') as HTMLCollectionOf<HTMLInputElement>)
-    );
+    )
     fillInputCells()
   }, [isInsertingA])
 
@@ -356,10 +356,10 @@ const MatrixModal: FC = () => {
 
     setInputCellsA(
       Array.from(document.getElementsByClassName('cell-a') as HTMLCollectionOf<HTMLInputElement>)
-    );
+    )
     setInputCellsB(
       Array.from(document.getElementsByClassName('cell-b') as HTMLCollectionOf<HTMLInputElement>)
-    );
+    )
     setInputCellsEqCoefs(
       Array.from(document.getElementsByClassName('cell-eq-coef') as HTMLCollectionOf<HTMLInputElement>)
     )
@@ -370,15 +370,15 @@ const MatrixModal: FC = () => {
   useEffect(() => {
     setInputCellsA(
       Array.from(document.getElementsByClassName('cell-a') as HTMLCollectionOf<HTMLInputElement>)
-    );
+    )
     setInputCellsB(
       Array.from(document.getElementsByClassName('cell-b') as HTMLCollectionOf<HTMLInputElement>)
-    );
+    )
     setInputCellsEqCoefs(
       Array.from(document.getElementsByClassName('cell-eq-coef') as HTMLCollectionOf<HTMLInputElement>)
-    );
-    initialFillMatrices();
-  }, [aDim[0], aDim[1], bDim[0], bDim[1], isEquation, location.pathname]);
+    )
+    initialFillMatrices()
+  }, [aDim[0], aDim[1], bDim[0], bDim[1], isEquation, location.pathname])
 
   useEffect(() => {
     const loc = location.pathname.split('/').slice(-1)[0]
@@ -423,7 +423,7 @@ const MatrixModal: FC = () => {
                         <thead>
                           <tr>
                             {/* First element is empty */}
-                            <th>&nbsp;</th>
+                            <th>&nbsp</th>
                             {Array.from({ length: aCols }).map((_, col) => (
                               <th key={col}>{!isEquation ? 'A' : 'X'}<span className='subindex'>{col + 1}</span></th>
                             ))}
@@ -510,7 +510,7 @@ const MatrixModal: FC = () => {
                           <thead>
                             <tr>
                               {/* First element is empty */}
-                              <th>&nbsp;</th>
+                              <th>&nbsp</th>
                               {Array.from({ length: bCols }).map((_, col) => (
                                 <th key={col}>B<span className='subindex'>{col + 1}</span></th>
                               ))}

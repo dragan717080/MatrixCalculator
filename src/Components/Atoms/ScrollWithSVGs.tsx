@@ -9,12 +9,12 @@ const ScrollWithSVGs: FC<ScrollWithSVGsProps> = ({
 }) => {
   const handleClickUp = (e: MouseEvent<SVGSVGElement>) => {
     const index = Array.from(document.getElementsByClassName('svg-up')).indexOf(e.target as HTMLElement) + 1
-    document.getElementById(`step-${index - 1}`)?.scrollIntoView({ behavior: 'smooth' });
+    document.getElementById(`step-${index - 1}`)?.scrollIntoView({ behavior: 'smooth' })
   }
 
   const handleClickDown = (e: MouseEvent<SVGSVGElement>) => {
     const index = Array.from(document.getElementsByClassName('svg-down')).indexOf(e.target as HTMLElement) + 1
-    document.getElementById(`step-${index + 1}`)?.scrollIntoView({ behavior: 'smooth' });
+    document.getElementById(`step-${index + 1}`)?.scrollIntoView({ behavior: 'smooth' })
   }
 
   return (

@@ -1,5 +1,5 @@
-import { Sign } from '../interfaces/Determinant';
-import Matrix from '../interfaces/Matrix';
+import { Sign } from '../interfaces/Determinant'
+import Matrix from '../interfaces/Matrix'
 
 const getAS = (A: Matrix, B: Matrix, sign: Sign): Matrix => {
   return Array.from(
@@ -15,4 +15,4 @@ const getAS = (A: Matrix, B: Matrix, sign: Sign): Matrix => {
   )
 }
 
-export default getAS;
+export default getAS

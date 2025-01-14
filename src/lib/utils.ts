@@ -28,9 +28,9 @@ export const getCalcTime =
 
 /** Whether the input value is a valid number. */
 export const isStringNumeric = (s: string) => {
-  const pattern = /^[\+\-]?\d*\.?\d+(?:[Ee][\+\-]?\d+)?$/;
+  const pattern = /^[\+\-]?\d*\.?\d+(?:[Ee][\+\-]?\d+)?$/
 
-  return pattern.test(s);
+  return pattern.test(s)
 }
 
 /**

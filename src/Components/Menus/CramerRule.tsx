@@ -81,7 +81,7 @@ const CramerRule: FC = () => {
         calculateResult()
       }
     }
-  }, [A, aIsFilled, isOpen, time]);
+  }, [A, aIsFilled, isOpen, time])
 
   useEffect(() => {
     resetParams()

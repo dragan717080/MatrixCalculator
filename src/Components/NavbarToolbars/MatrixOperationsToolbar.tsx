@@ -13,6 +13,6 @@ const MatrixOperationsToolbar: FC = () => {
   )
 }
 
-MatrixOperationsToolbar.displayName = 'MatrixOperationsToolbar';
+MatrixOperationsToolbar.displayName = 'MatrixOperationsToolbar'
 
-export default MatrixOperationsToolbar;
+export default MatrixOperationsToolbar

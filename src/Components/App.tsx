@@ -36,14 +36,14 @@ function App() {
     const hoveredPortalContent = navbarPortalContents.some(x => x.contains(target))
 
     /** If hovered directly under toolbar, don't close portal. */
-    const navbarItemContainers = Array.from(document.getElementsByClassName('navbar-item-container'));
+    const navbarItemContainers = Array.from(document.getElementsByClassName('navbar-item-container'))
 
     // Check if any of the 'navbar-item-container' elements are contained within the target element
-    let hoveredParentNode = false;
+    let hoveredParentNode = false
     navbarItemContainers.forEach((navItem, index) => {
       if (navItem.contains(target)) {
-        setActiveIndex(index);
-        hoveredParentNode = true;
+        setActiveIndex(index)
+        hoveredParentNode = true
       }
     })
 

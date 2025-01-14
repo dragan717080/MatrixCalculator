@@ -37,5 +37,5 @@ export default function Footer() {
         </svg>
       </a>
     </footer>
-  );
-};
+  )
+}

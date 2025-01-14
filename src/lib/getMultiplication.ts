@@ -85,7 +85,7 @@ import DotProduct from '../interfaces/Multiplication'
  */
 const getMultiplication = (A: Matrix, B: Matrix): Step[] => {
   /** Captures the state of the matrix after each dot product. */
-  const solution = [];
+  const solution = []
 
   // Create a deep copy of A to avoid mutating the original matrix
   let C = Array.from({ length: A.length }, () =>
@@ -106,13 +106,13 @@ const getMultiplication = (A: Matrix, B: Matrix): Step[] => {
       A: JSON.parse(JSON.stringify(C)),
       explanation: explanationRow,
       indices: indicesRow
-    });
+    })
   }
 
   return solution
-};
+}
 
-export default getMultiplication;
+export default getMultiplication
 
 /** Get dot product of i-th row and j-th column. */
 const getDotProduct = (
@@ -121,7 +121,7 @@ const getDotProduct = (
   i: number,
   j: number,
 ): DotProduct => {
-  let sum = 0;
+  let sum = 0
 
   /** Explanation display will be changed in the `Multiplication` component,
    * that will add the `subindex` span to display row/col. */
@@ -131,7 +131,7 @@ const getDotProduct = (
   for (let k = 0; k < A[i].length; k++) {
     const value = (A[i][k] as number) * (B[k][j]! as number)
 
-    sum += value;
+    sum += value
     explanation += `${A[i][k]!} * ${B[k][j]!}`
 
     if (k !== A[i].length - 1) {
