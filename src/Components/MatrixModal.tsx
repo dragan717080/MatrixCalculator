@@ -423,7 +423,7 @@ const MatrixModal: FC = () => {
                         <thead>
                           <tr>
                             {/* First element is empty */}
-                            <th>&nbsp</th>
+                            <th>&nbsp;</th>
                             {Array.from({ length: aCols }).map((_, col) => (
                               <th key={col}>{!isEquation ? 'A' : 'X'}<span className='subindex'>{col + 1}</span></th>
                             ))}
