@@ -1,5 +1,5 @@
 import { Dispatch, RefObject, SetStateAction } from 'react'
-import Matrix, { Step } from './Matrix'
+import Matrix, { Step, TwoNumbers } from './Matrix'
 import { Step as DeterminantStep } from './Determinant'
 
 /**
@@ -55,9 +55,7 @@ export interface useToggleShowSolutionProps {
 /**
  * @type {useUpdateExplanationsProps}
  * 
- * @property {Step[]} steps - Original steps.
- * @property {Dispatch<SetStateAction<boolean>>} setDidUpdateExplanations - Dispatch action
- * to notify that the explanations have been updated.
+ * @property {Step[]} steps - Solution steps.
  * @property {boolean} [isEquation] - (Optional) - Whether it is related to the linear equations system.
  * If it is, it will have one additional step which will provide info on whether
  * the system is consistent based on the value of the determinant.
@@ -71,7 +69,17 @@ export interface useToggleShowSolutionProps {
  */
 export interface UseUpdateExplanationsProps {
   steps: Step[]|DeterminantStep[],
-  setDidUpdateExplanations: Dispatch<SetStateAction<boolean>>
   isEquation?: boolean
   needsDeterminant?: boolean
+}
+
+/**
+ * @type {UseUpdateTableOnDefaultValuesProps}
+ * 
+ * @property {Step[]} steps - Solution steps.
+ * @property {TwoNumbers} aDim - Dimensions of `A`.
+ */
+export interface UseUpdateTableOnDefaultValuesProps {
+  steps: Step[]
+  aDim: TwoNumbers
 }

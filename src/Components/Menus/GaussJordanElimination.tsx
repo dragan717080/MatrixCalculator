@@ -5,7 +5,7 @@ import ScrollWithSVGs from '../Atoms/ScrollWithSVGs'
 import useRecalculate from '../../hooks/useRecalculate'
 import useResetParams from '../../hooks/useResetParams'
 import useToggleShowSolution from '../../hooks/useToggleShowSolution'
-import getInverse from '../../lib/getInverse'
+import useGetHighlightFunc from '../../hooks/useGetHighlightFunc'
 import getGaussJordanElimination from '../../lib/getGaussJordanElimination'
 import { getCalcTime } from '../../lib/utils'
 import { useLinearEquationsStore, useMatrixStore, useModalStore } from '../../store/zustandStore'
@@ -24,7 +24,6 @@ const GaussJordanElimination: FC = () => {
   const { isOpen } = useModalStore()
 
   const solutionStepsRef = useRef<HTMLDivElement | null>(null)
-
   const descriptionAndInputRef = useRef<HTMLDivElement | null>(null)
 
   const [determinant, setDeterminant] = useState<number | undefined>(undefined)
@@ -32,7 +31,6 @@ const GaussJordanElimination: FC = () => {
   const [steps, setSteps] = useState<Step[]>([])
   const [toShowSolution, setToShowSolution] = useState<boolean>(false)
   const [equationSolution, setEquationSolution] = useState<string[] | null>([])
-  const [didUpdateExplanations, setDidUpdateExplanations] = useState<boolean>(false)
 
   const { recalculate } = useRecalculate({ setTime, setShow: setToShowSolution, setSteps })
 
@@ -40,59 +38,9 @@ const GaussJordanElimination: FC = () => {
 
   const { toggleShowSolution } = useToggleShowSolution({ solutionStepsRef, toShowSolution, setToShowSolution })
 
-  const { updateExplanations } = useUpdateExplanations({ steps, setDidUpdateExplanations })
+  const { updateExplanations } = useUpdateExplanations({ steps })
 
-  /**
-   * @param {number} index - Step index.
-   * 
-   * @returns {HighlightCells}
-   */
-  const getHighlightFunc = (index: number): HighlightCells | undefined => {
-    const { A, explanation } = steps[index]
-    const [m, n] = [A.length, A[0].length]
-    const isAugmented = !Array.isArray(explanation) && explanation.includes('Write the augmented')
-    const isInversionStep = Array.isArray(explanation) && explanation.some(x => x.includes('matrix is inversed'))
-
-    if (isAugmented || isInversionStep) {
-      return (_, col) => col >= aDim[1]
-    }
-
-    const isPivot = !Array.isArray(explanation) && explanation.includes('Make the pivot in the')
-
-    if (isPivot) {
-      const [i, j] = explanation.split(/\D/).filter(Boolean).slice(0, 2).map(x => parseInt(x) - 1)
-
-      return (row, col) => row === i && col === j
-    }
-
-    const areRows = Array.isArray(explanation) && explanation.length && explanation[0].includes(' = ') && explanation[0][0] === 'R'
-
-    if (areRows) {
-      // Don't highlight only the pivoted row
-      const explanationRow = explanation[0] as string
-
-      /**
-       * e.g. `R<span class='subindex'>2</span> = R<span class='subindex'>2</span> - 3R1` will return 2.
-       * Text explanation uses 1-based indexing therefore `-1`.
-       */
-      let pivotedRow =
-        explanationRow.match(/>(\d+)</g)!.map(x => x.replace(/[><]/g, '')).slice(-1)[0] as unknown as number - 1
-
-      return (row, _) => row !== pivotedRow
-    }
-
-    const columnIsAlreadyOne = !Array.isArray(explanation) && explanation.includes('is already 1, so no need to eliminate this column')
-    if (columnIsAlreadyOne) {
-      // console.log('step to highlight:', explanation);
-      const index = explanation.split('is already 1, so no need to eliminate this column')[0]
-      // console.log(index);
-      // Text explanation uses 1-based indexing
-      const [i, j] = index.split(/\D/).filter(Boolean).map(x => parseInt(x) - 1)
-      // console.log('i:', i, 'j:', j);
-
-      return (row, col) => row === i && col === j
-    }
-  }
+  const { getHighlightFunc } = useGetHighlightFunc({ steps, aDim })
 
   const calculateResult = () => {
     // It will go to this function again when `A` changes with `updateValuesForMatrix`
@@ -185,10 +133,10 @@ const GaussJordanElimination: FC = () => {
   useEffect(() => {
     console.log('New steps:', steps);
 
-    if (steps.length && !didUpdateExplanations) {
+    if (steps.length) {
       updateExplanations()
     }
-  }, [steps.length, toShowSolution, didUpdateExplanations, A])
+  }, [steps.length, toShowSolution, A])
 
   return (
     <div className='col-h'>

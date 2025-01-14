@@ -6,6 +6,7 @@ import useRecalculate from '../../hooks/useRecalculate'
 import useResetParams from '../../hooks/useResetParams'
 import useUpdateExplanations from '../../hooks/useUpdateExplanations'
 import useToggleShowSolution from '../../hooks/useToggleShowSolution'
+import useGetHighlightFunc from '../../hooks/useGetHighlightFunc'
 import getInverse from '../../lib/getInverse'
 import { getCalcTime } from '../../lib/utils'
 import { useMatrixStore, useModalStore } from '../../store/zustandStore'
@@ -29,7 +30,6 @@ const Inverse: FC = () => {
   const [steps, setSteps] = useState<Step[]>([])
   const [toShowSolution, setToShowSolution] = useState<boolean>(false)
   const [C, setC] = useState<Matrix>([])
-  const [didUpdateExplanations, setDidUpdateExplanations] = useState<boolean>(false)
 
   const { recalculate } = useRecalculate({ setTime, setShow: setToShowSolution, setSteps })
 
@@ -37,56 +37,11 @@ const Inverse: FC = () => {
 
   const { toggleShowSolution } = useToggleShowSolution({ solutionStepsRef, toShowSolution, setToShowSolution })
 
-  const { updateExplanations } = useUpdateExplanations({ steps, setDidUpdateExplanations, isEquation: true })
+  const { updateExplanations } = useUpdateExplanations({ steps, isEquation: true })
+
+  const { getHighlightFunc } = useGetHighlightFunc({ steps, aDim })
 
   const tableRef = useRef<HTMLTableElement | null>(null)
-
-  /**
-   * @param {number} index - Step index.
-   * 
-   * @returns {HighlightCells}
-   */
-  const getHighlightFunc = (index: number): HighlightCells | undefined => {
-    const { A, explanation } = steps[index]
-    const [m, n] = [A.length, A[0].length]
-    const isAugmented = !Array.isArray(explanation) && explanation.includes('Write the augmented')
-    const isInversionStep = Array.isArray(explanation) && explanation.some(x => x.includes('matrix is inversed'))
-
-    if (isAugmented || isInversionStep) {
-      return (_, col) => col >= aDim[1]
-    }
-
-    const isPivot = !Array.isArray(explanation) && explanation.includes('Make the pivot in the')
-
-    if (isPivot) {
-      const [i, j] = explanation.split(/\D/).filter(Boolean).slice(0, 2).map(x => parseInt(x) - 1)
-
-      return (row, col) => row === i && col === j
-    }
-
-    const areRows = Array.isArray(explanation) && explanation.length && explanation[0].includes(' = ') && explanation[0][0] === 'R'
-
-    if (areRows) {
-      // Don't highlight only the pivoted row
-      let pivotedRow = parseInt((explanation[0] as string).split(/\s/).slice(-1)[0].split(/\D/).slice(-1)[0])
-      // Text explanation uses 1-based indexing
-      pivotedRow -= 1
-
-      return (row, col) => row !== pivotedRow
-    }
-
-    const columnIsAlreadyOne = !Array.isArray(explanation) && explanation.includes('is already 1, so no need to eliminate this column')
-    if (columnIsAlreadyOne) {
-      // console.log('step to highlight:', explanation);
-      const index = explanation.split('is already 1, so no need to eliminate this column')[0]
-      // console.log(index);
-      // Text explanation uses 1-based indexing
-      const [i, j] = index.split(/\D/).filter(Boolean).map(x => parseInt(x) - 1)
-      // console.log('i:', i, 'j:', j);
-
-      return (row, col) => row === i && col === j
-    }
-  }
 
   const calculateResult = () => {
     // It will go to this function again when `A` changes with `updateValuesForMatrix`
@@ -130,7 +85,7 @@ const Inverse: FC = () => {
         th.innerHTML = `B<span class='subindex'>${index + 1}</span>`
       })
     }
-  }, [steps.length, aDim, solutionStepsRef.current?.getElementsByTagName('table').length])
+  }, [steps.length, toShowSolution, aDim, solutionStepsRef.current?.getElementsByTagName('table').length])
 
   useEffect(() => {
     const originalMatrixHeaders = document.getElementById('step-1')?.getElementsByTagName('th')
@@ -158,10 +113,10 @@ const Inverse: FC = () => {
   useEffect(() => {
     console.log('New steps:', steps);
 
-    if (steps.length && !didUpdateExplanations) {
+    if (steps.length) {
       updateExplanations()
     }
-  }, [steps.length, toShowSolution, didUpdateExplanations])
+  }, [steps.length, toShowSolution])
 
   useEffect(() => {
     console.log('A changed:', A)

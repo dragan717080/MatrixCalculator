@@ -70,11 +70,9 @@ const AdditionSubstraction: FC = () => {
       {aIsFilled && bIsFilled && !isOpen && (
         <div ref={solutionStepsRef}>
           {toShowSolution && (
-            <>
               <div className='solution-items-container mb-7'>
                 <OriginalMatrix A={A} steps={[]} B={B} needsDeterminant={false} /> 
               </div>
-            </>
           )}
         </div>
       )}

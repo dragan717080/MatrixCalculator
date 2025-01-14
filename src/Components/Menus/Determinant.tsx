@@ -15,10 +15,8 @@ import OriginalMatrix from '../Atoms/OriginalMatrix'
 
 const Determinant: FC = () => {
   const {
-    setIsOnlyA,
     setCalculate,
-    aDim, setADim, A, setA, aIsFilled, setAIsFilled,
-    setBDim, setB, setBIsFilled
+    aDim, A, aIsFilled
   } = useMatrixStore()
   const { isOpen } = useModalStore()
 
@@ -32,7 +30,6 @@ const Determinant: FC = () => {
   const [toShowSolution, setToShowSolution] = useState<boolean>(false)
   const [actualCounts, setActualCounts] = useState<number[]>([])
   const [stepsSwapsIndices, setStepsSwapsIndices] = useState<{ [key: string]: number }>({} as { [key: string]: number })
-  const [didUpdateExplanations, setDidUpdateExplanations] = useState<boolean>(false)
 
   const { recalculate } = useRecalculate({ setTime, setShow: setToShowSolution, setSteps })
 
@@ -40,7 +37,7 @@ const Determinant: FC = () => {
 
   const { toggleShowSolution } = useToggleShowSolution({ solutionStepsRef, toShowSolution, setToShowSolution })
 
-  const { updateExplanations } = useUpdateExplanations({ steps, setDidUpdateExplanations, needsDeterminant: false })
+  const { updateExplanations } = useUpdateExplanations({ steps, needsDeterminant: false })
 
   const calculateResult = () => {
     // It will go to this function again when `A` changes with `updateValuesForMatrix`
@@ -70,13 +67,12 @@ const Determinant: FC = () => {
   const getStepText = useMemo(
     () =>
       (step: Step, index: number) => {
-        return ''
-/*         return typeof (step.swapRow) !== 'undefined'
+        return typeof (step.swapRow) !== 'undefined'
           ? `Swapping rows ${step.swapRow[0] + 1} and ${step.swapRow[1] + 1}, changing the sign to ${step.sign}`
           // Text will have 1-based indexing so need `+1`
           : `Eliminate elements in the ${stepsSwapsIndices[index] + 1}${getOrderNumberToStr(
             stepsSwapsIndices[index])} column under the ${stepsSwapsIndices[index] + 1}${getOrderNumberToStr(
-              stepsSwapsIndices[index])} element`; */
+              stepsSwapsIndices[index])} element`;
       },
     [steps.length, actualCounts.length, Object.keys(stepsSwapsIndices).length])
 
@@ -94,9 +90,9 @@ const Determinant: FC = () => {
 
     const stepsWithoutSwaps = steps.filter(x => typeof (x.swapRow) === 'undefined')
 
-    // Track indices of `steps` in relation to filtered steps without swaps
-    // e.g. if first 5 elements are 'swap, no swap, no swap, no swap, swap',
-    // it should return '{ 1 -> 0, 2 -> 1, 3 -> 2 }
+    /** Track indices of `steps` in relation to filtered steps without swaps
+     * e.g. if first 5 elements are 'swap, no swap, no swap, no swap, swap',
+     * it should return `{ 1 -> 0, 2 -> 1, 3 -> 2 }`. */
     const d = {} as { [key: string]: number }
 
     for (let i = 0; i < steps.length; i++) {

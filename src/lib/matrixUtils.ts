@@ -55,7 +55,7 @@ export const updateValuesInPivotRow = (A: Matrix, row: number) => {
   // Early return if pivot is 1, no need to process row
   if (pivot === 1) {
     const explanation = `A<span class='subindex'>${row + 1}</span><span class='subindex'>${row + 1}</span> is already 1, so no need to eliminate this column`
-    return { explanation, A, toReturnEarly: false }
+    return { explanation, A, toReturnEarly: true }
   }
 
   const strCoef = Math.round(pivot * 1000) / 1000

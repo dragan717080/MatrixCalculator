@@ -9,7 +9,6 @@ import { Step } from '../interfaces/Matrix';
  */
 const useUpdateExplanations = ({
   steps,
-  setDidUpdateExplanations,
   isEquation = false,
   needsDeterminant = true
 }: UseUpdateExplanationsProps) => {
@@ -20,29 +19,27 @@ const useUpdateExplanations = ({
       return;
     }
 
-    console.log('%cUpdating explanations', 'color:red;font-size:20px');
-    console.log('steps:', steps);
-    console.log('explanationParagraphs:', explanationParagraphs);
+    // console.log('%cUpdating explanations', 'color:red;font-size:20px');
+    // console.log('steps:', steps);
+    // console.log('explanationParagraphs:', explanationParagraphs);
 
     const allExplanations = steps.flatMap(x => x.explanation)
 
-    console.log('All explanations:', allExplanations);
+    // console.log('All explanations:', allExplanations);
 
     explanationParagraphs.forEach((p, index) => {
       // console.log('Current html, should go back to:', p.innerHTML);
       // To do: remove
       const curr = p.innerHTML;
       const decodedString = p.textContent;
-      console.log(decodedString);
+      // console.log(decodedString);
       const explanation = allExplanations.find(x => x === p.textContent) as string
-      console.log(explanation);
+      // console.log(explanation);
 
       if (explanation) {
         p.innerHTML = explanation
       }
     })
-
-    setDidUpdateExplanations(true)
   }
 
   return { updateExplanations }

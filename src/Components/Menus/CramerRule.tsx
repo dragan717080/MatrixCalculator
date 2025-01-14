@@ -31,7 +31,6 @@ const CramerRule: FC = () => {
   const [steps, setSteps] = useState<Step[]>([])
   const [toShowSolution, setToShowSolution] = useState<boolean>(false)
   const [C, setC] = useState<Matrix>([])
-  const [didUpdateExplanations, setDidUpdateExplanations] = useState<boolean>(false)
 
   const { recalculate } = useRecalculate({ setTime, setShow: setToShowSolution, setSteps })
 
@@ -39,9 +38,7 @@ const CramerRule: FC = () => {
 
   const { toggleShowSolution } = useToggleShowSolution({ solutionStepsRef, toShowSolution, setToShowSolution })
 
-  const { updateExplanations } = useUpdateExplanations({ steps, setDidUpdateExplanations, isEquation: true })
-
-  const tableRef = useRef<HTMLTableElement | null>(null)
+  const { updateExplanations } = useUpdateExplanations({ steps, isEquation: true })
 
   const calculateResult = () => {
     // It will go to this function again when `A` changes with `updateValuesForMatrix`
@@ -103,10 +100,10 @@ const CramerRule: FC = () => {
   useEffect(() => {
     console.log('New steps:', steps);
 
-    if (steps.length && !didUpdateExplanations) {
+    if (steps.length) {
       updateExplanations()
     }
-  }, [steps.length, toShowSolution, didUpdateExplanations])
+  }, [steps.length, toShowSolution])
 
   return (
     <div className='col-h'>
@@ -194,7 +191,6 @@ const CramerRule: FC = () => {
                       nRows={C.length}
                       nCols={C[0].length}
                       A={C}
-                      ref={tableRef}
                       letter='X'
                     />
                   </>)

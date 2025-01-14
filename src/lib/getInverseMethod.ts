@@ -53,8 +53,9 @@ const getInverseMethod = (A: Matrix, equationCoefs: number[]): InverseMethodSolu
   const coefsMatrix = equationCoefs.map(x => [x])
 
   const multiplicationSteps = getMultiplication(inverseMatrix!, coefsMatrix)
-  const resultMatrix = multiplicationSteps[multiplicationSteps.length - 1].A
+  let resultMatrix = multiplicationSteps[multiplicationSteps.length - 1].A
 
+  resultMatrix = [resultMatrix.flat()]
   console.log('Result matrix:', resultMatrix);
 
   steps.push({
