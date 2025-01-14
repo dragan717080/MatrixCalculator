@@ -18,7 +18,7 @@
     /* Black w/ opacity */
 }
 
-/* Modal Content */
+/* Modal content */
 .modal-content {
     margin: auto;
     padding: 20px 0;
@@ -28,7 +28,7 @@
     transform: translate(-50%, -50%);
 }
 
-/* The Close Button */
+/* Close Button */
 .close {
     color: #aaaaaa;
     float: right;
