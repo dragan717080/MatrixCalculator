@@ -11,12 +11,13 @@ import { getCalcTime, getIndicesFromEquation, wait } from '../../lib/utils'
 import { useMatrixStore } from '../../store/zustandStore'
 import { useModalStore } from '../../store/zustandStore'
 import { Step } from '../../interfaces/Matrix'
+import OriginalMatrix from '../Atoms/OriginalMatrix'
 
 const Multiplication: FC = () => {
   const {
     isOnlyA, setIsOnlyA,
-    aDim, setADim, A, setA, aIsFilled, setAIsFilled,
-    bDim, setBDim, B, setB, bIsFilled, setBIsFilled,
+    aDim, setADim, A, setA, aIsFilled,
+    bDim, setBDim, B, setB, bIsFilled,
     setCalculate
   } = useMatrixStore()
   const { isOpen } = useModalStore()
@@ -28,15 +29,12 @@ const Multiplication: FC = () => {
   const [toShowSolution, setToShowSolution] = useState<boolean>(false)
   const [steps, setSteps] = useState<Step[]>([])
   const [time, setTime] = useState<number>(-1)
-  const [didUpdateExplanations, setDidUpdateExplanations] = useState<boolean>(false)
 
   const { recalculate } = useRecalculate({ setTime, setShow: setToShowSolution, setSteps, stepsRef: solutionStepsRef })
 
   const { resetParams } = useResetParams({ onlyHasA: false, descriptionAndInputRef })
 
   const { toggleShowSolution } = useToggleShowSolution({ solutionStepsRef, toShowSolution, setToShowSolution })
-
-  const { updateExplanations } = useUpdateExplanations({ steps, setSteps })
 
   const calculateResult = () => {
     // It will go to this function again when `A` or `B` change with `updateValuesForMatrix`
@@ -65,32 +63,14 @@ const Multiplication: FC = () => {
     resetParams()
   }, [])
 
-  useEffect(() => {
-    console.log('New steps:', steps);
-
-    if (steps.length && !isOpen && !didUpdateExplanations) {
-      //updateExplanations()
-      setDidUpdateExplanations(true)
-    }
-  }, [steps, isOpen])
-
   return (
     <div className='col-h'>
       {aIsFilled && bIsFilled && !isOpen && (
         <div ref={solutionStepsRef}>
           {toShowSolution && (
             <>
-              {steps.length > 0 && (
-                <h3 className='mb-2 text-center bold leading-4'>Original matrices</h3>
-              )}
               <div className='solution-items-container mb-7'>
-                <div id='step-1' className='row-v pb-2 px-3 border-b-darkgray'>
-                  <ScrollWithSVGs aCols={aDim[1]} isFirst areBoth />
-                  <div className='row flex-col md:flex-row space-y-6 md:space-y-0 md:space-x-6 pb-6 md:pb-0'>
-                    <MatrixTable nRows={aDim[0]} nCols={aDim[1]} A={A} />
-                    <MatrixTable nRows={bDim[0]} nCols={bDim[1]} A={B} letter='B' />
-                  </div>
-                </div>
+                <OriginalMatrix A={A} steps={steps} B={B} needsDeterminant={false} />
                 {steps.map((step, index) => (
                   <div id={`step-${index + 2}`} className='pt-2 pb-3 border-b-darkgray' key={index}>
                     <div>
@@ -110,7 +90,9 @@ const Multiplication: FC = () => {
                         ))}
                       </div>
                       <div className='row-v px-3'>
-                        <ScrollWithSVGs aCols={aDim[1]} isLast={index === steps.length - 1} />
+                        {steps.length > 1 && (
+                          <ScrollWithSVGs aCols={aDim[1]} isLast={index === steps.length - 1} />
+                        )}
                         <MatrixTable
                           nRows={step.A.length}
                           nCols={step.A[0].length}

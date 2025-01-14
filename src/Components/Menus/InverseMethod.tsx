@@ -10,6 +10,9 @@ import { getCalcTime } from '../../lib/utils'
 import { useLinearEquationsStore, useMatrixStore, useModalStore } from '../../store/zustandStore'
 import Matrix, { Step } from '../../interfaces/Matrix'
 import { HighlightCells } from '../../interfaces/MatrixTableProps'
+import OnlyOneRow from '../Atoms/OnlyOneRow'
+import OriginalMatrix from '../Atoms/OriginalMatrix'
+import useUpdateExplanations from '../../hooks/useUpdateExplanations'
 
 const InverseMethod: FC = () => {
   const { equationCoefs } = useLinearEquationsStore()
@@ -28,12 +31,15 @@ const InverseMethod: FC = () => {
   const [steps, setSteps] = useState<Step[]>([])
   const [toShowSolution, setToShowSolution] = useState<boolean>(false)
   const [C, setC] = useState<Matrix>([])
+  const [didUpdateExplanations, setDidUpdateExplanations] = useState<boolean>(false)
 
   const { recalculate } = useRecalculate({ setTime, setShow: setToShowSolution, setSteps })
 
   const { resetParams } = useResetParams({ descriptionAndInputRef })
 
   const { toggleShowSolution } = useToggleShowSolution({ solutionStepsRef, toShowSolution, setToShowSolution })
+
+  const { updateExplanations } = useUpdateExplanations({ steps, setDidUpdateExplanations, isEquation: true })
 
   const tableRef = useRef<HTMLTableElement | null>(null)
 
@@ -110,7 +116,7 @@ const InverseMethod: FC = () => {
   }
 
   // Since identity matrix will be appended to the right, fix display indexes,
-  // e.g. `A1 A2 A3 A4` -> `A1 A2 B1 B2`
+  // e.g. `X1 X2 X3 X4` -> `X1 X2 B1 B2`
   useEffect(() => {
     if (!toShowSolution) {
       return
@@ -153,8 +159,12 @@ const InverseMethod: FC = () => {
   }, [])
 
   useEffect(() => {
-    console.log('new steps:', steps);
-  }, [steps.length])
+    console.log('New steps:', steps);
+
+    if (steps.length && !didUpdateExplanations) {
+      updateExplanations()
+    }
+  }, [steps.length, toShowSolution, didUpdateExplanations])
 
   useEffect(() => {
     console.log('A changed:', A)
@@ -166,32 +176,7 @@ const InverseMethod: FC = () => {
         <div ref={solutionStepsRef}>
           {toShowSolution && (
             <div className='solution-items-container mb-7'>
-              <h3 className='mb-4 text-center bold leading-4'>Original matrix</h3>
-              {A.length === 1 && (
-                <div className="w-full row overflow-hidden">
-                  <span>
-                    A has only one row so Δ =
-                    A<span className="subindex">1</span><span className="subindex">1</span> = {A[0][0]}
-                  </span>
-                </div>
-              )}
-              <div id='step-1' className='row-v px-3 border-b-darkgray'>
-                {steps.length > 1 && (
-                  <ScrollWithSVGs aCols={aDim[1]} isFirst />
-                )}
-                <MatrixTable
-                  nRows={aDim[0]}
-                  nCols={aDim[1]}
-                  A={A}
-                  isWithCoefs={true}
-                  letter='X'
-                  highlightFunc={
-                    A.length === 1 || A[0].length === 1
-                      ? (row, col) => row === 0 && col === 0
-                      : undefined
-                  }
-                />
-              </div>
+              <OriginalMatrix A={A} steps={steps} />
               {typeof (determinant) !== 'undefined' && determinant !== 0 && (
                 <div id='step-2' className='row-v py-4 px-3 border-b-darkgray'>
                   <ScrollWithSVGs aCols={aDim[1]} />
@@ -207,8 +192,8 @@ const InverseMethod: FC = () => {
                   <div className="flex flex-col space-y-1.5 pt-2 pb-2.5">
                     {Array.isArray(step.explanation)
                       ? step.explanation.map((explanation, index) => (
-                        <p key={index}>{explanation}</p>))
-                      : <p>{step.explanation}</p>
+                        <p className='step-explanation' key={index}>{explanation}</p>))
+                      : <p className='step-explanation'>{step.explanation}</p>
                     }
                   </div>
                   <p className={`${steps[index].swapRow && 'hidden'}`}></p>

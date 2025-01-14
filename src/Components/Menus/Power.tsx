@@ -9,6 +9,7 @@ import getPower from '../../lib/getPower'
 import { getCalcTime, wait } from '../../lib/utils'
 import { useMatrixStore, useModalStore } from '../../store/zustandStore'
 import Matrix, { Step } from '../../interfaces/Matrix'
+import OriginalMatrix from '../Atoms/OriginalMatrix'
 
 const Power: FC = () => {
   const {
@@ -74,14 +75,8 @@ const Power: FC = () => {
         <div ref={solutionStepsRef}>
           {toShowSolution && (
             <>
-              {steps.length > 0 && (
-                <h3 className='mb-1 text-center bold leading-4'>Original matrix</h3>
-              )}
               <div className='solution-items-container mb-7'>
-                <div id='step-1' className='row-v px-3 border-b-darkgray'>
-                  <ScrollWithSVGs aCols={aDim[1]} isFirst />
-                  <MatrixTable nRows={aDim[0]} nCols={aDim[1]} A={A} />
-                </div>
+                <OriginalMatrix A={A} steps={steps} needsDeterminant={false} />
                 {power !== 1 && steps.slice(0, -1).map((step, index) => (
                   <div id={`step-${index + 2}`} className='pt-2 pb-3 border-b-darkgray' key={index}>
                     <div>

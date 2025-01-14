@@ -1,33 +1,48 @@
 import { getIndicesFromEquation } from '../lib/utils';
 import { UseUpdateExplanationsProps } from '../interfaces/Hooks';
+import { Step as DeterminantStep } from '../interfaces/Determinant';
 import { Step } from '../interfaces/Matrix';
 
 /**
  * For components that need to update explanations (e.g. `Multiplication`),
  * for improved formatting. Those components will add the `subindex` class span.
  */
-const useUpdateExplanations = ({ steps, setSteps }: UseUpdateExplanationsProps) => {
+const useUpdateExplanations = ({
+  steps,
+  setDidUpdateExplanations,
+  isEquation = false,
+  needsDeterminant = true
+}: UseUpdateExplanationsProps) => {
   const updateExplanations = () => {
-    console.log('%cUpdating explanations', 'color:red;font-size:22px');
-    console.log('steps:', steps);
+    const explanationParagraphs = Array.from(document.getElementsByClassName('step-explanation'))
 
-    const newSteps: Step[] = structuredClone(steps)
-
-    for (let stepIndex = 0; stepIndex < steps.length; stepIndex++) {
-      (steps[stepIndex].explanation as string[]).forEach((expl, index) => {
-        const [indices, equation] = getIndicesFromEquation(expl as string, true)
-        console.log('indices:', indices);
-        console.log('equation:', equation);
-        const prevIndices = newSteps[stepIndex].indices ?? []
-
-        newSteps[stepIndex].indices = [...prevIndices, indices]
-      })
+    if (!steps.length || !explanationParagraphs.length) {
+      return;
     }
 
-    console.log('Updated steps:', newSteps);
-    console.log('new indices:', newSteps.map(x => x.indices));
+    console.log('%cUpdating explanations', 'color:red;font-size:20px');
+    console.log('steps:', steps);
+    console.log('explanationParagraphs:', explanationParagraphs);
 
-    setSteps(newSteps)
+    const allExplanations = steps.flatMap(x => x.explanation)
+
+    console.log('All explanations:', allExplanations);
+
+    explanationParagraphs.forEach((p, index) => {
+      // console.log('Current html, should go back to:', p.innerHTML);
+      // To do: remove
+      const curr = p.innerHTML;
+      const decodedString = p.textContent;
+      console.log(decodedString);
+      const explanation = allExplanations.find(x => x === p.textContent) as string
+      console.log(explanation);
+
+      if (explanation) {
+        p.innerHTML = explanation
+      }
+    })
+
+    setDidUpdateExplanations(true)
   }
 
   return { updateExplanations }

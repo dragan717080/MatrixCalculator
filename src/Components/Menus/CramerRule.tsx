@@ -4,12 +4,15 @@ import MatrixTable from '../Atoms/MatrixTable'
 import ScrollWithSVGs from '../Atoms/ScrollWithSVGs'
 import useRecalculate from '../../hooks/useRecalculate'
 import useResetParams from '../../hooks/useResetParams'
+import useUpdateExplanations from '../../hooks/useUpdateExplanations'
 import useToggleShowSolution from '../../hooks/useToggleShowSolution'
 import getCramerRule from '../../lib/getCramerRule'
 import { getCalcTime } from '../../lib/utils'
 import { useLinearEquationsStore, useMatrixStore, useModalStore } from '../../store/zustandStore'
 import Matrix, { Step } from '../../interfaces/Matrix'
 import { HighlightCells } from '../../interfaces/MatrixTableProps'
+import OnlyOneRow from '../Atoms/OnlyOneRow'
+import OriginalMatrix from '../Atoms/OriginalMatrix'
 
 const CramerRule: FC = () => {
   const { equationCoefs } = useLinearEquationsStore()
@@ -28,12 +31,15 @@ const CramerRule: FC = () => {
   const [steps, setSteps] = useState<Step[]>([])
   const [toShowSolution, setToShowSolution] = useState<boolean>(false)
   const [C, setC] = useState<Matrix>([])
+  const [didUpdateExplanations, setDidUpdateExplanations] = useState<boolean>(false)
 
   const { recalculate } = useRecalculate({ setTime, setShow: setToShowSolution, setSteps })
 
   const { resetParams } = useResetParams({ descriptionAndInputRef })
 
   const { toggleShowSolution } = useToggleShowSolution({ solutionStepsRef, toShowSolution, setToShowSolution })
+
+  const { updateExplanations } = useUpdateExplanations({ steps, setDidUpdateExplanations, isEquation: true })
 
   const tableRef = useRef<HTMLTableElement | null>(null)
 
@@ -68,29 +74,6 @@ const CramerRule: FC = () => {
     if (!toShowSolution) {
       return
     }
-
-    const tableElements = Array.from(document.getElementsByTagName('table'))
-
-    for (const table of tableElements) {
-      const headers = Array.from(table.getElementsByTagName('th'))
-
-      // On the original table display differently
-      const stepId = (table.parentNode as HTMLElement).id
-      if (stepId === 'step-1') {
-        continue
-      }
-
-      // Get table elements where header count is larger than `aDim[1]`
-      // First `th` is empty so `+1`
-      if (headers.length === aDim[1] + 1) {
-        continue
-      }
-
-      headers.slice(Math.floor(headers.length / 2) + 1).forEach((th, index) => {
-        th.innerHTML = `B<span class='subindex'>${index + 1}</span>`
-      })
-    }
-
     const solutionExplanations = Array.from(document.getElementsByClassName('solution-explanation'))
 
     const lastElements = steps.slice(steps.length - solutionExplanations.length)
@@ -114,12 +97,16 @@ const CramerRule: FC = () => {
   }, [])
 
   useEffect(() => {
-    console.log('new steps:', steps);
-  }, [steps.length])
-
-  useEffect(() => {
     console.log('A changed:', A)
   }, [A])
+
+  useEffect(() => {
+    console.log('New steps:', steps);
+
+    if (steps.length && !didUpdateExplanations) {
+      updateExplanations()
+    }
+  }, [steps.length, toShowSolution, didUpdateExplanations])
 
   return (
     <div className='col-h'>
@@ -127,32 +114,7 @@ const CramerRule: FC = () => {
         <div ref={solutionStepsRef}>
           {toShowSolution && (
             <div className='solution-items-container mb-7'>
-              <h3 className='mb-4 text-center bold leading-4'>Original matrix</h3>
-              {A.length === 1 && (
-                <div className="w-full row overflow-hidden">
-                  <span>
-                    A has only one row so Δ =
-                    A<span className="subindex">1</span><span className="subindex">1</span> = {A[0][0]}
-                  </span>
-                </div>
-              )}
-              <div id='step-1' className='row-v px-3 border-b-darkgray'>
-                {steps.length > 1 && (
-                  <ScrollWithSVGs aCols={aDim[1]} isFirst />
-                )}
-                <MatrixTable
-                  nRows={aDim[0]}
-                  nCols={aDim[1]}
-                  A={A}
-                  isWithCoefs={true}
-                  letter='X'
-                  highlightFunc={
-                    A.length === 1 || A[0].length === 1
-                      ? (row, col) => row === 0 && col === 0
-                      : undefined
-                  }
-                />
-              </div>
+              <OriginalMatrix A={A} steps={steps} isEquation={true} />
               {typeof (determinant) !== 'undefined' && determinant !== 0 && (
                 <div id='step-2' className='row-v py-4 px-3 border-b-darkgray'>
                   <ScrollWithSVGs aCols={aDim[1]} />

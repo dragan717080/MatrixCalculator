@@ -309,6 +309,11 @@ ol {
     overflow-x: scroll;
 }
 
+/* Paragraph explaining solution step */
+.solution-explanation {
+    line-height: 1.75rem;
+}
+
 @media screen and (min-width: 560px) {
     .solution-items-container > div {
         overflow-x: auto;

@@ -4,7 +4,7 @@ export interface Step {
   A: Matrix
   swapRow: number[] | undefined
   sign: Sign
-  explanations: string[]
+  explanation: string[]
 }
 
 export interface DeterminantSolution {

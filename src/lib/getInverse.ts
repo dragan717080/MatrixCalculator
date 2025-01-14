@@ -1,8 +1,9 @@
-import Matrix, { InverseSolution, Step, TwoNumbers } from '../interfaces/Matrix'
 import getDeterminant from './getDeterminant'
 import { getIdentityMatrix } from './getPower'
-import { swapRows } from './matrixUtils'
+import { eliminateRowsGaussJordan, swapRows, updateValuesInPivotRow } from './matrixUtils'
 import { getOrderNumberToStr } from './utils'
+import Matrix, { InverseSolution, Step, TwoNumbers } from '../interfaces/Matrix'
+import { EliminateValues } from '../interfaces/MatrixUtils'
 
 /**
  * Gauss-Jordan elimination to get the inverse matrix.
@@ -145,7 +146,7 @@ const getInverse = (A: Matrix): InverseSolution => {
     }
 
     // Handle row elimination
-    const eliminationResult = eliminateValues(B, i);
+    const eliminationResult = eliminateRowsGaussJordan(B, i);
     B = eliminationResult.A
     const newB = JSON.parse(JSON.stringify(B))
 
@@ -195,70 +196,5 @@ const getInverse = (A: Matrix): InverseSolution => {
     determinant,
   }
 }
-
-/** In Gauss-Jordan elimination, pivot is divided to be 1, and elements in the same row are also divided by that value. */
-const updateValuesInPivotRow = (A: Matrix, row: number) => {
-  const pivot = A[row][row] as number
-
-  // Early return if pivot is 1, no need to process row
-  if (pivot === 1) {
-    const explanation = `A[${row + 1}][${row + 1}] is already 1, so no need to eliminate this column`
-    return { explanation, A, toReturnEarly: false }
-  }
-
-  const strCoef = Math.round(pivot * 1000) / 1000
-
-  for (let j = 0; j < A[0].length; j++) {
-    A[row][j] = Math.round((A[row][j] as number / pivot as number) * 1000) / 1000
-  }
-
-  const explanation = `
-    Make the pivot in the ${row + 1}${getOrderNumberToStr(row)}
-    column by dividing the ${row + 1}${getOrderNumberToStr(row)}
-    row by ${strCoef}
-  `
-  return { A, explanation, toReturnEarly: false }
-}
-
-/**
- * Handles value changes to eliminate values below the pivot.
- * 
- * Unlike Gauss elimination, this iterates from 0 to last.
- */
-const eliminateValues = (
-  A: Matrix,
-  col: number,
-  /** Whether to eliminate values above current column */
-  toEliminateAbove = false,
-): { A: Matrix; toReturnEarly: boolean, explanations: string[] } => {
-  const pivot = A[col][col] as number;
-  if (pivot === 0) {
-    return { A, toReturnEarly: true, explanations: [`R${col + 1} early return because A[${col + 1}][${col + 1}] is 0`] };
-  }
-
-  const explanations = []
-
-  for (let i = 0; i < A.length; i++) {
-    // Only skip the current row
-    if (i === col) {
-      continue;
-    }
-
-    if (A[i][col] === 0) {
-      explanations.push(`R${i + 1} at column ${col + 1} is already 0, so this step is skipped.`)
-      continue
-    };
-
-    const coef = (A[i][col] as number) / pivot!;
-
-    explanations.push(`R${i + 1} = R${i + 1} ${coef < 0 ? '+' : '-'} ${![-1, 1].includes(coef) ? Math.abs(Number.isInteger(coef) ? coef : parseFloat(coef?.toFixed(3).replace(/(\.\d*?[1-9])0+$|\.0+$/, '$1'))) : ''}R${col + 1}`)
-
-    for (let j = col; j < A[0].length; j++) {
-      (A[i][j] as number) -= (A[col][j] as number) * coef;
-    }
-  }
-
-  return { A, toReturnEarly: false, explanations };
-};
 
 export default getInverse;

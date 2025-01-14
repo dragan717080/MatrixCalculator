@@ -56,9 +56,22 @@ export interface useToggleShowSolutionProps {
  * @type {useUpdateExplanationsProps}
  * 
  * @property {Step[]} steps - Original steps.
- * @property {Dispatch<SetStateAction<Step[]>>} setSteps - Dispatch action to update with new steps.
+ * @property {Dispatch<SetStateAction<boolean>>} setDidUpdateExplanations - Dispatch action
+ * to notify that the explanations have been updated.
+ * @property {boolean} [isEquation] - (Optional) - Whether it is related to the linear equations system.
+ * If it is, it will have one additional step which will provide info on whether
+ * the system is consistent based on the value of the determinant.
+ * 
+ * Defaults to false.
+ * 
+ * @property {boolean} [needsDeterminant] - (Optional) - Whether the component
+ * has one additional step to describe whether it needs determinant.
+ * 
+ * Defaults to true.
  */
 export interface UseUpdateExplanationsProps {
-  steps: Step[],
-  setSteps: Dispatch<SetStateAction<Step[]>>
+  steps: Step[]|DeterminantStep[],
+  setDidUpdateExplanations: Dispatch<SetStateAction<boolean>>
+  isEquation?: boolean
+  needsDeterminant?: boolean
 }

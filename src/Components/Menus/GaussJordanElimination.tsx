@@ -11,6 +11,9 @@ import { getCalcTime } from '../../lib/utils'
 import { useLinearEquationsStore, useMatrixStore, useModalStore } from '../../store/zustandStore'
 import Matrix, { Step } from '../../interfaces/Matrix'
 import { HighlightCells } from '../../interfaces/MatrixTableProps'
+import OnlyOneRow from '../Atoms/OnlyOneRow'
+import useUpdateExplanations from '../../hooks/useUpdateExplanations'
+import OriginalMatrix from '../Atoms/OriginalMatrix'
 
 const GaussJordanElimination: FC = () => {
   const { equationCoefs } = useLinearEquationsStore()
@@ -29,12 +32,15 @@ const GaussJordanElimination: FC = () => {
   const [steps, setSteps] = useState<Step[]>([])
   const [toShowSolution, setToShowSolution] = useState<boolean>(false)
   const [equationSolution, setEquationSolution] = useState<string[] | null>([])
+  const [didUpdateExplanations, setDidUpdateExplanations] = useState<boolean>(false)
 
   const { recalculate } = useRecalculate({ setTime, setShow: setToShowSolution, setSteps })
 
   const { resetParams } = useResetParams({ descriptionAndInputRef })
 
   const { toggleShowSolution } = useToggleShowSolution({ solutionStepsRef, toShowSolution, setToShowSolution })
+
+  const { updateExplanations } = useUpdateExplanations({ steps, setDidUpdateExplanations })
 
   /**
    * @param {number} index - Step index.
@@ -63,11 +69,16 @@ const GaussJordanElimination: FC = () => {
 
     if (areRows) {
       // Don't highlight only the pivoted row
-      let pivotedRow = parseInt((explanation[0] as string).split(/\s/).slice(-1)[0].split(/\D/).slice(-1)[0])
-      // Text explanation uses 1-based indexing
-      pivotedRow -= 1
+      const explanationRow = explanation[0] as string
 
-      return (row, col) => row !== pivotedRow
+      /**
+       * e.g. `R<span class='subindex'>2</span> = R<span class='subindex'>2</span> - 3R1` will return 2.
+       * Text explanation uses 1-based indexing therefore `-1`.
+       */
+      let pivotedRow =
+        explanationRow.match(/>(\d+)</g)!.map(x => x.replace(/[><]/g, '')).slice(-1)[0] as unknown as number - 1
+
+      return (row, _) => row !== pivotedRow
     }
 
     const columnIsAlreadyOne = !Array.isArray(explanation) && explanation.includes('is already 1, so no need to eliminate this column')
@@ -122,9 +133,7 @@ const GaussJordanElimination: FC = () => {
       const tableRows = Array.from(table.getElementsByTagName('tbody')[0].getElementsByTagName('tr'))
       for (const row of tableRows) {
         const cells = row.getElementsByTagName('td')
-        console.log('Cells:', cells);
         const lastCell = cells[cells.length - 1]
-        console.log('last cell:', lastCell);
         lastCell.classList.add('border-l-orange')
       }
     }
@@ -172,7 +181,14 @@ const GaussJordanElimination: FC = () => {
       explanation.innerHTML = equationSolution![index]
     })
   }, [steps.length, equationSolution])
-  
+
+  useEffect(() => {
+    console.log('New steps:', steps);
+
+    if (steps.length && !didUpdateExplanations) {
+      updateExplanations()
+    }
+  }, [steps.length, toShowSolution, didUpdateExplanations, A])
 
   return (
     <div className='col-h'>
@@ -180,49 +196,17 @@ const GaussJordanElimination: FC = () => {
         <div ref={solutionStepsRef}>
           {toShowSolution && (
             <div className='solution-items-container mb-7'>
-              <h3 className='mb-4 text-center bold leading-4'>Original matrix</h3>
-              {A.length === 1 && (
-                <div className='w-full row overflow-hidden'>
-                  <span>
-                    A has only one row so Δ =
-                    A<span className='subindex'>1</span><span className='subindex'>1</span> = {A[0][0]}
-                  </span>
-                </div>
-              )}
-              <div id='step-1' className='row-v px-3 border-b-darkgray'>
-                {steps.length > 1 && (
-                  <ScrollWithSVGs aCols={aDim[1]} isFirst />
-                )}
-                <MatrixTable
-                  nRows={aDim[0]}
-                  nCols={aDim[1]}
-                  A={A}
-                  isWithCoefs={true}
-                  letter='X'
-                  highlightFunc={
-                    A.length === 1 || A[0].length === 1
-                      ? (row, col) => row === 0 && col === 0
-                      : undefined
-                  }
-                />
-              </div>
-              {typeof (determinant) !== 'undefined' && determinant !== 0 && (
-                <div id='step-2' className='row-v py-4 px-3 border-b-darkgray'>
-                  <ScrollWithSVGs aCols={aDim[1]} />
-                  <div className='col-v space-y-1'>
-                    <p>Δ = {determinant}</p>
-                    <p>Determinant is not zero, therefore system is consistent</p>
-                  </div>
-                </div>
-              )}
+              <OriginalMatrix A={A} steps={steps} needsDeterminant={false} isEquation={true} />
+              {/* This empty paragraph with no opacity and number of `step-explanation` classes expected in `useUpdateExplanations` */}
+              {/* <p className='step-explanation h-[1px] w-[1px] opacity-0'></p> */}
               {steps.map((step, index) => (
-                <div id={`step-${index + 3}`} className='pt-2 pb-3 border-b-darkgray' key={index}>
+                <div id={`step-${index + 2}`} className='pt-2 pb-3 border-b-darkgray' key={index}>
                   {/* <p>{getStepText(step, index)}</p> */}
                   <div className='flex flex-col space-y-1.5 pt-2 pb-2.5'>
                     {Array.isArray(step.explanation)
                       ? step.explanation.map((explanation, index) => (
-                        <p key={index}>{explanation}</p>))
-                      : <p>{step.explanation}</p>
+                        <p className='step-explanation' key={index}>{explanation}</p>))
+                      : <p className='step-explanation'>{step.explanation}</p>
                     }
                   </div>
                   <p className={`${steps[index].swapRow && 'hidden'}`}></p>
@@ -246,6 +230,8 @@ const GaussJordanElimination: FC = () => {
         <div className={`${isOpen || aIsFilled ? 'hidden' : 'block'}`}>
           <h3 className='mb-4 text-lg bold'>Gauss-Jordan Elimination</h3>
           <ol>
+            <li>The main condition for the Gauss-Jordan Elimination is that the number of rows must be either the same as the number of
+              unknown variables, or at most by 1 larger.</li>
             <li>Change the matrix to reduced row echelon form (RREF).</li>
             <li>It is matrix with all zeros below the main diagonal, and all ones at the main diagonal.</li>
             <li>Pick the 1st element in the 1st column (pivot), if it is 0, swap it with the first non zero column under it.</li>
@@ -293,7 +279,7 @@ const GaussJordanElimination: FC = () => {
                   </>)
                 : (
                   <div>
-                    Determinant is 0, so this matrix has no inverse.
+                    The linear equations system is inconsistent.
                   </div>
                 )}
               <div className='w-full flex'>

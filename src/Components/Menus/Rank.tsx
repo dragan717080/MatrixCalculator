@@ -9,6 +9,8 @@ import getRank from '../../lib/getRank'
 import { getCalcTime, getStrValuesOfMainDiagonal } from '../../lib/utils'
 import { useMatrixStore, useModalStore } from '../../store/zustandStore'
 import { Step } from '../../interfaces/Matrix'
+import OnlyOneRow from '../Atoms/OnlyOneRow'
+import OriginalMatrix from '../Atoms/OriginalMatrix'
 
 const Rank: FC = () => {
   const {
@@ -92,40 +94,8 @@ const Rank: FC = () => {
                 <h3 className='mb-6 text-center bold leading-4'>Original matrix</h3>
               )}
               <div className='solution-items-container mb-7'>
-                {A.length === 1 && (
-                  <div className="w-full row overflow-hidden">
-                    <span>
-                      A has only one row so since A
-                      <span className="subindex">1</span><span className="subindex">1</span> is {
-                        A[0][0] === 0 ? '0' : 'not 0'
-                      } it will be {Number(A[0][0] !== 0)}
-                    </span>
-                  </div>
-                )}
-                {A.length !== 1 && A[0].length === 1 && (
-                  <div className="w-full row overflow-hidden">
-                    <span>
-                      A has only one column so since A
-                      <span className="subindex">1</span><span className="subindex">1</span> is {
-                        A[0][0] === 0 ? '0' : 'not 0'
-                      } it will be {Number(A[0][0] !== 0)}
-                    </span>
-                  </div>
-                )}
-                <div id='step-1' className='row-v px-3 border-b-darkgray'>
-                  {steps.length > 0 && (
-                    <ScrollWithSVGs aCols={aDim[1]} isFirst />
-                  )}
-                  <MatrixTable
-                    nRows={aDim[0]}
-                    nCols={aDim[1]}
-                    A={A}
-                    highlightFunc={A.length === 1 || A[0].length === 1
-                      ? (row, col) => row === 0 && col === 0
-                      : undefined
-                    }
-                  />
-                </div>
+                <OnlyOneRow A={A} isRank={true} />
+                <OriginalMatrix A={A} steps={steps} needsDeterminant={false} />
                 {steps.map((step, index) => (
                   <div id={`step-${index + 2}`} className='pt-2 pb-3 border-b-darkgray' key={index}>
                     <div>

@@ -1,11 +1,17 @@
 import { swapRows } from './matrixUtils'
 import getDeterminant from './getDeterminant'
-import { getOrderNumberToStr } from './utils'
+import { eliminateRowsGaussJordan, updateValuesInPivotRow } from './matrixUtils'
 import Matrix, { GaussJordanEliminationSolution, MatrixElement, Step, TwoNumbers } from '../interfaces/Matrix'
 import { Sign } from '../interfaces/Determinant'
 
 /**
  * Solution of simultaneous linear equations using Gauss-Jordan elimination.
+ * 
+ * The main condition is that number of rows must be either the same as the number of
+ * unknown variables, or at most by 1 larger.
+ * 
+ * If determinant of matrix (with right side of equation values included) is not 0, it still
+ * does not guarantee that the system might not be inconsistent.
  * 
  * Can be solved with rectangular matrices to see whether the system is consistent.
  * 
@@ -80,7 +86,11 @@ import { Sign } from '../interfaces/Determinant'
 const getGaussJordanElimination = (A: Matrix, coefs: number[]): GaussJordanEliminationSolution => {
   let B = JSON.parse(JSON.stringify(A))
 
-  const { result: determinant } = getDeterminant(B)
+  let determinant = NaN
+
+  if (!(A.length > A[0].length)) {
+    determinant = getDeterminant(B).result
+  }
 
   const steps: Step[] = []
 
@@ -129,7 +139,7 @@ const getGaussJordanElimination = (A: Matrix, coefs: number[]): GaussJordanElimi
     }
 
     // Handle row elimination
-    const eliminationResult = eliminateValues(B, i);
+    const eliminationResult = eliminateRowsGaussJordan(B, i);
     B = eliminationResult.A
     const newB = JSON.parse(JSON.stringify(B))
 
@@ -175,7 +185,7 @@ const getGaussJordanElimination = (A: Matrix, coefs: number[]): GaussJordanElimi
         continue
       }
 
-      const xStr = `X${i + 1}`
+      const xStr = `X<span class='subindex'>${i + 1}</span>`
 
       if (i < m) {
         console.log(`Variable X${i + 1} = ${coef}`);
@@ -203,7 +213,7 @@ const getGaussJordanElimination = (A: Matrix, coefs: number[]): GaussJordanElimi
   let freeVariablesStr = ''
 
   for (let i = A.length; i < leftSideLength; i++) {
-    freeVariablesStr += `X${i + 1}`
+    freeVariablesStr += `X<span class='subindex'>${i + 1}</span>`
 
     if (i !== leftSideLength - 1) {
       freeVariablesStr += ', '
@@ -245,70 +255,5 @@ const appendCoefsToMatrix = (A: Matrix, coefs: number[]) => {
 
   return newMatrix
 }
-
-/** In Gauss-Jordan elimination, pivot is divided to be 1, and elements in the same row are also divided by that value. */
-const updateValuesInPivotRow = (A: Matrix, row: number) => {
-  const pivot = A[row][row] as number
-
-  // Early return if pivot is 1, no need to process row
-  if (pivot === 1) {
-    const explanation = `A[${row + 1}][${row + 1}] is already 1, so no need to eliminate this column`
-    return { explanation, A, toReturnEarly: false }
-  }
-
-  const strCoef = Math.round(pivot * 1000) / 1000
-
-  for (let j = 0; j < A[0].length; j++) {
-    A[row][j] = Math.round((A[row][j] as number / pivot as number) * 1000) / 1000
-  }
-
-  const explanation = `
-    Make the pivot in the ${row + 1}${getOrderNumberToStr(row)}
-    column by dividing the ${row + 1}${getOrderNumberToStr(row)}
-    row by ${strCoef}
-  `
-  return { A, explanation, toReturnEarly: false }
-}
-
-/**
- * Handles value changes to eliminate values below the pivot.
- * 
- * Unlike Gauss elimination, this iterates from 0 to last.
- */
-const eliminateValues = (
-  A: Matrix,
-  col: number,
-  /** Whether to eliminate values above current column */
-  toEliminateAbove = false,
-): { A: Matrix; toReturnEarly: boolean, explanations: string[] } => {
-  const pivot = A[col][col] as number;
-  if (pivot === 0) {
-    return { A, toReturnEarly: true, explanations: [`R${col + 1} early return because A[${col + 1}][${col + 1}] is 0`] };
-  }
-
-  const explanations = []
-
-  for (let i = 0; i < A.length; i++) {
-    // Only skip the current row
-    if (i === col) {
-      continue;
-    }
-
-    if (A[i][col] === 0) {
-      explanations.push(`R${i + 1} at column ${col + 1} is already 0, so this step is skipped.`)
-      continue
-    };
-
-    const coef = (A[i][col] as number) / pivot!;
-
-    explanations.push(`R${i + 1} = R${i + 1} ${coef < 0 ? '+' : '-'} ${![-1, 1].includes(coef) ? Math.abs(Number.isInteger(coef) ? coef : parseFloat(coef?.toFixed(3).replace(/(\.\d*?[1-9])0+$|\.0+$/, '$1'))) : ''}R${col + 1}`)
-
-    for (let j = col; j < A[0].length; j++) {
-      (A[i][j] as number) -= (A[col][j] as number) * coef;
-    }
-  }
-
-  return { A, toReturnEarly: false, explanations };
-};
 
 export default getGaussJordanElimination;

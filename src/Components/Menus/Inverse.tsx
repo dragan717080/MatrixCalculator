@@ -4,12 +4,14 @@ import MatrixTable from '../Atoms/MatrixTable'
 import ScrollWithSVGs from '../Atoms/ScrollWithSVGs'
 import useRecalculate from '../../hooks/useRecalculate'
 import useResetParams from '../../hooks/useResetParams'
+import useUpdateExplanations from '../../hooks/useUpdateExplanations'
 import useToggleShowSolution from '../../hooks/useToggleShowSolution'
 import getInverse from '../../lib/getInverse'
 import { getCalcTime } from '../../lib/utils'
 import { useMatrixStore, useModalStore } from '../../store/zustandStore'
 import Matrix, { Step } from '../../interfaces/Matrix'
 import { HighlightCells } from '../../interfaces/MatrixTableProps'
+import OriginalMatrix from '../Atoms/OriginalMatrix'
 
 const Inverse: FC = () => {
   const {
@@ -27,12 +29,15 @@ const Inverse: FC = () => {
   const [steps, setSteps] = useState<Step[]>([])
   const [toShowSolution, setToShowSolution] = useState<boolean>(false)
   const [C, setC] = useState<Matrix>([])
+  const [didUpdateExplanations, setDidUpdateExplanations] = useState<boolean>(false)
 
   const { recalculate } = useRecalculate({ setTime, setShow: setToShowSolution, setSteps })
 
   const { resetParams } = useResetParams({ descriptionAndInputRef })
 
   const { toggleShowSolution } = useToggleShowSolution({ solutionStepsRef, toShowSolution, setToShowSolution })
+
+  const { updateExplanations } = useUpdateExplanations({ steps, setDidUpdateExplanations, isEquation: true })
 
   const tableRef = useRef<HTMLTableElement | null>(null)
 
@@ -72,12 +77,12 @@ const Inverse: FC = () => {
 
     const columnIsAlreadyOne = !Array.isArray(explanation) && explanation.includes('is already 1, so no need to eliminate this column')
     if (columnIsAlreadyOne) {
-      console.log('step to highlight:', explanation);
+      // console.log('step to highlight:', explanation);
       const index = explanation.split('is already 1, so no need to eliminate this column')[0]
-      console.log(index);
+      // console.log(index);
       // Text explanation uses 1-based indexing
       const [i, j] = index.split(/\D/).filter(Boolean).map(x => parseInt(x) - 1)
-      console.log('i:', i, 'j:', j);
+      // console.log('i:', i, 'j:', j);
 
       return (row, col) => row === i && col === j
     }
@@ -151,8 +156,12 @@ const Inverse: FC = () => {
   }, [])
 
   useEffect(() => {
-    console.log('new steps:', steps);
-  }, [steps.length])
+    console.log('New steps:', steps);
+
+    if (steps.length && !didUpdateExplanations) {
+      updateExplanations()
+    }
+  }, [steps.length, toShowSolution, didUpdateExplanations])
 
   useEffect(() => {
     console.log('A changed:', A)
@@ -164,32 +173,7 @@ const Inverse: FC = () => {
         <div ref={solutionStepsRef}>
           {toShowSolution && (
             <div className='solution-items-container mb-7'>
-              {steps.length > 0 && (
-                <h3 className='mb-4 text-center bold leading-4'>Original matrix</h3>
-              )}
-              {A.length === 1 && (
-                <div className="w-full row overflow-hidden">
-                  <span>
-                    A has only one row so Δ =
-                    A<span className="subindex">1</span><span className="subindex">1</span> = {A[0][0]}
-                  </span>
-                </div>
-              )}
-              <div id='step-1' className='row-v px-3 border-b-darkgray'>
-                {steps.length > 1 && (
-                  <ScrollWithSVGs aCols={aDim[1]} isFirst />
-                )}
-                <MatrixTable
-                  nRows={aDim[0]}
-                  nCols={aDim[1]}
-                  A={A}
-                  highlightFunc={
-                    A.length === 1 || A[0].length === 1
-                      ? (row, col) => row === 0 && col === 0
-                      : undefined
-                  }
-                />
-              </div>
+              <OriginalMatrix A={A} steps={steps} />
               {typeof (determinant) !== 'undefined' && determinant !== 0 && (
                 <div id='step-2' className='row-v py-4 px-3 border-b-darkgray'>
                   <ScrollWithSVGs aCols={aDim[1]} />
@@ -205,8 +189,8 @@ const Inverse: FC = () => {
                   <div className="flex flex-col space-y-1.5 pt-2 pb-2.5">
                     {Array.isArray(step.explanation)
                       ? step.explanation.map((explanation, index) => (
-                        <p key={index}>{explanation}</p>))
-                      : <p>{step.explanation}</p>
+                        <p className='step-explanation' key={index}>{explanation}</p>))
+                      : <p className='step-explanation'>{step.explanation}</p>
                     }
                   </div>
                   <p className={`${steps[index].swapRow && 'hidden'}`}></p>

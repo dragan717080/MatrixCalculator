@@ -273,8 +273,8 @@ const MatrixModal: FC = () => {
         : inputCellsEqCoefs
       : inputCellsB
 
-    console.log('is equation cell', isEquationCell);
-    console.log('input cells:', inputCells);
+    // console.log('is equation cell', isEquationCell);
+    // console.log('input cells:', inputCells);
 
     if (newChar === '.') {
       dotsCount--;
@@ -514,7 +514,7 @@ const MatrixModal: FC = () => {
                             {/* First element is empty */}
                             <th>&nbsp;</th>
                             {Array.from({ length: aCols }).map((_, col) => (
-                              <th key={col}>A<span className='subindex'>{col + 1}</span></th>
+                              <th key={col}>{!isEquation ? 'A' : 'X'}<span className='subindex'>{col + 1}</span></th>
                             ))}
                             {isEquation && (
                               <th>b</th>

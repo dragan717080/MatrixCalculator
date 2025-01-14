@@ -9,6 +9,7 @@ import { getCalcTime, wait } from '../../lib/utils'
 import { useMatrixStore, useModalStore } from '../../store/zustandStore'
 import Matrix, { Step } from '../../interfaces/Matrix'
 import getAS from '../../lib/getAS'
+import OriginalMatrix from '../Atoms/OriginalMatrix'
 
 const AdditionSubstraction: FC = () => {
   const {
@@ -70,14 +71,8 @@ const AdditionSubstraction: FC = () => {
         <div ref={solutionStepsRef}>
           {toShowSolution && (
             <>
-              <h3 className='mb-8 text-center bold leading-4'>Original matrices</h3>
               <div className='solution-items-container mb-7'>
-                <div id='step-1' className='row-v px-3 border-b-darkgray'>
-                  <div className='row flex-col md:flex-row space-y-6 md:space-y-0 md:space-x-6 pb-6 md:pb-0'>
-                    <MatrixTable nRows={aDim[0]} nCols={aDim[1]} A={A} />
-                    <MatrixTable nRows={bDim[0]} nCols={bDim[1]} A={B} letter='B' />
-                  </div>
-                </div>
+                <OriginalMatrix A={A} steps={[]} B={B} needsDeterminant={false} /> 
               </div>
             </>
           )}
@@ -87,8 +82,8 @@ const AdditionSubstraction: FC = () => {
         <div className={`${isOpen || aIsFilled && bIsFilled ? 'hidden' : 'block'}`}>
           <h3 className='mb-4 text-lg bold'>Addition and Substraction</h3>
           <p>
-            Matrix addition or subtraction is calculated by addition or subtraction of corresponding elements.<br/>
-            As a result you get a new matrix with the same dimension.<br/>
+            Matrix addition or subtraction is calculated by addition or subtraction of corresponding elements.<br />
+            As a result you get a new matrix with the same dimension.<br />
             <span>
               For example, C<span className='subindex'>1</span><span className='subindex'>1</span> = A<span className='subindex'>1</span><span className='subindex'>1</span> {sign} B<span className='subindex'>1</span><span className='subindex'>1</span>
             </span>
@@ -119,6 +114,7 @@ const AdditionSubstraction: FC = () => {
             </div>
             {time > -1 && (
               <section>
+                <h3 className='bold mb-2'>Result of {sign === '+' ? 'addition' : 'substraction'}</h3>
                 <MatrixTable nRows={aDim[0]} nCols={aDim[1]} A={C} />
                 <div className='w-full flex'>
                   <span className='ml-auto pt-2'>

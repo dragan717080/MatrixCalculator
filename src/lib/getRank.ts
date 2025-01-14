@@ -1,5 +1,5 @@
 import Matrix, { SolutionWithNumericResult, Step, TwoNumbers } from '../interfaces/Matrix';
-import { swapRows } from './matrixUtils';
+import { eliminateRowsBelow, swapRows } from './matrixUtils';
 
 /**
  * Gaussian elimination to get upper triangular form.
@@ -111,7 +111,7 @@ const getRank = (A: Matrix): SolutionWithNumericResult => {
       break
     }
 
-    const eliminationResult = eliminateValues(B, i);
+    const eliminationResult = eliminateRowsBelow(B, i);
     console.log('Got result:', eliminationResult);
     steps.push({
       A: JSON.parse(JSON.stringify(B)),
@@ -135,44 +135,5 @@ const getRank = (A: Matrix): SolutionWithNumericResult => {
 
   return { result: result as number, steps };
 }
-
-/** Handles value changes to eliminate values below the pivot */
-const eliminateValues = (
-  A: Matrix,
-  col: number
-): { A: Matrix; toReturnEarly: boolean, explanations: string[] } => {
-  const pivot = A[col][col] as number;
-
-  if (pivot === 0) {
-    return { A, toReturnEarly: true, explanations: [`R${col + 1} early return because A[${col + 1}][${col + 1}] is 0`] };
-  }
-
-  const explanations = []
-
-  for (let i = col + 1; i < A.length; i++) {
-    if (A[i][col] === 0) {
-      explanations.push(`R${i + 1} at column ${col + 1} is already 0, so this step is skipped.`)
-      break
-    };
-
-    const coef = (A[i][col] as number) / pivot!;
-    if (Number.isNaN(coef)) {
-      continue
-    }
-    
-
-    explanations.push(`R${i + 1} = R${i + 1} ${coef < 0 ? '+' : '-'} ${![-1, 1].includes(coef) ? Math.abs(Number.isInteger(coef) ? coef : parseFloat(coef?.toFixed(3).replace(/(\.\d*?[1-9])0+$|\.0+$/, '$1'))) : ''}R${col + 1}`)
-
-    for (let j = col; j < A.length; j++) {
-      if (j >= A[0].length) {
-        break
-      }
-
-      (A[i][j] as number) -= (A[col][j] as number) * coef;
-    }
-  }
-
-  return { A, toReturnEarly: false, explanations };
-};
 
 export default getRank

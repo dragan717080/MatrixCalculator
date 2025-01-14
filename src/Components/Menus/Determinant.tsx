@@ -1,6 +1,7 @@
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
 import MatrixDimensionsInput from '../Atoms/MatrixDimensionsInput'
 import MatrixTable from '../Atoms/MatrixTable'
+import OnlyOneRow from '../Atoms/OnlyOneRow'
 import ScrollWithSVGs from '../Atoms/ScrollWithSVGs'
 import useRecalculate from '../../hooks/useRecalculate'
 import useResetParams from '../../hooks/useResetParams'
@@ -9,6 +10,8 @@ import getDeterminant from '../../lib/getDeterminant'
 import { getCalcTime, getOrderNumberToStr, getStrValuesOfMainDiagonal } from '../../lib/utils'
 import { useMatrixStore, useModalStore } from '../../store/zustandStore'
 import { Step } from '../../interfaces/Determinant'
+import useUpdateExplanations from '../../hooks/useUpdateExplanations'
+import OriginalMatrix from '../Atoms/OriginalMatrix'
 
 const Determinant: FC = () => {
   const {
@@ -29,12 +32,15 @@ const Determinant: FC = () => {
   const [toShowSolution, setToShowSolution] = useState<boolean>(false)
   const [actualCounts, setActualCounts] = useState<number[]>([])
   const [stepsSwapsIndices, setStepsSwapsIndices] = useState<{ [key: string]: number }>({} as { [key: string]: number })
+  const [didUpdateExplanations, setDidUpdateExplanations] = useState<boolean>(false)
 
   const { recalculate } = useRecalculate({ setTime, setShow: setToShowSolution, setSteps })
 
   const { resetParams } = useResetParams({ descriptionAndInputRef })
 
   const { toggleShowSolution } = useToggleShowSolution({ solutionStepsRef, toShowSolution, setToShowSolution })
+
+  const { updateExplanations } = useUpdateExplanations({ steps, setDidUpdateExplanations, needsDeterminant: false })
 
   const calculateResult = () => {
     // It will go to this function again when `A` changes with `updateValuesForMatrix`
@@ -64,12 +70,13 @@ const Determinant: FC = () => {
   const getStepText = useMemo(
     () =>
       (step: Step, index: number) => {
-        return typeof (step.swapRow) !== 'undefined'
+        return ''
+/*         return typeof (step.swapRow) !== 'undefined'
           ? `Swapping rows ${step.swapRow[0] + 1} and ${step.swapRow[1] + 1}, changing the sign to ${step.sign}`
           // Text will have 1-based indexing so need `+1`
           : `Eliminate elements in the ${stepsSwapsIndices[index] + 1}${getOrderNumberToStr(
             stepsSwapsIndices[index])} column under the ${stepsSwapsIndices[index] + 1}${getOrderNumberToStr(
-              stepsSwapsIndices[index])} element`;
+              stepsSwapsIndices[index])} element`; */
       },
     [steps.length, actualCounts.length, Object.keys(stepsSwapsIndices).length])
 
@@ -119,16 +126,16 @@ const Determinant: FC = () => {
   }, [])
 
   useEffect(() => {
-    console.log('%cnew actual counts:', 'color:green', actualCounts);
-  }, [actualCounts.length])
-
-  useEffect(() => {
-    console.log('new steps:', steps);
-  }, [steps.length])
-
-  useEffect(() => {
     console.log('A changed in determinant:', A)
   }, [A])
+
+  useEffect(() => {
+    console.log('New steps:', steps);
+
+    if (steps.length) {
+      updateExplanations()
+    }
+  }, [steps.length, toShowSolution])
 
   return (
     <div className='col-h'>
@@ -136,36 +143,14 @@ const Determinant: FC = () => {
         <div ref={solutionStepsRef}>
           {toShowSolution && (
             <div className='solution-items-container mb-7'>
-              {A.length === 1 && (
-                <div className="w-full row overflow-hidden">
-                  <span>
-                    A has only one row so Δ =
-                    A<span className="subindex">1</span><span className="subindex">1</span> = {A[0][0]}
-                  </span>
-                </div>
-              )}
-              <div id='step-1' className='row-v px-3 border-b-darkgray'>
-                {steps.length > 1 && (
-                  <ScrollWithSVGs aCols={aDim[1]} isFirst />
-                )}
-                <MatrixTable
-                  nRows={aDim[0]}
-                  nCols={aDim[1]}
-                  A={A}
-                  highlightFunc={
-                    A.length === 1 || A[0].length === 1
-                      ? (row, col) => row === 0 && col === 0
-                      : undefined
-                  }
-                />
-              </div>
+              <OriginalMatrix A={A} steps={steps} />
               {steps.map((step, index) => (
-                <div id={`step-${index + 1}`} className='pt-2 pb-3 border-b-darkgray' key={index}>
+                <div id={`step-${index + 2}`} className='pt-2 pb-3 border-b-darkgray' key={index}>
                   <p>{getStepText(step, index)}</p>
                   {!steps[index].swapRow && (
                     <div className='mt-3'>
-                      {step.explanations.map((explanation, index) => (
-                        <p key={index}>{explanation}</p>
+                      {step.explanation.map((explanation, index) => (
+                        <p className='step-explanation' key={index}>{explanation}</p>
                       ))}
                     </div>
                   )}
