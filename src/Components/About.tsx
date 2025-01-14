@@ -10,7 +10,7 @@ const About = () => {
         <li>Press "Solve" ("Calculate") button.</li>
         <li>If you want to get a very detailed solution, click on "Show solution".</li>
       </ol>
-      <h3 className='mt-1 mb-0.5'>All methods are supported</h3>
+      <h3 className='mt-1 mb-0.5 bold'>All methods are supported</h3>
       <ol>
         <li>Multiplication</li>
         <li>Addition</li>

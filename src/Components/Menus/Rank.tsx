@@ -83,7 +83,6 @@ const Rank: FC = () => {
                 <h3 className='mb-6 text-center bold leading-4'>Original matrix</h3>
               )}
               <div className='solution-items-container mb-7'>
-                <OnlyOneRow A={A} isRank={true} />
                 <OriginalMatrix A={A} steps={steps} needsDeterminant={false} />
                 {steps.map((step, index) => (
                   <div id={`step-${index + 2}`} className='pt-2 pb-3 border-b-darkgray' key={index}>

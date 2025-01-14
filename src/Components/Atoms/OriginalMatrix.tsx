@@ -2,7 +2,6 @@ import React, { FC, memo } from 'react'
 import MatrixTable from './MatrixTable'
 import OnlyOneRow from './OnlyOneRow'
 import ScrollWithSVGs from './ScrollWithSVGs'
-import Matrix from '../../interfaces/Matrix'
 import OriginalMatrixProps from '../../interfaces/OriginalMatrixProps'
 
 const OriginalMatrix: FC<OriginalMatrixProps> = ({ A, steps, B, needsDeterminant=true, isEquation=false }) => {
