@@ -8,6 +8,7 @@ type MinValue = 1 | 2
  * @property {boolean} [iSPower] - (Optional) - Defaults to false.
  * @property {boolean} [isMultiplication] - (Optional) - Defaults to false.
  * @property {boolean} [isAs] - (Optional) - Whether it is `Addition/Substraction`. Defaults to false.
+ * @property {boolean} [isGaussJordan] - (Optional) - Defaults to false.
  */
 export default interface MatrixDimensionsInputProps {
   minValue: MinValue
@@ -15,4 +16,5 @@ export default interface MatrixDimensionsInputProps {
   isPower?: boolean
   isMultiplication?: boolean
   isAS?: boolean
+  isGaussJordan?: boolean
 }

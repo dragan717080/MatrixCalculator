@@ -6,21 +6,20 @@ import useRecalculate from '../../hooks/useRecalculate'
 import useResetParams from '../../hooks/useResetParams'
 import useToggleShowSolution from '../../hooks/useToggleShowSolution'
 import getPower from '../../lib/getPower'
-import { getCalcTime, wait } from '../../lib/utils'
+import { getCalcTime } from '../../lib/utils'
 import { useMatrixStore, useModalStore } from '../../store/zustandStore'
-import Matrix, { Step } from '../../interfaces/Matrix'
+import { Step } from '../../interfaces/Matrix'
 import OriginalMatrix from '../Atoms/OriginalMatrix'
 
 const Power: FC = () => {
   const {
     setCalculate,
-    aDim, setADim, aIsFilled, A, setA, setAIsFilled,
-    power, setPower
+    aDim, aIsFilled, A,
+    power
   } = useMatrixStore()
   const { isOpen } = useModalStore()
 
   const solutionStepsRef = useRef<HTMLDivElement | null>(null)
-
   const descriptionAndInputRef = useRef<HTMLDivElement | null>(null)
 
   const [toShowSolution, setToShowSolution] = useState<boolean>(false)

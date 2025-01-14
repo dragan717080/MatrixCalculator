@@ -1,27 +1,25 @@
-import React, { FC, useCallback, useRef, useState, useEffect } from 'react'
+import React, { FC, useRef, useState, useEffect } from 'react'
 import MatrixDimensionsInput from '../Atoms/MatrixDimensionsInput'
 import MatrixTable from '../Atoms/MatrixTable'
-import ScrollWithSVGs from '../Atoms/ScrollWithSVGs'
 import useRecalculate from '../../hooks/useRecalculate'
 import useResetParams from '../../hooks/useResetParams'
 import useToggleShowSolution from '../../hooks/useToggleShowSolution'
-import { getCalcTime, wait } from '../../lib/utils'
+import { getCalcTime } from '../../lib/utils'
 import { useMatrixStore, useModalStore } from '../../store/zustandStore'
-import Matrix, { Step } from '../../interfaces/Matrix'
+import Matrix from '../../interfaces/Matrix'
 import getAS from '../../lib/getAS'
 import OriginalMatrix from '../Atoms/OriginalMatrix'
 
 const AdditionSubstraction: FC = () => {
   const {
     setCalculate,
-    aDim, setADim, aIsFilled, A, setA, setAIsFilled,
-    bDim, setBDim, B, setB, bIsFilled, setBIsFilled,
+    aDim,  aIsFilled, A,
+    B, bIsFilled,
     sign
   } = useMatrixStore()
   const { isOpen } = useModalStore()
 
   const solutionStepsRef = useRef<HTMLDivElement | null>(null)
-
   const descriptionAndInputRef = useRef<HTMLDivElement | null>(null)
 
   const [C, setC] = useState<Matrix>(A)

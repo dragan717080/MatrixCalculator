@@ -1,12 +1,13 @@
-import { FC } from 'react';
+import { FC } from 'react'
+import { Link } from 'react-router-dom'
 
 const MatrixOperationsToolbar: FC = () => {
   return (
     <div>
       <ul className='bg-deepazure'>
-        <li><a href='/multiplication'>Matrix Multiplication</a></li>
-        <li><a href='/addition-substraction'>Matrix Addition/Subtraction</a></li>
-        <li><a href='/transpose'>Matrix Transpose</a></li>
+        <li><Link to='/multiplication'>Matrix Multiplication</Link></li>
+        <li><Link to='/addition-substraction'>Matrix Addition/Subtraction</Link></li>
+        <li><Link to='/transpose'>Matrix Transpose</Link></li>
       </ul>
     </div>
   )

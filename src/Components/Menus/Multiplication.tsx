@@ -1,13 +1,12 @@
-import React, { FC, useCallback, useEffect, useReducer, useRef, useState } from 'react'
+import React, { FC, useEffect, useRef, useState } from 'react'
 import MatrixDimensionsInput from '../Atoms/MatrixDimensionsInput'
 import MatrixTable from '../Atoms/MatrixTable'
 import ScrollWithSVGs from '../Atoms/ScrollWithSVGs'
 import useRecalculate from '../../hooks/useRecalculate'
 import useResetParams from '../../hooks/useResetParams'
-import useUpdateExplanations from '../../hooks/useUpdateExplanations'
 import useToggleShowSolution from '../../hooks/useToggleShowSolution'
 import getMultiplication from '../../lib/getMultiplication'
-import { getCalcTime, getIndicesFromEquation, wait } from '../../lib/utils'
+import { getCalcTime } from '../../lib/utils'
 import { useMatrixStore } from '../../store/zustandStore'
 import { useModalStore } from '../../store/zustandStore'
 import { Step } from '../../interfaces/Matrix'
@@ -15,9 +14,8 @@ import OriginalMatrix from '../Atoms/OriginalMatrix'
 
 const Multiplication: FC = () => {
   const {
-    isOnlyA, setIsOnlyA,
-    aDim, setADim, A, setA, aIsFilled,
-    bDim, setBDim, B, setB, bIsFilled,
+    aDim, A, aIsFilled,
+    B, bIsFilled,
     setCalculate
   } = useMatrixStore()
   const { isOpen } = useModalStore()

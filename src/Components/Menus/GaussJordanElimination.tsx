@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
+import React, { FC, useEffect, useRef, useState } from 'react'
 import MatrixDimensionsInput from '../Atoms/MatrixDimensionsInput'
 import MatrixTable from '../Atoms/MatrixTable'
 import ScrollWithSVGs from '../Atoms/ScrollWithSVGs'
@@ -9,9 +9,7 @@ import useGetHighlightFunc from '../../hooks/useGetHighlightFunc'
 import getGaussJordanElimination from '../../lib/getGaussJordanElimination'
 import { getCalcTime } from '../../lib/utils'
 import { useLinearEquationsStore, useMatrixStore, useModalStore } from '../../store/zustandStore'
-import Matrix, { Step } from '../../interfaces/Matrix'
-import { HighlightCells } from '../../interfaces/MatrixTableProps'
-import OnlyOneRow from '../Atoms/OnlyOneRow'
+import { Step } from '../../interfaces/Matrix'
 import useUpdateExplanations from '../../hooks/useUpdateExplanations'
 import OriginalMatrix from '../Atoms/OriginalMatrix'
 
@@ -178,8 +176,9 @@ const GaussJordanElimination: FC = () => {
         <div className={`${isOpen || aIsFilled ? 'hidden' : 'block'}`}>
           <h3 className='mb-4 text-lg bold'>Gauss-Jordan Elimination</h3>
           <ol>
-            <li>The main condition for the Gauss-Jordan Elimination is that the number of rows must be either the same as the number of
-              unknown variables, or at most by 1 larger.</li>
+            <li>The main condition for the Gauss-Jordan Elimination is that the number of rows must be <span className="text-red-500">not greater than as the number of
+              unknown variables.</span></li>
+            <li><span className="text-red-500">A rows &lt;= A cols</span></li>
             <li>Change the matrix to reduced row echelon form (RREF).</li>
             <li>It is matrix with all zeros below the main diagonal, and all ones at the main diagonal.</li>
             <li>Pick the 1st element in the 1st column (pivot), if it is 0, swap it with the first non zero column under it.</li>
@@ -190,7 +189,7 @@ const GaussJordanElimination: FC = () => {
             <li>Solution matrix will describe the corelation between the variables.</li>
           </ol>
           <span>To understand inverse calculation better input any example and examine the solution.</span>
-          <MatrixDimensionsInput minValue={1} />
+          <MatrixDimensionsInput minValue={1} isGaussJordan={true} />
         </div>
         {aIsFilled && !isOpen && (
           <>

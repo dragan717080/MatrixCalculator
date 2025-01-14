@@ -22,7 +22,6 @@ const Inverse: FC = () => {
   const { isOpen } = useModalStore()
 
   const solutionStepsRef = useRef<HTMLDivElement | null>(null)
-
   const descriptionAndInputRef = useRef<HTMLDivElement | null>(null)
 
   const [determinant, setDeterminant] = useState<number | undefined>(undefined)

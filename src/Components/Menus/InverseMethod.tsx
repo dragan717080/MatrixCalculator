@@ -10,8 +10,6 @@ import getInverseMethod from '../../lib/getInverseMethod'
 import { getCalcTime } from '../../lib/utils'
 import { useLinearEquationsStore, useMatrixStore, useModalStore } from '../../store/zustandStore'
 import Matrix, { Step } from '../../interfaces/Matrix'
-import { HighlightCells } from '../../interfaces/MatrixTableProps'
-import OnlyOneRow from '../Atoms/OnlyOneRow'
 import OriginalMatrix from '../Atoms/OriginalMatrix'
 import useUpdateExplanations from '../../hooks/useUpdateExplanations'
 
@@ -19,12 +17,11 @@ const InverseMethod: FC = () => {
   const { equationCoefs } = useLinearEquationsStore()
   const {
     setCalculate,
-    aDim, setADim, A, setA, aIsFilled,
+    aDim, A, aIsFilled,
   } = useMatrixStore()
   const { isOpen } = useModalStore()
 
   const solutionStepsRef = useRef<HTMLDivElement | null>(null)
-
   const descriptionAndInputRef = useRef<HTMLDivElement | null>(null)
 
   const [determinant, setDeterminant] = useState<number | undefined>(undefined)

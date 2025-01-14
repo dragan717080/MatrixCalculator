@@ -9,6 +9,7 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
   isPower = false,
   isMultiplication = false,
   isAS = false,
+  isGaussJordan = false,
 }) => {
   const {
     isOnlyA,
@@ -29,9 +30,6 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
   const submitRef = useRef<HTMLButtonElement | null>(null)
 
   const [allIsFilled, setAllIsFilled] = useState<boolean>(false)
-
-  // Track for sign changes, if it is changed in last setup, return it to `+`
-  const [isFirstLoaded, setIsFirstLoaded] = useState<boolean>(false)
 
   /** For matrix inputs compare with `minValue` from props, for other take argument in func. */
   const validateRange = useCallback((
@@ -64,18 +62,22 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
 
     const powerIsFilled = isPower
       ? powerRef.current!.value.length : true
-    // console.log(powerIsFilled);
 
     /** If multiplication is passed, `A` cols must be same as `B` rows. */
     const multiplicationIsOk = isMultiplication
       ? aCols.current!.value.length && aCols.current!.value === bRows.current!.value
       : true
-    
-      const newAllIsFilled = Boolean(aIsFilled && bIsFilled && powerIsFilled && multiplicationIsOk)
-/*     console.log('a is filled:', aIsFilled, 'b is filled:', bIsFilled, 'power is filled:', powerIsFilled,
-      'multiplication is ok:', multiplicationIsOk
-    );
-    console.log(newAllIsFilled); */
+
+    /** Gauss-Jordan elimination requires that the number of rows must be at most by `1` larger than number of cols. */
+    const gjIsOk = isGaussJordan
+      ? parseInt(aRows.current!.value) <= parseInt(aCols.current!.value)
+      : true
+
+    const newAllIsFilled = Boolean(aIsFilled && bIsFilled && powerIsFilled && multiplicationIsOk && gjIsOk)
+    /*     console.log('a is filled:', aIsFilled, 'b is filled:', bIsFilled, 'power is filled:', powerIsFilled,
+          'multiplication is ok:', multiplicationIsOk
+        );
+        console.log(newAllIsFilled); */
 
     if (newAllIsFilled && powerRef.current) {
       setPower(parseInt(powerRef.current!.value))
@@ -182,10 +184,6 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
     }
   }, [sign])
 
-  useEffect(() => {
-    setIsFirstLoaded(true)
-  }, [])
-
   return (
     <div className='row pt-7'>
       <form action=''>
@@ -274,8 +272,8 @@ const MatrixDimensionsInput: FC<MatrixDimensionsInputProps> = ({
         )}
         <button
           ref={submitRef}
-/*           disabled={!allIsFilled}
- */          type='submit'
+          disabled={!allIsFilled}
+          type='submit'
           onClick={(e) => handleSubmit(e)}
           className='row-h disabled:opacity-50 disabled:pointer-none rounded-md mt-7 mb-5 lg:mt-10 lg:mb-8 mx-auto px-3 py-2 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 bg-sky-500 hover:bg-sky-600 text-gray-300 focus-visible:outline-sky-600'
         >

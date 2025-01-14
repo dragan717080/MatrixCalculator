@@ -1,4 +1,5 @@
-import { FC, ChangeEvent, useEffect, useMemo, useState, useCallback } from 'react';
+import { FC, ChangeEvent, useEffect, useMemo, useState, useCallback, useLayoutEffect } from 'react';
+import { useLocation } from "react-router-dom";
 import MatrixTextInsert from './MatrixTextInsert';
 import useUpdateValuesForMatrix from '../hooks/useUpdateValuesForMatrix';
 import { isStringNumeric } from '../lib/utils';
@@ -8,11 +9,13 @@ const MatrixModal: FC = () => {
   const {
     isOnlyA,
     aDim, setADim, A, setA, aIsFilled, setAIsFilled,
-    bDim, B, setB, bIsFilled, setBIsFilled,
+    bDim, setBDim, B, setB, bIsFilled, setBIsFilled,
     calculate
   } = useMatrixStore()
   const { isOpen, setIsOpen } = useModalStore()
   const { equationCoefs, setEquationCoefs } = useLinearEquationsStore()
+
+  const location = useLocation()
 
   const { updateValuesForArr, updateValuesForMatrix } = useUpdateValuesForMatrix()
 
@@ -216,6 +219,11 @@ const MatrixModal: FC = () => {
     if (typeof (newMatrix[row]) === 'undefined') {
       newMatrix.push([])
     }
+
+    if (!Array.isArray(newMatrix[row])) {
+      return;
+    }
+
     // Make a copy of the row that we want to modify
     const updatedRow = [...newMatrix[row]];
 
@@ -443,6 +451,7 @@ const MatrixModal: FC = () => {
 
   useEffect(() => {
     console.log('filling in use effect on adim change');
+    console.log('new route:', location.pathname.split('/').slice(-1)[0]);
     setInputCellsA(
       Array.from(document.getElementsByClassName('cell-a') as HTMLCollectionOf<HTMLInputElement>)
     );
@@ -455,7 +464,7 @@ const MatrixModal: FC = () => {
     initialFillMatrices();
     // console.log('input cells A:', inputCellsA);
     // console.log('input cells B:', inputCellsB);
-  }, [aDim[0], aDim[1], bDim[0], bDim[1], isEquation]);
+  }, [aDim[0], aDim[1], bDim[0], bDim[1], isEquation, location.pathname]);
 
   useEffect(() => {
     // console.log('is open in modal:', isOpen);
@@ -466,11 +475,22 @@ const MatrixModal: FC = () => {
   }, [bDim])
 
   useEffect(() => {
-    const loc = window.location.href.split('/').slice(-1)[0]
+    const loc = location.pathname.split('/').slice(-1)[0]
     const equationRoutes = ['cramer-rule', 'gauss-jordan-elimination', 'inverse-method']
 
+    console.log('new location:', location.pathname.split('/').slice(-1)[0]);
+    console.log(location);
     setIsEquation(equationRoutes.includes(loc))
-  }, [])
+    setADim([0, 0])
+    setA([])
+    setBDim([0, 0])
+    setB([])
+  }, [location.pathname])
+
+  useEffect(() => {
+    console.log('A changed in modal:', A);
+  }, [A])
+
 
   useEffect(() => {
     // console.log('%cequation coefs changed:', 'color:red;font-size:18px;', equationCoefs);

@@ -1,14 +1,13 @@
 import { MouseEvent, useEffect, useState } from 'react'
 import { Disclosure } from '@headlessui/react'
 import { Bars3Icon } from '@heroicons/react/24/outline'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useToast } from '../contexts/ToastContext'
 import AdvancedPropertiesToolbar from '../Components/NavbarToolbars/AdvancedPropertiesToolbar'
 import InversionsToolbar from './NavbarToolbars/InversionsToolbar'
 import LinearEquationsToolbar from './NavbarToolbars/LinearEquationsToolbar'
 import MatrixOperationsToolbar from './NavbarToolbars/MatrixOperationsToolbar'
 import NavbarMenuItem from './NavbarMenuItem'
-import { wait } from '../lib/utils'
 import DASH_NAVBAR_LINKS from '../constants/dashNavbarLinks'
 import Logo from '../../public/logo.webp'
 
@@ -31,8 +30,6 @@ export default function DashNavbar() {
     { name: 'Inversions', href: '/inversions', current: false, component: InversionsToolbar },
     { name: 'Linear Equations Systems', href: '/linear-equations-systems', current: false, component: LinearEquationsToolbar },
   ])
-
-  const navigate = useNavigate()
 
   // Handle submenu visibility when clicking a menu item
   const handleChangePanelIndex = (e: MouseEvent<HTMLDivElement>, index: number) => {

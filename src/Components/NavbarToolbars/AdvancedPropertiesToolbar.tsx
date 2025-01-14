@@ -1,12 +1,13 @@
-import { FC } from 'react';
+import { FC } from 'react'
+import { Link } from 'react-router-dom'
 
 const AdvancedPropertiesToolbar: FC = () => {
   return (
     <div>
       <ul className='bg-deepazure'>
-        <li><a href='/rank'>Matrix Rank</a></li>
-        <li><a href='/determinant'>Matrix Determinant</a></li>
-        <li><a href='/power'>Matrix Power</a></li>
+        <li><Link to='/rank'>Matrix Rank</Link></li>
+        <li><Link to='/determinant'>Matrix Determinant</Link></li>
+        <li><Link to='/power'>Matrix Power</Link></li>
       </ul>
     </div>
   )

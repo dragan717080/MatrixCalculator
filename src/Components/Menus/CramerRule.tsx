@@ -10,8 +10,6 @@ import getCramerRule from '../../lib/getCramerRule'
 import { getCalcTime } from '../../lib/utils'
 import { useLinearEquationsStore, useMatrixStore, useModalStore } from '../../store/zustandStore'
 import Matrix, { Step } from '../../interfaces/Matrix'
-import { HighlightCells } from '../../interfaces/MatrixTableProps'
-import OnlyOneRow from '../Atoms/OnlyOneRow'
 import OriginalMatrix from '../Atoms/OriginalMatrix'
 
 const CramerRule: FC = () => {
@@ -23,7 +21,6 @@ const CramerRule: FC = () => {
   const { isOpen } = useModalStore()
 
   const solutionStepsRef = useRef<HTMLDivElement | null>(null)
-
   const descriptionAndInputRef = useRef<HTMLDivElement | null>(null)
 
   const [determinant, setDeterminant] = useState<number | undefined>(undefined)
@@ -126,7 +123,7 @@ const CramerRule: FC = () => {
                   {/* <p>{getStepText(step, index)}</p> */}
                   <div className="flex flex-col space-y-1.5 pt-2 pb-2.5">
                     {Array.isArray(step.explanation)
-                      ? step.explanation.map((explanation, index) => (
+                      ? step.explanation.map((_, index) => (
                         <p className='solution-explanation' key={index}></p>))
                       : <p className='solution-explanation'></p>
                     }

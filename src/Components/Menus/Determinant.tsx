@@ -1,17 +1,16 @@
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
 import MatrixDimensionsInput from '../Atoms/MatrixDimensionsInput'
 import MatrixTable from '../Atoms/MatrixTable'
-import OnlyOneRow from '../Atoms/OnlyOneRow'
+import OriginalMatrix from '../Atoms/OriginalMatrix'
 import ScrollWithSVGs from '../Atoms/ScrollWithSVGs'
 import useRecalculate from '../../hooks/useRecalculate'
 import useResetParams from '../../hooks/useResetParams'
 import useToggleShowSolution from '../../hooks/useToggleShowSolution'
+import useUpdateExplanations from '../../hooks/useUpdateExplanations'
 import getDeterminant from '../../lib/getDeterminant'
 import { getCalcTime, getOrderNumberToStr, getStrValuesOfMainDiagonal } from '../../lib/utils'
 import { useMatrixStore, useModalStore } from '../../store/zustandStore'
 import { Step } from '../../interfaces/Determinant'
-import useUpdateExplanations from '../../hooks/useUpdateExplanations'
-import OriginalMatrix from '../Atoms/OriginalMatrix'
 
 const Determinant: FC = () => {
   const {
@@ -21,7 +20,6 @@ const Determinant: FC = () => {
   const { isOpen } = useModalStore()
 
   const solutionStepsRef = useRef<HTMLDivElement | null>(null)
-
   const descriptionAndInputRef = useRef<HTMLDivElement | null>(null)
 
   const [determinant, setDeterminant] = useState<number | undefined>(undefined)
@@ -127,7 +125,6 @@ const Determinant: FC = () => {
 
   useEffect(() => {
     console.log('New steps:', steps);
-
     if (steps.length) {
       updateExplanations()
     }

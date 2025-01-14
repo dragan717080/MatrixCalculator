@@ -17,9 +17,12 @@ const useResetParams = ({
   } = useMatrixStore()
 
   const resetParams = () => {
+    console.log('IN RESET');
     setIsOnlyA(onlyHasA)
     setAIsFilled(false)
     setBIsFilled(false)
+    setA([])
+    setB([])
 
     if (isSign) {
       setSign('+')

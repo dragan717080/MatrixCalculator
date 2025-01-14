@@ -48,11 +48,17 @@ const MatrixTextInsert: FC<MatrixTextInsertProps> = ({
         rows.pop()
       }
 
+      /** These variables are needed, if it had error previously, to not hang if the new input is ok. */
+      let newWrongColsCountError = ''
+      let newWrongRowsCountError = ''
+
       // Will be changed later if errors
       setWrongColsCountError('')
 
       if (rows.length !== nRows) {
         // console.log(`Matrix ${isA ? 'A' : 'B'} has ${nRows} rows but your input has ${rows.length}`);
+        newWrongRowsCountError = `Matrix ${isA ? 'A' : 'B'} has ${nRows} rows but your input has ${rows.length}`
+        console.log('setting new rows err');
         setWrongRowsCountError(`Matrix ${isA ? 'A' : 'B'} has ${nRows} rows but your input has ${rows.length}`)
         return
       } else {
@@ -106,10 +112,11 @@ const MatrixTextInsert: FC<MatrixTextInsertProps> = ({
         }
       }
 
+      newWrongColsCountError = ''
       setWrongColsCountError('')
       // console.log('NEW ERRORS:', errors);
-      if (!wrongRowsCountError && !wrongColsCountError && !hasWrongNumbers) {
-        // console.log('ALL IS OK!');
+      if (!newWrongRowsCountError && !newWrongColsCountError && !hasWrongNumbers) {
+        console.log('ALL IS OK!');
         // console.log('errors:', errors);
         
         newMatrix = updateValuesForMatrix(isA, newMatrix)
