@@ -32,7 +32,6 @@ const useGetHighlightFunc = ({
       const rowsBeingUpdated = explanation
         .filter(x => x.includes(' = ') && x[0] === 'R')
         .map(x => (x as string).match(/>(\d+)</g)!.map(x => x.replace(/[><]/g, ''))[0] as unknown as number - 1)
-      console.log('rowsBeingUpdated:', rowsBeingUpdated);
 
       // Include all rows that are being updated
       return (row, _) => rowsBeingUpdated.includes(row)
