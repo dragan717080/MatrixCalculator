@@ -64,7 +64,7 @@ const Transpose: FC = () => {
       <div ref={descriptionAndInputRef} className='hidden'>
         <div className={`${isOpen || aIsFilled ? 'hidden' : 'block'}`}>
           <h3 className='mb-4 text-lg bold'>Transpose</h3>
-          <p className="mb-2">The algorithm of matrix transpose is pretty simple.</p>
+          <p className='mb-2'>The algorithm of matrix transpose is pretty simple.</p>
           <ol>
             <li>A new matrix is obtained the following way: each [i, j] element of the new matrix gets the value of the [j, i] element of the original one.</li>
             <li>Dimension also changes to the opposite. For example if you transpose a 'n' x 'm' size matrix you'll get a new one of 'm' x 'n' dimension.</li>

@@ -123,11 +123,11 @@ const MatrixTextInsert: FC<MatrixTextInsertProps> = ({
             className='w-full min-h-24 !outline-none focus:!outline-none border-none focus:ring-0 focus:bg-primary text-gray-800'
           >
           </textarea>
-          <div className="py-3 text-red-500">
+          <div className='py-3 text-red-500'>
             <span>{wrongRowsCountError}</span>
             <span>{wrongColsCountError}</span>
             {!wrongRowsCountError && !wrongColsCountError && Object.entries(errors).map(([rowIndex, errorArray]) => (
-              <div className="py-3 text-red-500" key={rowIndex}>
+              <div className='py-3 text-red-500' key={rowIndex}>
                 Row {parseInt(rowIndex) + 1}: {errorArray.length} error{errorArray.length !== 1 ? 's' : ''}
                 <ul>
                   {errorArray.map((error, i) => (

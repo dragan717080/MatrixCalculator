@@ -53,34 +53,34 @@ export default function DashNavbar() {
   }
 
   return (
-    <Disclosure as="nav" className="bg-gray-800 h-16">
+    <Disclosure as='nav' className='bg-gray-800 h-16'>
       <>
-        <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
-          <div className="relative flex h-16 items-center justify-between">
-            <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
+        <div className='mx-auto max-w-7xl px-2 sm:px-6 lg:px-8'>
+          <div className='relative flex h-16 items-center justify-between'>
+            <div className='absolute inset-y-0 left-0 flex items-center sm:hidden'>
               {/* Mobile menu button*/}
-              <Disclosure.Button className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
-                <span className="sr-only">Open main menu</span>
-                <Bars3Icon className="block h-6 w-6" aria-hidden="true" />
+              <Disclosure.Button className='inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white'>
+                <span className='sr-only'>Open main menu</span>
+                <Bars3Icon className='block h-6 w-6' aria-hidden='true' />
               </Disclosure.Button>
             </div>
-            <div className="flex flex-1 items-center justify-center max-h-full sm:justify-start">
+            <div className='flex flex-1 items-center justify-center max-h-full sm:justify-start'>
               <Link to='/'>
-                <div className="flex flex-shrink-0 items-center">
+                <div className='flex flex-shrink-0 items-center'>
                   <img
-                    className="block h-8 w-auto lg:hidden"
+                    className='block h-8 w-auto lg:hidden'
                     src={Logo}
-                    alt="Dragan Logo"
+                    alt='Dragan Logo'
                   />
                   <img
-                    className="hidden h-8 w-auto lg:block"
+                    className='hidden h-8 w-auto lg:block'
                     src={Logo}
-                    alt="Dragan Logo"
+                    alt='Dragan Logo'
                   />
                 </div>
               </Link>
-              <div className="hidden sm:ml-6 sm:block">
-                <div className="flex space-x-4 h-16">
+              <div className='hidden sm:ml-6 sm:block'>
+                <div className='flex space-x-4 h-16'>
                   {navigation.map((toolbarComponent, index: number) => (
                     <div className='h-full row-v navbar-item-container' key={toolbarComponent.name}>
                       <div
@@ -106,8 +106,8 @@ export default function DashNavbar() {
           </div>
         </div>
 
-        <Disclosure.Panel className="sm:hidden relative z-10 bg-deepazure">
-          <div className="flex flex-col items-start">
+        <Disclosure.Panel className='sm:hidden relative z-10 bg-deepazure'>
+          <div className='flex flex-col items-start'>
             {DASH_NAVBAR_LINKS.map((item, index) => (
               <div
                 onClick={(e) => handleChangePanelIndex(e, index)}
@@ -119,7 +119,7 @@ export default function DashNavbar() {
                 )}
                 key={item.name}
               >
-                <div className="row-v h-14">
+                <div className='row-v h-14'>
                   <h4 className='px-5'>{item.name}</h4>
                 </div>
                   <ul
@@ -129,7 +129,7 @@ export default function DashNavbar() {
                   >
                     {item.subroutes.map((subroute) => (
                       <li
-                        className="py-4 px-8 text-white border-b-lightgray"
+                        className='py-4 px-8 text-white border-b-lightgray'
                         key={subroute.name}
                       >
                         <Link to={subroute.href}>{subroute.name}</Link>

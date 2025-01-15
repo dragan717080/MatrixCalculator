@@ -79,10 +79,10 @@ const Multiplication: FC = () => {
                         {(step.explanation as string[]).map((explanation, explanationIndex) => (
                           <div className='row w-full' key={explanationIndex}>
                             C
-                            <span className="subindex">
+                            <span className='subindex'>
                               {steps[index]?.indices?.[explanationIndex]?.[0] ?? ''}
                             </span>
-                            <span className="subindex">
+                            <span className='subindex'>
                               {steps[index]?.indices?.[explanationIndex]?.[1] ?? ''}
                             </span>
                             <span className='pl-1 pr-2'> = </span>

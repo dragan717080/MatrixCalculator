@@ -100,7 +100,7 @@ const Rank: FC = () => {
                 {steps.map((step, index) => (
                   <div id={`step-${index + 2}`} className='pt-2 pb-3 border-b-darkgray' key={index}>
                     <div>
-                      <div className="flex flex-col space-y-1.5 pt-2 pb-2.5">
+                      <div className='flex flex-col space-y-1.5 pt-2 pb-2.5'>
                         {(step.explanation as string[]).map((explanation, index) => (
                           <p className='step-explanation' key={index}>{explanation}</p>
                         ))}

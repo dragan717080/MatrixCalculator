@@ -16,10 +16,10 @@ const OnlyOneRow: FC<OnlyOneRowProps> = ({
       {!isRank
         ? (
           A.length === 1 && (
-            <div className="w-full row overflow-hidden">
+            <div className='w-full row overflow-hidden'>
               <span>
                 A has only one row so Δ =
-                A<span className="subindex">1</span><span className="subindex">1</span> = {A[0][0]}
+                A<span className='subindex'>1</span><span className='subindex'>1</span> = {A[0][0]}
               </span>
             </div>
           )
@@ -27,20 +27,20 @@ const OnlyOneRow: FC<OnlyOneRowProps> = ({
         : (
           <>
             {A.length === 1 && (
-              <div className="w-full row overflow-hidden">
+              <div className='w-full row overflow-hidden'>
                 <span>
                   A has only one row so since A
-                  <span className="subindex">1</span><span className="subindex">1</span> is {
+                  <span className='subindex'>1</span><span className='subindex'>1</span> is {
                     A[0][0] === 0 ? '0' : 'not 0'
                   } it will be {Number(A[0][0] !== 0)}
                 </span>
               </div>
             )}
             {A.length !== 1 && A[0].length === 1 && (
-              <div className="w-full row overflow-hidden">
+              <div className='w-full row overflow-hidden'>
                 <span>
                   A has only one column so since A
-                  <span className="subindex">1</span><span className="subindex">1</span> is {
+                  <span className='subindex'>1</span><span className='subindex'>1</span> is {
                     A[0][0] === 0 ? '0' : 'not 0'
                   } it will be {Number(A[0][0] !== 0)}
                 </span>

@@ -10,7 +10,7 @@ interface NavbarMenuItemProps {
 
 const NavbarMenuItem: FC<NavbarMenuItemProps> = ({ ComponentToRender, index }) => {
   const { isNavbarPortalOpen, setIsNavbarPortalOpen, activeIndex, setActiveIndex } = useNavbarPortalStore()
-  let newDisplayName = ComponentToRender.displayName!.split("Toolbar")[0]
+  let newDisplayName = ComponentToRender.displayName!.split('Toolbar')[0]
   newDisplayName = newDisplayName.replace(/([a-z])([A-Z])/g, '$1 $2')
 
   // Local state to manage the portal for this specific toolbar
@@ -34,9 +34,9 @@ const NavbarMenuItem: FC<NavbarMenuItemProps> = ({ ComponentToRender, index }) =
     ComponentToRender.displayName = 'Add display name to this component'
 
   const content = (
-    <div className="">
-      <h2 className='semibold'>{ComponentToRender.displayName.split("Toolbar")[0].replace(/([a-z])([A-Z])/g, '$1 $2')}</h2>
-      <div className="w-4 h-4 transform transition-transform duration-300 group-hover:rotate-180 group-hover:text-primary">
+    <div className=''>
+      <h2 className='semibold'>{ComponentToRender.displayName.split('Toolbar')[0].replace(/([a-z])([A-Z])/g, '$1 $2')}</h2>
+      <div className='w-4 h-4 transform transition-transform duration-300 group-hover:rotate-180 group-hover:text-primary'>
         {/* <ArrowIcon /> */}
       </div>
     </div>
@@ -49,7 +49,7 @@ const NavbarMenuItem: FC<NavbarMenuItemProps> = ({ ComponentToRender, index }) =
   }
 
   return (
-    <div ref={navbarMenuItemRef} className="relative">
+    <div ref={navbarMenuItemRef} className='relative'>
       <div
         className={`parent-container px-4 md:px-1.5 xl:px-4 pointer`}
         onMouseEnter={() => {

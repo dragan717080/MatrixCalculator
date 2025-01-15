@@ -1,6 +1,6 @@
-import { UseGetHighlightFuncProps } from "../interfaces/Hooks"
-import { Step } from "../interfaces/Matrix"
-import { HighlightCells } from "../interfaces/MatrixTableProps"
+import { UseGetHighlightFuncProps } from '../interfaces/Hooks'
+import { Step } from '../interfaces/Matrix'
+import { HighlightCells } from '../interfaces/MatrixTableProps'
 
 /** Highlight `MatrixTable` cells based on row and col values of corresponding solution step. */
 const useGetHighlightFunc = ({

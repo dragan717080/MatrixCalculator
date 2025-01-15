@@ -53,18 +53,18 @@ export function MessageCard(props: IMessageCardProps) {
     return colorSchemeObj[props.type]
   }, [props.type])
   return (
-    <div className="m-auto space-y-6">
+    <div className='m-auto space-y-6'>
       <div className={`flex gap-4 p-4 rounded-md ${getColor.primary}`}>
-        <div className="w-max flex items-center">
-          <div className="h-10 w-10 flex align-middle ">
-            <span className="material-icons material-icons-outlined m-auto">
+        <div className='w-max flex items-center'>
+          <div className='h-10 w-10 flex align-middle '>
+            <span className='material-icons material-icons-outlined m-auto'>
               <ExclamationCircleIcon
                 className={`h-10 w-10 ${getColor.text500} `}
               />
             </span>
           </div>
         </div>
-        <div className=" flex space-y-1 text-sm flex-col justify-center">
+        <div className=' flex space-y-1 text-sm flex-col justify-center'>
           <h6 className={`font-medium ${getColor.text900}`}>{props.title}</h6>
           <p className={`${getColor.text700} leading-tight`}>{props.message}</p>
         </div>

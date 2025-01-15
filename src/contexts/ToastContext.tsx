@@ -81,7 +81,7 @@ export function ToastProvider({ children }: IToastProviderProps): JSX.Element {
   return (
     <ToastContext.Provider value={value}>
       <ToastContainer
-        position="bottom-right"
+        position='bottom-right'
         autoClose={5000}
         hideProgressBar={false}
         newestOnTop={false}

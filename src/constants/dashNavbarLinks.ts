@@ -1,4 +1,4 @@
-import { DashNavbarLink } from "../interfaces/Constants"
+import { DashNavbarLink } from '../interfaces/Constants'
 
 const DASH_NAVBAR_LINKS: DashNavbarLink[] = [
   {

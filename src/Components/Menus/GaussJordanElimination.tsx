@@ -161,9 +161,9 @@ const GaussJordanElimination: FC = () => {
         <div className={`${isOpen || aIsFilled ? 'hidden' : 'block'}`}>
           <h3 className='mb-4 text-lg bold'>Gauss-Jordan Elimination</h3>
           <ol>
-            <li>The main condition for the Gauss-Jordan Elimination is that the number of rows must be <span className="text-red-500">not greater than as the number of
+            <li>The main condition for the Gauss-Jordan Elimination is that the number of rows must be <span className='text-red-500'>not greater than as the number of
               unknown variables.</span></li>
-            <li><span className="text-red-500">A rows &lt;= A cols</span></li>
+            <li><span className='text-red-500'>A rows &lt;= A cols</span></li>
             <li>Change the matrix to reduced row echelon form (RREF).</li>
             <li>It is matrix with all zeros below the main diagonal, and all ones at the main diagonal.</li>
             <li>Pick the 1st element in the 1st column (pivot), if it is 0, swap it with the first non zero column under it.</li>
