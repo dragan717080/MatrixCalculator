@@ -15,11 +15,10 @@ import { ReactNode } from 'react'
  * is clicked, it will trigger the animation, this `Promise<void>`.
  * @property {() => void} recalculate - On recalculate, reset state e.g. `time`,
  * `aDim`, `A`, `isOpen` and other params are all reset.
- * @property {boolean} [toShow] - (Optional) - Whether the
- * component itself should be in the DOM, e.g. `aIsFilled && bIsFilled && !isOpen` for the
- * `Multiplication`.
+ * @property {boolean} withMatrixText - What text to display in `Hide/Show` button.
+ * If omitted, will be `solution`, otherwise `matrix`.
  * 
- * Defaults to true.
+ * Defaults to false.
  */
 export default interface SolutionRowsProps {
   children: ReactNode,
@@ -27,5 +26,5 @@ export default interface SolutionRowsProps {
   time: number
   toggleShowSolution: () => Promise<void>
   recalculate: () => void
-  toShow?: boolean
+  withMatrixText?: boolean
 }

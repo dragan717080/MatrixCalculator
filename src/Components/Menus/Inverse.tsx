@@ -1,7 +1,8 @@
-import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
+import React, { FC, useEffect, useRef, useState } from 'react'
 import MatrixDimensionsInput from '../Atoms/MatrixDimensionsInput'
 import MatrixTable from '../Atoms/MatrixTable'
 import ScrollWithSVGs from '../Atoms/ScrollWithSVGs'
+import SolutionRows from '../Atoms/SolutionRows'
 import useRecalculate from '../../hooks/useRecalculate'
 import useResetParams from '../../hooks/useResetParams'
 import useUpdateExplanations from '../../hooks/useUpdateExplanations'
@@ -11,7 +12,6 @@ import getInverse from '../../lib/getInverse'
 import { getCalcTime } from '../../lib/utils'
 import { useMatrixStore, useModalStore } from '../../store/zustandStore'
 import Matrix, { Step } from '../../interfaces/Matrix'
-import { HighlightCells } from '../../interfaces/MatrixTableProps'
 import OriginalMatrix from '../Atoms/OriginalMatrix'
 
 const Inverse: FC = () => {
@@ -39,8 +39,6 @@ const Inverse: FC = () => {
   const { updateExplanations } = useUpdateExplanations({ steps, isEquation: true })
 
   const { getHighlightFunc } = useGetHighlightFunc({ steps, aDim })
-
-  const tableRef = useRef<HTMLTableElement | null>(null)
 
   const calculateResult = () => {
     // It will go to this function again when `A` changes with `updateValuesForMatrix`
@@ -102,6 +100,10 @@ const Inverse: FC = () => {
     }
   }, [steps.length, toShowSolution])
 
+  useEffect(() => {
+    setTime(-1)
+  }, [A])
+
   return (
     <div className='col-h'>
       {aIsFilled && !isOpen && (
@@ -157,51 +159,28 @@ const Inverse: FC = () => {
           <MatrixDimensionsInput minValue={1} isSquare={true} />
         </div>
         {aIsFilled && !isOpen && (
-          <>
-            <div className={`
-              ${toShowSolution
-                ? 'mt-1 md:mt-2 mb-4 md:mb-6'
-                : 'mb-8 md:mb-12'
-              }
-              row text-white space-x-5
-            `}>
-              <button
-                onClick={() => toggleShowSolution()}
-                className='btn btn-brighter'
-              >
-                {!toShowSolution ? 'Show' : 'Hide'} solution
-              </button>
-              <button
-                onClick={() => recalculate()}
-                className='btn btn-brighter'
-              >
-                Recalculate
-              </button>
-            </div>
-            <section className={!toShowSolution ? 'pt-6' : 'pt-2'}>
-              {steps.length
-                ? (
-                  <>
-                    <h3 className='bold mb-2'>Result</h3>
-                    <MatrixTable
-                      nRows={C.length}
-                      nCols={C[0].length}
-                      A={C}
-                      ref={tableRef}
-                    />
-                  </>)
-                : (
-                  <div>
-                    Determinant is 0, so this matrix has no inverse.
-                  </div>
-                )}
-              <div className='w-full flex'>
-                <span className='ml-auto pt-2'>
-                  Computation time: <span>{time !== - 1 ? time : '0.001'}</span>sec.
-                </span>
-              </div>
-            </section>
-          </>
+          <SolutionRows
+            toShowSolution={toShowSolution}
+            time={time}
+            toggleShowSolution={toggleShowSolution}
+            recalculate={recalculate}
+          >
+            {steps.length
+              ? (
+                <>
+                  <h3 className='bold mb-2'>Result</h3>
+                  <MatrixTable
+                    nRows={C.length}
+                    nCols={C[0].length}
+                    A={C}
+                  />
+                </>)
+              : (
+                <div>
+                  Determinant is 0, so this matrix has no inverse.
+                </div>
+              )}
+          </SolutionRows>
         )}
       </div>
     </div>

@@ -1,13 +1,20 @@
-import React, { FC, forwardRef, useEffect } from 'react'
+import React, { FC, memo } from 'react'
 import MatrixTableProps from '../../interfaces/MatrixTableProps'
-import { LinearEquationStore } from '../../interfaces/Zustand'
 import { useLinearEquationsStore } from '../../store/zustandStore'
 
-const MatrixTable = forwardRef<HTMLTableElement, MatrixTableProps>(
-  ({ nRows, nCols, A, highlightFunc, className, index, letter, isWithCoefs }, ref) => {
+const MatrixTable: FC<MatrixTableProps> = ({
+  nRows,
+  nCols,
+  A,
+  highlightFunc,
+  className,
+  index,
+  letter,
+  isWithCoefs
+}) => {
     const { equationCoefs } = useLinearEquationsStore()
 
-    const getTableCellValue = (row: number, col: number, value: number) => {
+    const getTableCellValue = (value: number) => {
       if (typeof (value) === 'string') {
         value = parseFloat(value)
       }
@@ -17,7 +24,6 @@ const MatrixTable = forwardRef<HTMLTableElement, MatrixTableProps>(
 
     return (
       <table
-        ref={ref}
         className={`${className ? className : ''} matrix-table mt-5 mb-6 mx-auto overflow-scroll md:overflow-auto text-center`}
       >
         <thead>
@@ -41,7 +47,7 @@ const MatrixTable = forwardRef<HTMLTableElement, MatrixTableProps>(
                   className={`${highlightFunc && highlightFunc(row, col, index, A) ? 'bg-gray-450 text-neutral-150' : ''} min-h-[2.3125rem] min-w-[2.3125rem] whitespace-nowrap`}
                   key={col}
                 >
-                  {getTableCellValue(row, col, A[row][col] as number)}
+                  {getTableCellValue(A && A.length && A.length > row && A[0] && A[0].length > col ? A[row][col] as number : 0)}
                 </td>
               ))}
               {isWithCoefs && (
@@ -54,6 +60,5 @@ const MatrixTable = forwardRef<HTMLTableElement, MatrixTableProps>(
       </table>
     )
   }
-)
 
-export default MatrixTable
+export default memo(MatrixTable)

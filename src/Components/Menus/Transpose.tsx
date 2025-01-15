@@ -1,6 +1,8 @@
 import React, { FC, useEffect, useRef, useState } from 'react'
 import MatrixDimensionsInput from '../Atoms/MatrixDimensionsInput'
 import MatrixTable from '../Atoms/MatrixTable'
+import SolutionRows from '../Atoms/SolutionRows'
+import OriginalMatrix from '../Atoms/OriginalMatrix'
 import useRecalculate from '../../hooks/useRecalculate'
 import useToggleShowSolution from '../../hooks/useToggleShowSolution'
 import { getCalcTime, transpose } from '../../lib/utils'
@@ -12,20 +14,21 @@ const Transpose: FC = () => {
   const { setCalculate, aDim, A, aIsFilled } = useMatrixStore()
   const { isOpen } = useModalStore()
 
-  const showOriginalRef = useRef<HTMLTableElement | null>(null)
+  const showOriginalRef = useRef<HTMLDivElement | null>(null)
+  const descriptionAndInputRef = useRef<HTMLDivElement | null>(null)
 
   const [C, setC] = useState<Matrix>(A)
-  const [aRows, aCols] = aDim
   const [cRows, cCols] = [aDim[1], aDim[0]]
   const [time, setTime] = useState<number>(-1)
-  const [showOriginalMatrix, setShowOriginalMatrix] = useState<boolean>(false)
+  const [toShowOriginalMatrix, setToShowOriginalMatrix] = useState<boolean>(false)
 
-  const { recalculate } = useRecalculate({ setTime, setC, setShow: setShowOriginalMatrix, stepsRef: showOriginalRef })
+  const { recalculate } = useRecalculate({ setTime, setC, setShow: setToShowOriginalMatrix, stepsRef: showOriginalRef })
 
-  const { resetParams } = useResetParams({ onlyHasA: true })
+  const { resetParams } = useResetParams({ descriptionAndInputRef, onlyHasA: true })
 
-  const { toggleShowSolution: toggleShowOriginalMatrix } = useToggleShowSolution({ solutionStepsRef: showOriginalRef, toShowSolution: showOriginalMatrix, setToShowSolution: setShowOriginalMatrix })
+  const { toggleShowSolution: toggleShowOriginalMatrix } = useToggleShowSolution({ solutionStepsRef: showOriginalRef, toShowSolution: toShowOriginalMatrix, setToShowSolution: setToShowOriginalMatrix })
 
+  /** Unlike other `calculate` functions, transpose doesn't need to wait for parsing number to floats. */
   const calculateResult = () => {
     const { time, funcResult: transposed } = getCalcTime(() => transpose(A))
     setTime(time)
@@ -43,28 +46,22 @@ const Transpose: FC = () => {
     resetParams()
   }, [])
 
+  useEffect(() => {
+    setTime(-1)
+  }, [A])
+
   return (
     <div className='col-h'>
-      {aIsFilled && !isOpen && C.length && (
-        <>
-          <MatrixTable ref={showOriginalRef} nRows={aRows} nCols={aCols} A={A} className='hidden' />
-          <div className='row text-white space-x-5'>
-            <button
-              onClick={() => toggleShowOriginalMatrix()}
-              className='btn btn-brighter'
-            >
-              {!showOriginalMatrix ? 'Show' : 'Hide'} matrix
-            </button>
-            <button
-              onClick={() => recalculate()}
-              className='btn btn-brighter'
-            >
-              Recalculate
-            </button>
-          </div>
-        </>
+      {aIsFilled && !isOpen && (
+        <div ref={showOriginalRef}>
+          {toShowOriginalMatrix && (
+            <div className='solution-items-container mb-7'>
+              <OriginalMatrix A={A} steps={[]} isEquation={false} />
+            </div>
+          )}
+        </div>
       )}
-      <div>
+      <div ref={descriptionAndInputRef} className='hidden'>
         <div className={`${isOpen || aIsFilled ? 'hidden' : 'block'}`}>
           <h3 className='mb-4 text-lg bold'>Transpose</h3>
           <p className="mb-2">The algorithm of matrix transpose is pretty simple.</p>
@@ -76,19 +73,15 @@ const Transpose: FC = () => {
           <MatrixDimensionsInput minValue={2} />
         </div>
         {!isOpen && C.length > 0 && aIsFilled && (
-          <section className='py-5'>
-            <h3 className='bold mb-2'>Result</h3>
-            <div className=''>
-              <MatrixTable nRows={cRows} nCols={cCols} A={C} />
-            </div>
-            {time > -1 && (
-              <div className='w-full pt-4 flex'>
-                <span className='ml-auto'>
-                  Computation time: <span>{time}</span>sec.
-                </span>
-              </div>
-            )}
-          </section>
+          <SolutionRows
+            toShowSolution={toShowOriginalMatrix}
+            time={time}
+            toggleShowSolution={toggleShowOriginalMatrix}
+            recalculate={recalculate}
+            withMatrixText={true}
+          >
+            <MatrixTable nRows={cRows} nCols={cCols} A={C} />
+          </SolutionRows>
         )}
       </div>
     </div>

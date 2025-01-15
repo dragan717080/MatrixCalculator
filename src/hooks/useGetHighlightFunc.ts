@@ -37,10 +37,10 @@ const useGetHighlightFunc = ({
       return (row, _) => rowsBeingUpdated.includes(row)
     }
 
-    const columnIsAlreadyOne = !Array.isArray(explanation) && explanation.includes('is already 1, so no need to eliminate this column')
+    const columnIsAlreadyOne = !Array.isArray(explanation) && explanation.includes('is already 1, so no need to eliminate')
 
     if (columnIsAlreadyOne) {
-      const index = explanation.split('is already 1, so no need to eliminate this column')[0]
+      const index = explanation.split('is already 1, so no need to eliminate')[0]
 
       // Text explanation uses 1-based indexing
       const [i, j] = index.split(/\D/).filter(Boolean).map(x => parseInt(x) - 1)
@@ -51,7 +51,7 @@ const useGetHighlightFunc = ({
     const columnIsAlreadyZero = Array.isArray(explanation) && explanation[0].includes('column 1 is already 0, so this step is skipped')
 
     if (columnIsAlreadyZero) {
-      const index = (explanation as string[])[0].split('is already 1, so no need to eliminate this column')[0]
+      const index = (explanation as string[])[0].split('is already 1, so no need to eliminate')[0]
 
       // Text explanation uses 1-based indexing
       const [i, j] = index.split(/\D/).filter(Boolean).map(x => parseInt(x) - 1)

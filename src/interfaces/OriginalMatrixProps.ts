@@ -10,6 +10,7 @@ import Matrix, { Step, TwoNumbers } from "./Matrix"
  * @property {boolean} [needsDeterminant] - (Optional) - Whether the component
  * needs determinant (e.g. linear equations systems). Defaults to true.
  * @property {boolean} [isEquation] - (Optional) - Defaults to false.
+ * @property {boolean} [isRank] - (Optional) - Defaults to false.
  */
 export default interface OriginalMatrixProps {
   A: Matrix
@@ -17,4 +18,5 @@ export default interface OriginalMatrixProps {
   B?: Matrix
   needsDeterminant?: boolean
   isEquation?: boolean
+  isRank?: boolean
 }

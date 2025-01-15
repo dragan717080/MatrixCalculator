@@ -1,6 +1,7 @@
 import React, { FC, useRef, useState, useEffect } from 'react'
 import MatrixDimensionsInput from '../Atoms/MatrixDimensionsInput'
 import MatrixTable from '../Atoms/MatrixTable'
+import SolutionRows from '../Atoms/SolutionRows'
 import useRecalculate from '../../hooks/useRecalculate'
 import useResetParams from '../../hooks/useResetParams'
 import useToggleShowSolution from '../../hooks/useToggleShowSolution'
@@ -57,14 +58,18 @@ const AdditionSubstraction: FC = () => {
     resetParams()
   }, [])
 
+  useEffect(() => {
+    setTime(-1)
+  }, [A])
+
   return (
     <div className='col-h'>
       {aIsFilled && bIsFilled && !isOpen && (
         <div ref={solutionStepsRef}>
           {toShowSolution && (
-              <div className='solution-items-container mb-7'>
-                <OriginalMatrix A={A} steps={[]} B={B} needsDeterminant={false} /> 
-              </div>
+            <div className='solution-items-container mb-7'>
+              <OriginalMatrix A={A} steps={[]} B={B} needsDeterminant={false} />
+            </div>
           )}
         </div>
       )}
@@ -81,39 +86,15 @@ const AdditionSubstraction: FC = () => {
           <MatrixDimensionsInput minValue={1} isAS={true} />
         </div>
         {aIsFilled && bIsFilled && !isOpen && (
-          <>
-            <div className={`
-              ${toShowSolution
-                ? 'mt-1 md:mt-2 mb-4 md:mb-6'
-                : 'mb-8 md:mb-12'
-              }
-              row text-white space-x-5
-            `}>
-              <button
-                onClick={() => toggleShowSolution()}
-                className='btn btn-brighter'
-              >
-                {!toShowSolution ? 'Show' : 'Hide'} solution
-              </button>
-              <button
-                onClick={() => recalculate()}
-                className='btn btn-brighter'
-              >
-                Recalculate
-              </button>
-            </div>
-            {time > -1 && (
-              <section>
-                <h3 className='bold mb-2'>Result of {sign === '+' ? 'addition' : 'substraction'}</h3>
-                <MatrixTable nRows={aDim[0]} nCols={aDim[1]} A={C} />
-                <div className='w-full flex'>
-                  <span className='ml-auto pt-2'>
-                    Computation time: <span>{time}</span>sec.
-                  </span>
-                </div>
-              </section>
-            )}
-          </>
+          <SolutionRows
+            toShowSolution={toShowSolution}
+            time={time}
+            toggleShowSolution={toggleShowSolution}
+            recalculate={recalculate}
+          >
+            <h3 className='bold mb-2'>Result of {sign === '+' ? 'addition' : 'substraction'}</h3>
+            <MatrixTable nRows={aDim[0]} nCols={aDim[1]} A={C} />
+          </SolutionRows>
         )}
       </div>
     </div>

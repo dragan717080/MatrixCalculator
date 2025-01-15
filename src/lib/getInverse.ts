@@ -137,11 +137,6 @@ const getInverse = (A: Matrix): InverseSolution => {
       explanation
     })
 
-    // If pivot is already 1, no need to eliminate column
-    if (updateRowResult.toReturnEarly) {
-      continue
-    }
-
     // Handle row elimination
     const eliminationResult = eliminateRowsGaussJordan(B, i)
     B = eliminationResult.A
@@ -154,13 +149,9 @@ const getInverse = (A: Matrix): InverseSolution => {
     }
 
     steps.push({
-      A: JSON.parse(JSON.stringify(B)),
+      A: newB,
       explanation: eliminationResult.explanations
     })
-
-    if (eliminationResult.toReturnEarly) {
-      continue
-    }
   }
 
   const explanation = [

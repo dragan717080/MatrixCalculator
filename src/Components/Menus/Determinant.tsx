@@ -63,6 +63,13 @@ const Determinant: FC = () => {
   const getStepText = useMemo(
     () =>
       (step: Step, index: number) => {
+        let rowIndex
+
+        const hasSwapRow = typeof (step.swapRow) !== 'undefined'
+        if (hasSwapRow) {
+
+        }
+        
         return typeof (step.swapRow) !== 'undefined'
           ? `Swapping rows ${step.swapRow[0] + 1} and ${step.swapRow[1] + 1}, changing the sign to ${step.sign}`
           // Text will have 1-based indexing so need `+1`
@@ -123,13 +130,17 @@ const Determinant: FC = () => {
     }
   }, [steps.length, toShowSolution, A])
 
+  useEffect(() => {
+    setTime(-1)
+  }, [A])
+
   return (
     <div className='col-h'>
       {aIsFilled && !isOpen && (
         <div ref={solutionStepsRef}>
           {toShowSolution && (
             <div className='solution-items-container mb-7'>
-              <OriginalMatrix A={A} steps={steps} />
+              <OriginalMatrix A={A} steps={steps} isEquation={false} />
               {steps.map((step, index) => (
                 <div id={`step-${index + 2}`} className='pt-2 pb-3 border-b-darkgray' key={index}>
                   <p>{getStepText(step, index)}</p>
@@ -181,41 +192,19 @@ const Determinant: FC = () => {
           <MatrixDimensionsInput minValue={1} isSquare={true} />
         </div>
         {aIsFilled && !isOpen && (
-          <>
-            <div className={`
-            ${toShowSolution
-                ? 'mt-6 md:mt-4 mb-7 md:mb-8'
-                : 'mt-3 mb-1'
-              }
-              row text-white space-x-5
-            `}>
-              <button
-                onClick={() => toggleShowSolution()}
-                className='btn btn-brighter'
-              >
-                {!toShowSolution ? 'Show' : 'Hide'} solution
-              </button>
-              <button
-                onClick={() => recalculate()}
-                className='btn btn-brighter'
-              >
-                Recalculate
-              </button>
-            </div>
-            <section className={!toShowSolution ? 'pt-6' : 'pt-2'}>
-              {typeof (determinant) !== 'undefined' && (
-                <>
-                  <h3 className='bold mb-2'>Result</h3>
-                  <p>Δ = {determinant}</p>
-                </>
-              )}
-              <div className='w-full flex'>
-                <span className='ml-auto pt-2'>
-                  Computation time: <span>{time !== - 1 ? time : '0.001'}</span>sec.
-                </span>
-              </div>
-            </section>
-          </>
+          <SolutionRows
+            toShowSolution={toShowSolution}
+            time={time}
+            toggleShowSolution={toggleShowSolution}
+            recalculate={recalculate}
+          >
+            {typeof (determinant) !== 'undefined' && (
+              <>
+                <h3 className='bold mb-2'>Result</h3>
+                <p>Δ = {determinant}</p>
+              </>
+            )}
+          </SolutionRows>
         )}
       </div>
     </div>

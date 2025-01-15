@@ -74,6 +74,10 @@ const MatrixModal: FC = () => {
       inputCells = isA ? newAInputCells : newBInputCells
     }
 
+    if (!inputCells.length) {
+      return
+    }
+
     // In case it was in insert matrix, input cells will not be in DOM
     const { width: cellWidth } = inputCells[0].getBoundingClientRect()
 
@@ -276,6 +280,7 @@ const MatrixModal: FC = () => {
 
   const handleCalculate = () => {
     setIsOpen(false)
+
     const newA = updateValuesForMatrix()
     setA(newA)
     const newEquationCoefs = updateValuesForArr(inputCellsEqCoefs.map(x => x.value))

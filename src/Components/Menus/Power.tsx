@@ -57,6 +57,10 @@ const Power: FC = () => {
     resetParams()
   }, [])
 
+  useEffect(() => {
+    setTime(-1)
+  }, [A])
+
   return (
     <div className='col-h'>
       {aIsFilled && !isOpen && (

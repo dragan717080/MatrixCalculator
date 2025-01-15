@@ -2,6 +2,7 @@ import React, { FC, useEffect, useRef, useState } from 'react'
 import MatrixDimensionsInput from '../Atoms/MatrixDimensionsInput'
 import MatrixTable from '../Atoms/MatrixTable'
 import ScrollWithSVGs from '../Atoms/ScrollWithSVGs'
+import SolutionRows from '../Atoms/SolutionRows'
 import useRecalculate from '../../hooks/useRecalculate'
 import useResetParams from '../../hooks/useResetParams'
 import useToggleShowSolution from '../../hooks/useToggleShowSolution'
@@ -119,6 +120,10 @@ const GaussJordanElimination: FC = () => {
     }
   }, [steps.length, toShowSolution, A])
 
+  useEffect(() => {
+    setTime(-1)
+  }, [A])
+
   return (
     <div className='col-h'>
       {aIsFilled && !isOpen && (
@@ -126,11 +131,8 @@ const GaussJordanElimination: FC = () => {
           {toShowSolution && (
             <div className='solution-items-container mb-7'>
               <OriginalMatrix A={A} steps={steps} needsDeterminant={false} isEquation={true} />
-              {/* This empty paragraph with no opacity and number of `step-explanation` classes expected in `useUpdateExplanations` */}
-              {/* <p className='step-explanation h-[1px] w-[1px] opacity-0'></p> */}
               {steps.map((step, index) => (
                 <div id={`step-${index + 2}`} className='pt-2 pb-3 border-b-darkgray' key={index}>
-                  {/* <p>{getStepText(step, index)}</p> */}
                   <div className='flex flex-col space-y-1.5 pt-2 pb-2.5'>
                     {Array.isArray(step.explanation)
                       ? step.explanation.map((explanation, index) => (
@@ -175,50 +177,28 @@ const GaussJordanElimination: FC = () => {
           <MatrixDimensionsInput minValue={1} isGaussJordan={true} />
         </div>
         {aIsFilled && !isOpen && (
-          <>
-            <div className={`
-              ${toShowSolution
-                ? 'mt-1 md:mt-2 mb-4 md:mb-6'
-                : 'mb-8 md:mb-12'
-              }
-              row text-white space-x-5
-            `}>
-              <button
-                onClick={() => toggleShowSolution()}
-                className='btn btn-brighter'
-              >
-                {!toShowSolution ? 'Show' : 'Hide'} solution
-              </button>
-              <button
-                onClick={() => recalculate()}
-                className='btn btn-brighter'
-              >
-                Recalculate
-              </button>
-            </div>
-            <section className={!toShowSolution ? 'pt-6' : 'pt-2'}>
-              {determinant
-                ? (
-                  <>
-                    <h3 className='bold mb-2'>Result</h3>
-                    <div className='flex flex-col'>
-                      {equationSolution!.map((variableSolution, index) => (
-                        <p className='solution-explanation' key={index}>{variableSolution}</p>
-                      ))}
-                    </div>
-                  </>)
-                : (
-                  <div>
-                    The linear equations system is inconsistent.
+          <SolutionRows
+            toShowSolution={toShowSolution}
+            time={time}
+            toggleShowSolution={toggleShowSolution}
+            recalculate={recalculate}
+          >
+            {determinant
+              ? (
+                <>
+                  <h3 className='bold mb-2'>Result</h3>
+                  <div className='flex flex-col'>
+                    {equationSolution!.map((variableSolution, index) => (
+                      <p className='solution-explanation' key={index}>{variableSolution}</p>
+                    ))}
                   </div>
-                )}
-              <div className='w-full flex'>
-                <span className='ml-auto pt-2'>
-                  Computation time: <span>{time !== - 1 ? time : '0.001'}</span>sec.
-                </span>
-              </div>
-            </section>
-          </>
+                </>)
+              : (
+                <div>
+                  The linear equations system is inconsistent.
+                </div>
+              )}
+          </SolutionRows>
         )}
       </div>
     </div>

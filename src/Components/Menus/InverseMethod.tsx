@@ -2,6 +2,7 @@ import React, { FC, useEffect, useRef, useState } from 'react'
 import MatrixDimensionsInput from '../Atoms/MatrixDimensionsInput'
 import MatrixTable from '../Atoms/MatrixTable'
 import ScrollWithSVGs from '../Atoms/ScrollWithSVGs'
+import SolutionRows from '../Atoms/SolutionRows'
 import useGetHighlightFunc from '../../hooks/useGetHighlightFunc'
 import useRecalculate from '../../hooks/useRecalculate'
 import useResetParams from '../../hooks/useResetParams'
@@ -111,6 +112,10 @@ const InverseMethod: FC = () => {
     }
   }, [steps.length, toShowSolution])
 
+  useEffect(() => {
+    setTime(-1)
+  }, [A])
+
   return (
     <div className='col-h'>
       {aIsFilled && !isOpen && (
@@ -169,51 +174,29 @@ const InverseMethod: FC = () => {
           <MatrixDimensionsInput minValue={1} isSquare={true} />
         </div>
         {aIsFilled && !isOpen && (
-          <>
-            <div className={`
-              ${toShowSolution
-                ? 'mt-1 md:mt-2 mb-4 md:mb-6'
-                : 'mb-8 md:mb-12'
-              }
-              row text-white space-x-5
-            `}>
-              <button
-                onClick={() => toggleShowSolution()}
-                className='btn btn-brighter'
-              >
-                {!toShowSolution ? 'Show' : 'Hide'} solution
-              </button>
-              <button
-                onClick={() => recalculate()}
-                className='btn btn-brighter'
-              >
-                Recalculate
-              </button>
-            </div>
-            <section className={!toShowSolution ? 'pt-6' : 'pt-2'}>
-              {steps.length > 0 && C.length > 0
-                ? (
-                  <>
-                    <h3 className='bold mb-2'>Result</h3>
-                    <MatrixTable
-                      nRows={C.length}
-                      nCols={C[0].length}
-                      A={C}
-                      letter='X'
-                    />
-                  </>)
-                : (
-                  <div>
-                    Determinant of the main matrix is zero. This means that the system of linear equations is either inconsistent or has infinitely many solutions.
-                  </div>
-                )}
-              <div className='w-full flex'>
-                <span className='ml-auto pt-2'>
-                  Computation time: <span>{time !== - 1 ? time : '0.001'}</span>sec.
-                </span>
-              </div>
-            </section>
-          </>
+          <SolutionRows
+            toShowSolution={toShowSolution}
+            time={time}
+            toggleShowSolution={toggleShowSolution}
+            recalculate={recalculate}
+          >
+            {steps.length > 0 && C.length > 0
+              ? (
+                <>
+                  <h3 className='bold mb-2'>Result</h3>
+                  <MatrixTable
+                    nRows={C.length}
+                    nCols={C[0].length}
+                    A={C}
+                    letter='X'
+                  />
+                </>)
+              : (
+                <div>
+                  Determinant of the main matrix is zero. This means that the system of linear equations is either inconsistent or has infinitely many solutions.
+                </div>
+              )}
+          </SolutionRows>
         )}
       </div>
     </div>

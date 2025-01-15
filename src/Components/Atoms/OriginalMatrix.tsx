@@ -4,7 +4,8 @@ import OnlyOneRow from './OnlyOneRow'
 import ScrollWithSVGs from './ScrollWithSVGs'
 import OriginalMatrixProps from '../../interfaces/OriginalMatrixProps'
 
-const OriginalMatrix: FC<OriginalMatrixProps> = ({ A, steps, B, needsDeterminant=true, isEquation=false }) => {
+const OriginalMatrix: FC<OriginalMatrixProps> = ({ A, steps, B, needsDeterminant=true, isRank=false, isEquation=false }) => {
+
   return (
     <>
       <div id='step-1' className='row-v pb-2 px-3 border-b-darkgray'>
@@ -24,14 +25,14 @@ const OriginalMatrix: FC<OriginalMatrixProps> = ({ A, steps, B, needsDeterminant
                   A={A}
                   letter={isEquation ? 'X' : 'A'}
                   highlightFunc={
-                    needsDeterminant && (A.length === 1 || A[0].length === 1)
+                    (needsDeterminant || isRank) && (A.length === 1 || A[0].length === 1)
                       ? (row, col) => row === 0 && col === 0
                       : undefined
                   }
                   isWithCoefs={isEquation}
                 />
-                {needsDeterminant && (
-                  <OnlyOneRow A={A} />
+                {(needsDeterminant || isRank) && (
+                  <OnlyOneRow A={A} isRank={isRank} />
                 )}
               </div>
             </>

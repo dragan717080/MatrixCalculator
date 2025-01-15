@@ -2,6 +2,7 @@ import React, { FC, useRef, useState, useEffect } from 'react'
 import MatrixDimensionsInput from '../Atoms/MatrixDimensionsInput'
 import MatrixTable from '../Atoms/MatrixTable'
 import ScrollWithSVGs from '../Atoms/ScrollWithSVGs'
+import SolutionRows from '../Atoms/SolutionRows'
 import useGetHighlightFunc from '../../hooks/useGetHighlightFunc'
 import useRecalculate from '../../hooks/useRecalculate'
 import useResetParams from '../../hooks/useResetParams'
@@ -84,6 +85,10 @@ const Rank: FC = () => {
     }
   }, [steps.length, toShowSolution, A])
 
+  useEffect(() => {
+    setTime(-1)
+  }, [A])
+
   return (
     <div className='col-h'>
       {aIsFilled && !isOpen && (
@@ -91,7 +96,7 @@ const Rank: FC = () => {
           {toShowSolution && (
             <>
               <div className='solution-items-container mb-7'>
-                <OriginalMatrix A={A} steps={steps} needsDeterminant={false} />
+                <OriginalMatrix A={A} steps={steps} needsDeterminant={false} isRank={true} />
                 {steps.map((step, index) => (
                   <div id={`step-${index + 2}`} className='pt-2 pb-3 border-b-darkgray' key={index}>
                     <div>
@@ -143,41 +148,19 @@ const Rank: FC = () => {
           <MatrixDimensionsInput minValue={1} />
         </div>
         {aIsFilled && !isOpen && (
-          <>
-            <div className={`
-              ${toShowSolution
-                ? 'mt-1 md:mt-2 mb-4 md:mb-6'
-                : 'mb-8 md:mb-12'
-              }
-              row text-white space-x-5
-            `}>
-              <button
-                onClick={() => toggleShowSolution()}
-                className='btn btn-brighter'
-              >
-                {!toShowSolution ? 'Show' : 'Hide'} solution
-              </button>
-              <button
-                onClick={() => recalculate()}
-                className='btn btn-brighter'
-              >
-                Recalculate
-              </button>
-            </div>
-            <section className={!toShowSolution ? 'pt-6' : 'pt-2'}>
-              {typeof (rank) !== 'undefined' && (
-                <>
-                  <h3 className='bold mb-2'>Result</h3>
-                  <p>{rank}</p>
-                </>
-              )}
-              <div className='w-full flex'>
-                <span className='ml-auto pt-2'>
-                  Computation time: <span>{time !== - 1 ? time : '0.000'}</span>sec.
-                </span>
-              </div>
-            </section>
-          </>
+          <SolutionRows
+            toShowSolution={toShowSolution}
+            time={time}
+            toggleShowSolution={toggleShowSolution}
+            recalculate={recalculate}
+          >
+            {typeof (rank) !== 'undefined' && (
+              <>
+                <h3 className='bold mb-2'>Result</h3>
+                <p>{rank}</p>
+              </>
+            )}
+          </SolutionRows>
         )}
       </div>
     </div>

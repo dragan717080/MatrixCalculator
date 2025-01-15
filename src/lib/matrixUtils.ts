@@ -53,7 +53,7 @@ export const updateValuesInPivotRow = (A: Matrix, row: number) => {
 
   // Early return if pivot is 1, no need to process row
   if (pivot === 1) {
-    const explanation = `A<span class='subindex'>${row + 1}</span><span class='subindex'>${row + 1}</span> is already 1, so no need to eliminate this column`
+    const explanation = `A<span class='subindex'>${row + 1}</span><span class='subindex'>${row + 1}</span> is already 1, so no need to eliminate this row`
     return { explanation, A, toReturnEarly: true }
   }
 
