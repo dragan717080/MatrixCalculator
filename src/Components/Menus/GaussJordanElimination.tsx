@@ -104,10 +104,9 @@ const GaussJordanElimination: FC = () => {
     resetParams()
   }, [])
 
+  // Updated only solutions unlike `updateExplanations` function
   useEffect(() => {
     const solutionExplanations = Array.from(document.getElementsByClassName('solution-explanation'))
-
-    const lastElements = equationSolution
 
     solutionExplanations.forEach((explanation, index) => {
       explanation.innerHTML = equationSolution![index]

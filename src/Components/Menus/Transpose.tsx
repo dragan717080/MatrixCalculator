@@ -3,13 +3,13 @@ import MatrixDimensionsInput from '../Atoms/MatrixDimensionsInput'
 import MatrixTable from '../Atoms/MatrixTable'
 import useRecalculate from '../../hooks/useRecalculate'
 import useToggleShowSolution from '../../hooks/useToggleShowSolution'
-import { getCalcTime, transpose, wait } from '../../lib/utils'
+import { getCalcTime, transpose } from '../../lib/utils'
 import { useMatrixStore, useModalStore } from '../../store/zustandStore'
 import Matrix from '../../interfaces/Matrix'
 import useResetParams from '../../hooks/useResetParams'
 
 const Transpose: FC = () => {
-  const { setCalculate, aDim, setADim, A, setA, aIsFilled, setAIsFilled, setBIsFilled } = useMatrixStore()
+  const { setCalculate, aDim, A, aIsFilled } = useMatrixStore()
   const { isOpen } = useModalStore()
 
   const showOriginalRef = useRef<HTMLTableElement | null>(null)

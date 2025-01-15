@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useRef, useState, useEffect } from 'react'
+import React, { FC, useRef, useState, useEffect } from 'react'
 import MatrixDimensionsInput from '../Atoms/MatrixDimensionsInput'
 import MatrixTable from '../Atoms/MatrixTable'
 import ScrollWithSVGs from '../Atoms/ScrollWithSVGs'

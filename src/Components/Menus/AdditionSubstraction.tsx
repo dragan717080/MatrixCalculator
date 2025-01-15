@@ -13,7 +13,7 @@ import OriginalMatrix from '../Atoms/OriginalMatrix'
 const AdditionSubstraction: FC = () => {
   const {
     setCalculate,
-    aDim,  aIsFilled, A,
+    aDim, aIsFilled, A,
     B, bIsFilled,
     sign
   } = useMatrixStore()

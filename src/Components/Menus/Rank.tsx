@@ -5,17 +5,17 @@ import ScrollWithSVGs from '../Atoms/ScrollWithSVGs'
 import useRecalculate from '../../hooks/useRecalculate'
 import useResetParams from '../../hooks/useResetParams'
 import useToggleShowSolution from '../../hooks/useToggleShowSolution'
+import useUpdateExplanations from '../../hooks/useUpdateExplanations'
 import getRank from '../../lib/getRank'
 import { getCalcTime, getStrValuesOfMainDiagonal } from '../../lib/utils'
 import { useMatrixStore, useModalStore } from '../../store/zustandStore'
 import { Step } from '../../interfaces/Matrix'
-import OnlyOneRow from '../Atoms/OnlyOneRow'
 import OriginalMatrix from '../Atoms/OriginalMatrix'
 
 const Rank: FC = () => {
   const {
     setCalculate,
-    aDim, aIsFilled, A, setA, setAIsFilled,
+    aDim, aIsFilled, A,
   } = useMatrixStore()
   const { isOpen } = useModalStore()
 
@@ -33,6 +33,8 @@ const Rank: FC = () => {
   const { resetParams } = useResetParams({ descriptionAndInputRef })
 
   const { toggleShowSolution } = useToggleShowSolution({ solutionStepsRef, toShowSolution, setToShowSolution })
+
+  const { updateExplanations } = useUpdateExplanations({ steps, needsDeterminant: false })
 
   const calculateResult = () => {
     const aIsFilled = A.length && A.flat().every(x => typeof (x) !== 'string')
@@ -73,15 +75,18 @@ const Rank: FC = () => {
     resetParams()
   }, [])
 
+  useEffect(() => {
+    if (steps.length) {
+      updateExplanations()
+    }
+  }, [steps.length, toShowSolution, A])
+
   return (
     <div className='col-h'>
       {aIsFilled && !isOpen && (
         <div ref={solutionStepsRef}>
           {toShowSolution && (
             <>
-              {steps.length > 0 && (
-                <h3 className='mb-6 text-center bold leading-4'>Original matrix</h3>
-              )}
               <div className='solution-items-container mb-7'>
                 <OriginalMatrix A={A} steps={steps} needsDeterminant={false} />
                 {steps.map((step, index) => (
@@ -89,7 +94,7 @@ const Rank: FC = () => {
                     <div>
                       <div className="flex flex-col space-y-1.5 pt-2 pb-2.5">
                         {(step.explanation as string[]).map((explanation, index) => (
-                          <p key={index}>{explanation}</p>
+                          <p className='step-explanation' key={index}>{explanation}</p>
                         ))}
                       </div>
                       <div className='row-v px-3'>

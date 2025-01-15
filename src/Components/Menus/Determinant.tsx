@@ -120,7 +120,7 @@ const Determinant: FC = () => {
     if (steps.length) {
       updateExplanations()
     }
-  }, [steps.length, toShowSolution])
+  }, [steps.length, toShowSolution, A])
 
   return (
     <div className='col-h'>
