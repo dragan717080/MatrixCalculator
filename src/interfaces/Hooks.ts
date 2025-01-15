@@ -74,12 +74,12 @@ export interface UseUpdateExplanationsProps {
 }
 
 /**
- * @type {UseUpdateTableOnDefaultValuesProps}
+ * @type {UseGetHighlightFuncProps}
  * 
  * @property {Step[]} steps - Solution steps.
  * @property {TwoNumbers} aDim - Dimensions of `A`.
  */
-export interface UseUpdateTableOnDefaultValuesProps {
+export interface UseGetHighlightFuncProps {
   steps: Step[]
   aDim: TwoNumbers
 }

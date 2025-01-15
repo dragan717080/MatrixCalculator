@@ -2,6 +2,7 @@ import React, { FC, useRef, useState, useEffect } from 'react'
 import MatrixDimensionsInput from '../Atoms/MatrixDimensionsInput'
 import MatrixTable from '../Atoms/MatrixTable'
 import ScrollWithSVGs from '../Atoms/ScrollWithSVGs'
+import useGetHighlightFunc from '../../hooks/useGetHighlightFunc'
 import useRecalculate from '../../hooks/useRecalculate'
 import useResetParams from '../../hooks/useResetParams'
 import useToggleShowSolution from '../../hooks/useToggleShowSolution'
@@ -35,6 +36,8 @@ const Rank: FC = () => {
   const { toggleShowSolution } = useToggleShowSolution({ solutionStepsRef, toShowSolution, setToShowSolution })
 
   const { updateExplanations } = useUpdateExplanations({ steps, needsDeterminant: false })
+
+  const { getHighlightFunc } = useGetHighlightFunc({ steps, aDim })
 
   const calculateResult = () => {
     const aIsFilled = A.length && A.flat().every(x => typeof (x) !== 'string')
@@ -103,7 +106,7 @@ const Rank: FC = () => {
                           nRows={step.A.length}
                           nCols={step.A[0].length}
                           A={step.A}
-                          highlightFunc={(row: number, col: number, index: number | undefined) => row === index}
+                          highlightFunc={getHighlightFunc(index)}
                           index={index}
                         />
                       </div>

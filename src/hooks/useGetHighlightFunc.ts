@@ -1,4 +1,4 @@
-import { UseUpdateTableOnDefaultValuesProps } from "../interfaces/Hooks"
+import { UseGetHighlightFuncProps } from "../interfaces/Hooks"
 import { Step } from "../interfaces/Matrix"
 import { HighlightCells } from "../interfaces/MatrixTableProps"
 
@@ -6,7 +6,7 @@ import { HighlightCells } from "../interfaces/MatrixTableProps"
 const useGetHighlightFunc = ({
   steps,
   aDim
-}: UseUpdateTableOnDefaultValuesProps) => {
+}: UseGetHighlightFuncProps) => {
   const getHighlightFunc = (index: number): HighlightCells | undefined => {
     const { explanation } = steps[index]
 
@@ -25,14 +25,17 @@ const useGetHighlightFunc = ({
       return (row, col) => row === i && col === j
     }
 
-    const areRows = Array.isArray(explanation) && explanation.length && explanation[0].includes(' = ') && explanation[0][0] === 'R'
+    const areRows = Array.isArray(explanation) && explanation.some(x => x.includes(' = ')) && explanation[0][0] === 'R'
 
     if (areRows) {
-      // Don't highlight only the pivoted row
-      let pivotedRow =
-        (explanation[0] as string).match(/>(\d+)</g)!.map(x => x.replace(/[><]/g, '')).slice(-1)[0] as unknown as number - 1
+      /** Text explanations use 1-based indexing, therefore `-1`. */
+      const rowsBeingUpdated = explanation
+        .filter(x => x.includes(' = ') && x[0] === 'R')
+        .map(x => (x as string).match(/>(\d+)</g)!.map(x => x.replace(/[><]/g, ''))[0] as unknown as number - 1)
+      console.log('rowsBeingUpdated:', rowsBeingUpdated);
 
-      return (row, _) => row !== pivotedRow
+      // Include all rows that are being updated
+      return (row, _) => rowsBeingUpdated.includes(row)
     }
 
     const columnIsAlreadyOne = !Array.isArray(explanation) && explanation.includes('is already 1, so no need to eliminate this column')
